@@ -1,0 +1,168 @@
+.rightCol, .leftCol, .breadcrumbs, .brandName, .title, .addToStashBtn, .enquireBtn {
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+.container {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin: 120px auto 0 auto;
+  max-width: 1280px;
+  width: 100%;
+  min-height: 80vh;
+}
+
+@media (min-width: 1024px) {
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 48px 48px;
+    margin: 120px auto 0 auto;
+    max-width: 1280px;
+    width: 100%;
+    min-height: 80vh;
+  }
+  .leftCol {
+ 
+
+    position: relative;
+    max-width: 100%;
+  }
+  .rightCol {
+   
+    /* Move right data a little right */
+    position: sticky;
+   
+    align-self: flex-start;
+    max-width: 100%;
+    width: 100%;
+  }
+  .recommendationsRow {
+    width: 100%;
+    margin: 48px auto 0 auto;
+    max-width: 1280px;
+    /* Remove grid placement for desktop */
+  }
+  .leftSticky {
+    position: sticky !important;
+    top: 120px;
+    align-self: flex-start;
+    z-index: 2;
+  }
+  .rightSticky {
+    position: sticky !important;
+    top: 120px;
+    align-self: flex-start;
+    z-index: 2;
+  }
+}
+
+.leftCol {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: flex-start;
+  width: 100%;
+  /* Remove height and overflow-y for scroll sync */
+}
+
+.brandName {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #22304a;
+  margin-bottom: 0px;
+  margin-left: 4px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-family: Monsterrat;
+}
+
+.rightCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+  min-width: 0;
+  width: 100%;
+  margin-top: 0px;
+}
+
+.addToStashBtn {
+  width: 100%;
+  padding: 18px 0;
+  background: #051F2D;
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+
+  cursor: pointer;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+.enquireBtn {
+  width: 100%;
+  padding: 18px 0;
+  background: #fff;
+  color: #051F2D;
+  border: 1.5px solid #C6A779;
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+  margin-bottom: 32px;
+  cursor: pointer;
+  text-transform: none;
+}
+
+/* Responsive: stack vertically on mobile */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    gap: 24px;
+    padding: 0 8px;
+    margin-top: 120px;
+    min-height: unset;
+  }
+  .leftCol, .rightCol {
+    width: 100%;
+    max-width: 100%;
+    align-items: stretch;
+    gap: 20px;
+  }
+  .title {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
+  .addToStashBtn, .enquireBtn {
+    padding: 14px 0;
+    font-size: 1rem;
+  }
+}
+
+/* Tablet: intermediate layout if needed */
+@media (max-width: 1100px) and (min-width: 769px) {
+  .container {
+    gap: 32px;
+    padding: 0 12px;
+  }
+  .leftCol, .rightCol {
+    max-width: 100%;
+    align-items: stretch;
+  }
+  .title {
+    font-size: 1.7rem;
+    margin-bottom: 18px;
+  }
+} 

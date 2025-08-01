@@ -1,0 +1,216 @@
+.premiumScrollWrapper {
+  width: 100%;
+  background: #f8f9fa;
+  padding: 2.5rem 0 2.5rem 0;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 2.1rem;
+  align-items: center;
+  border-radius: 0 0 2rem 2rem;
+  margin-bottom: 40px; /* Add gap after Premium Icon Row */
+}
+
+.marqueeWrapper {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  height: 70px;
+  display: flex;
+  align-items: center;
+}
+
+/* Larger height for icon row to prevent cutting */
+.marqueeWrapper:last-child {
+  height: 50px;
+}
+
+.marquee {
+  display: flex;
+  align-items: center;
+  gap: 2.2rem;
+  will-change: transform;
+  white-space: nowrap;
+  animation-duration: 28s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.left {
+  animation-name: marqueeLeft;
+}
+
+.right {
+  animation-name: marqueeRight;
+}
+
+@keyframes marqueeLeft {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marqueeRight {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.brandLogoSmall {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  height: 40px;
+  filter: grayscale(0.2) brightness(0.9);
+  opacity: 0.95;
+  margin: 0 0.7rem;
+}
+
+.brandImage {
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.shoeItemSmall {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  min-width: 140px;
+  margin: 0 0.7rem;
+  gap: 1.1rem;
+}
+
+.shoeImage {
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+  flex-shrink: 0;
+}
+
+.starImage {
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.shoeNameSmall {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  font-size: 1.13rem;
+  color: #1a1a1a;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  white-space: nowrap;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.starIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0.4rem;
+  min-width: 15px;
+  flex-shrink: 0;
+}
+
+.shoeItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+  margin: 0 2.2rem;
+}
+
+.shoeName {
+  font-family: 'TIMES NOW NORMAL';
+  font-size: 2rem;
+  color: #1a1a1a;
+  font-weight: 700;
+  margin-top: 0.3rem;
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.iconItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  margin: 0 1.2rem;
+}
+
+.iconImage {
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.betweenIcon {
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+@media (max-width: 900px) {
+  .premiumScrollWrapper {
+    gap: 1.1rem;
+    padding: 1.2rem 0 1.2rem 0;
+    margin-bottom: 60px; /* Add gap after Premium Icon Row */
+  }
+  .marqueeWrapper {
+    height: 55px;
+  }
+  .marqueeWrapper:last-child {
+    height: 40px;
+  }
+  .brandLogoSmall {
+    min-width: 35px;
+    height: 25px;
+  }
+  .shoeItemSmall {
+    min-width: 80px;
+    gap: 0.5rem;
+  }
+  .shoeNameSmall {
+    font-size: 0.65rem;
+  }
+  .starIcon {
+    min-width: 10px;
+  }
+  .shoeItem {
+    min-width: 70px;
+  }
+  .shoeName {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .premiumScrollWrapper {
+    gap: 0.8rem;
+    padding: 1rem 0 1rem 0;
+    margin-bottom: 60px; /* Add gap after Premium Icon Row */
+  }
+  .marqueeWrapper {
+    height: 45px;
+  }
+  .marqueeWrapper:last-child {
+    height: 30px;
+  }
+  .brandLogoSmall {
+    min-width: 30px;
+    height: 20px;
+  }
+  .shoeItemSmall {
+    min-width: 60px;
+    gap: 0.3rem;
+  }
+  .shoeNameSmall {
+    font-size: 0.55rem;
+  }
+  .iconItem {
+    min-width: 30px;
+    margin: 0 0.8rem;
+  }
+} 

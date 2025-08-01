@@ -1,0 +1,184 @@
+/* [project]/src/components/HeroCarousel/HeroCarousel.module.css [client] (css) */
+html, body {
+  background-color: #000;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden auto;
+}
+
+.HeroCarousel-module__kybdLG__heroWrapper {
+  width: 100%;
+  position: relative;
+  overflow: visible;
+}
+
+.HeroCarousel-module__kybdLG__heroCarousel {
+  z-index: 10;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.HeroCarousel-module__kybdLG__bgCarousel {
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.HeroCarousel-module__kybdLG__videoContainer {
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 1s;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.HeroCarousel-module__kybdLG__videoContainer.HeroCarousel-module__kybdLG__active {
+  opacity: 1;
+}
+
+.HeroCarousel-module__kybdLG__video {
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.HeroCarousel-module__kybdLG__fgCarousel {
+  z-index: 5;
+  width: 200px;
+  height: 300px;
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%);
+}
+
+.HeroCarousel-module__kybdLG__fgVideoContainer {
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 1s;
+  position: absolute;
+}
+
+.HeroCarousel-module__kybdLG__fgVideoContainer.HeroCarousel-module__kybdLG__active {
+  opacity: 1;
+}
+
+.HeroCarousel-module__kybdLG__fgVideo {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.HeroCarousel-module__kybdLG__textContent {
+  z-index: 10;
+  color: #fff;
+  position: absolute;
+  bottom: 15%;
+  left: 10%;
+}
+
+.HeroCarousel-module__kybdLG__title {
+  letter-spacing: .05em;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  font-weight: 300;
+  line-height: 1.2;
+}
+
+.HeroCarousel-module__kybdLG__cta {
+  gap: 2rem;
+  display: flex;
+}
+
+.HeroCarousel-module__kybdLG__caption {
+  text-transform: uppercase;
+  letter-spacing: .2em;
+  font-size: .75rem;
+}
+
+.HeroCarousel-module__kybdLG__rightControls {
+  z-index: 10;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2rem;
+  display: flex;
+  position: absolute;
+  bottom: 20%;
+  right: 2rem;
+}
+
+.HeroCarousel-module__kybdLG__overlaySection {
+  z-index: 20;
+  color: #000;
+  transform-origin: center;
+  background: #fff;
+  border-radius: 24px;
+  justify-content: center;
+  align-items: flex-start;
+  width: 70vw;
+  height: 60vh;
+  margin: 0 auto;
+  padding: 3rem 2rem 1rem;
+  display: flex;
+  position: relative;
+  top: -20vh;
+  overflow: hidden;
+  box-shadow: 0 0 40px #0000004d;
+}
+
+.HeroCarousel-module__kybdLG__categoryGrid {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  width: 80%;
+  display: flex;
+}
+
+.HeroCarousel-module__kybdLG__categoryCard {
+  text-align: center;
+  flex-direction: column;
+  flex: 18%;
+  align-items: center;
+  min-width: 170px;
+  max-width: 180px;
+  display: flex;
+}
+
+.HeroCarousel-module__kybdLG__categoryImage {
+  aspect-ratio: 3 / 5;
+  background-position: center;
+  background-size: cover;
+  border-radius: 12px;
+  width: 100%;
+  transition: transform .4s;
+  transform: scale(1.1);
+}
+
+.HeroCarousel-module__kybdLG__categoryImage:hover {
+  transform: scale(1.15);
+}
+
+.HeroCarousel-module__kybdLG__categoryLabel {
+  color: #000;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  margin-top: .75rem;
+  font-size: .75rem;
+  font-weight: 500;
+}
+
+
+/*# sourceMappingURL=src_components_HeroCarousel_HeroCarousel_module_8915fd7c.css.map*/

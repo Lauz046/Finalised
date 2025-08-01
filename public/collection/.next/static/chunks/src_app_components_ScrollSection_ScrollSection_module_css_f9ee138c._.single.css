@@ -1,0 +1,162 @@
+/* [project]/src/app/components/ScrollSection/ScrollSection.module.css [app-client] (css) */
+.ScrollSection-module__NtoM5q__wrapper {
+  width: 100%;
+  min-height: 100vh;
+  padding: 5rem 0;
+  position: relative;
+}
+
+.ScrollSection-module__NtoM5q__section {
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  position: relative;
+}
+
+.ScrollSection-module__NtoM5q__sectionContent {
+  will-change: transform;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.ScrollSection-module__NtoM5q__desktopContent {
+  display: none;
+}
+
+.ScrollSection-module__NtoM5q__mobileContent {
+  display: block;
+}
+
+.ScrollSection-module__NtoM5q__caption {
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  font-size: .875rem;
+}
+
+.ScrollSection-module__NtoM5q__captionSmall {
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-size: .75rem;
+}
+
+.ScrollSection-module__NtoM5q__chapterTitle {
+  margin-bottom: 3rem;
+  font-size: 3.5rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.ScrollSection-module__NtoM5q__chapterTitle i {
+  font-style: italic;
+}
+
+.ScrollSection-module__NtoM5q__sectionGrid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  display: grid;
+}
+
+.ScrollSection-module__NtoM5q__chapterOne {
+  grid-template-areas: "image1 image2"
+                       "label1 label2"
+                       "image3 image3"
+                       "label3 label3"
+                       "image4 image5"
+                       "label4 label5";
+}
+
+.ScrollSection-module__NtoM5q__image {
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.ScrollSection-module__NtoM5q__image1 {
+  grid-area: image1;
+}
+
+.ScrollSection-module__NtoM5q__image2 {
+  grid-area: image2;
+}
+
+.ScrollSection-module__NtoM5q__image3 {
+  grid-area: image3;
+  padding-bottom: 50%;
+}
+
+.ScrollSection-module__NtoM5q__image4 {
+  grid-area: image4;
+}
+
+.ScrollSection-module__NtoM5q__image5 {
+  grid-area: image5;
+}
+
+.ScrollSection-module__NtoM5q__label {
+  margin-top: .5rem;
+  margin-bottom: 2rem;
+}
+
+.ScrollSection-module__NtoM5q__label1 {
+  grid-area: label1;
+}
+
+.ScrollSection-module__NtoM5q__label2 {
+  grid-area: label2;
+}
+
+.ScrollSection-module__NtoM5q__label3 {
+  grid-area: label3;
+}
+
+.ScrollSection-module__NtoM5q__label4 {
+  grid-area: label4;
+}
+
+.ScrollSection-module__NtoM5q__label5 {
+  grid-area: label5;
+}
+
+.ScrollSection-module__NtoM5q__transitionImage {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+@media (width >= 768px) {
+  .ScrollSection-module__NtoM5q__desktopContent {
+    display: block;
+  }
+
+  .ScrollSection-module__NtoM5q__mobileContent {
+    display: none;
+  }
+
+  .ScrollSection-module__NtoM5q__sectionGrid {
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+
+  .ScrollSection-module__NtoM5q__chapterOne {
+    grid-template-areas: "image1 image2 image3 image3"
+                         "label1 label2 image3 image3"
+                         "image4 image4 image5 image5"
+                         "label4 label4 label5 label5";
+  }
+
+  .ScrollSection-module__NtoM5q__image3 {
+    padding-bottom: 100%;
+  }
+}
+
+/*# sourceMappingURL=src_app_components_ScrollSection_ScrollSection_module_css_f9ee138c._.single.css.map*/

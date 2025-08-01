@@ -1,0 +1,27 @@
+/* [project]/src/First-section/First_section.module.css [client] (css) */
+.First_section-module__3kusEq__expandingWrapper {
+  z-index: 5;
+  background: none;
+  height: 100vh;
+  position: relative;
+}
+
+.First_section-module__3kusEq__innerBox {
+  color: #fff;
+  z-index: 10;
+  will-change: transform, border-radius;
+  background: #111;
+  border-radius: 20px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 60vw;
+  height: 60vh;
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%)scale(.3);
+}
+
+/*# sourceMappingURL=src_First-section_First_section_module_css_2bef753f._.single.css.map*/

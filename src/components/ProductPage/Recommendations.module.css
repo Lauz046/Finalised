@@ -1,0 +1,297 @@
+.container {
+  background: #fff;
+  padding: 20px 24px;
+  margin: 40px 0 0 0;
+  color: #051F2D;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  margin-bottom: 70px;
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #adacac;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .container {
+    margin-top: 64px;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
+    margin-bottom: 90px;
+  }
+  
+  .container::before {
+    width: 100%;
+  }
+  .scrollRow {
+    gap: 32px;
+    padding-bottom: 16px;
+  }
+}
+
+.header {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.scrollRow {
+  display: flex;
+  overflow-x: auto;
+  gap: 28px;
+  padding-bottom: 8px;
+}
+
+.card {
+  min-width: 260px;
+  max-width: 260px;
+  height: 370px;
+  background: #fff;
+  border: 1px solid #e0e6ed;
+  border-radius: 0;
+  box-shadow: 0 2px 12px rgba(30,40,90,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(30,40,90,0.12);
+}
+
+.card a, .card:visited, .card:active {
+  text-decoration: none !important;
+  color: inherit;
+}
+
+.imageWrapper {
+  width: 100%;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  margin-bottom: 24px;
+  z-index: 2;
+}
+
+.image {
+  width: 240px;
+  height: 220px;
+  object-fit: contain;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  display: block;
+  margin: 0 auto;
+}
+
+.info {
+  width: 92%;
+  min-height: 70px;
+  max-height: 70px;
+  background: #0d1a2f;
+  border-radius: 0;
+  padding: 16px 18px 12px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  position: relative;
+  z-index: 1;
+}
+
+.infoText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  max-width: 100%;
+  justify-content: flex-start;
+  height: auto;
+}
+
+.brand {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 0.65rem;
+  color: #fff;
+  font-weight: 500;
+  opacity: 0.85;
+  margin-bottom: 0;
+  line-height: 1.4;
+  align-self: flex-start;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.name {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 0.75rem;
+  color: #fff;
+  font-weight: 400;
+  margin-bottom: 0;
+  white-space: normal;
+  line-height: 1.2;
+  align-self: flex-start;
+  overflow: visible;
+  text-overflow: unset;
+  display: block;
+}
+
+.priceRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.startingFrom {
+  font-size: 0.9rem;
+  color: #b0b8c9;
+  font-family: 'Montserrat';
+  font-weight: 400;
+  margin-bottom: 0;
+}
+
+.price {
+  font-size: 1.1rem;
+  color: #fff;
+  font-weight: 600;
+  font-family: 'Montserrat';
+  margin-bottom: 0;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+    margin: 24px 0 0 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  
+  .container::before {
+    width: 100%;
+  }
+  
+  .header {
+    font-size: 1.1rem;
+    margin-bottom: 32px;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .scrollRow {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    overflow-x: visible;
+    padding-bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    justify-items: center;
+  }
+  
+  .card {
+    min-width: unset;
+    max-width: unset;
+    height: 280px;
+    width: 100%;
+  }
+  
+  .imageWrapper {
+    height: 160px;
+    margin-bottom: 60px;
+  }
+  
+  .image {
+    width: 160px;
+    height: 140px;
+  }
+  
+  .info {
+    width: 95%;
+    min-height: 50px;
+    padding: 8px 10px 6px 10px;
+  }
+  
+  .brand {
+    font-size: 0.8rem;
+  }
+  
+  .name {
+    font-size: 0.7rem;
+    overflow: visible;
+    text-overflow: unset;
+    display: block;
+  }
+  
+  .price {
+    font-size: 0.9rem;
+  }
+  
+  .startingFrom {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .card {
+    min-width: 160px;
+    max-width: 160px;
+    height: 200px;
+  }
+  .imageWrapper {
+    height: 120px;
+    margin-bottom: 40px;
+  }
+  .image {
+    width: 120px;
+    height: 100px;
+  }
+  .info {
+    min-height: 36px;
+    padding: 8px 6px 6px 6px;
+  }
+  .brand {
+    font-size: 0.7rem;
+  }
+  .name {
+    font-size: 0.6rem;
+    overflow: visible;
+    text-overflow: unset;
+    display: block;
+  }
+  .price {
+    font-size: 0.8rem;
+  }
+  .startingFrom {
+    font-size: 0.7rem;
+  }
+} 

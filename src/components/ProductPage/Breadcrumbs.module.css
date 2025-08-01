@@ -1,0 +1,70 @@
+.breadcrumbsBar {
+  width: 100%;
+  background: #051f2d;
+  color: #fff;
+  font-family: 'Montserrat', 'Inter', 'Segoe UI', Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 40px;
+  letter-spacing: 0.01em;
+  height: 40px;
+  position: fixed;
+  top: 67px;
+  left: 0;
+  z-index: 999;
+  box-sizing: border-box;
+  border-bottom: 1px solid #22304a;
+}
+
+@media (max-width: 600px) {
+  .breadcrumbsBar {
+    padding: 0 10px;
+    height: 38px;
+    top: 60px;
+    font-size: 0.92rem;
+  }
+}
+
+.breadcrumbItem {
+  color: #fff;
+  font-weight: 400;
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.breadcrumbItem a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s, text-decoration 0.2s;
+}
+.breadcrumbItem a:hover {
+  color: #C6A779;
+  text-decoration: underline;
+}
+.breadcrumbItem:last-child {
+  font-weight: 700;
+  color: #C6A779;
+  cursor: default;
+}
+
+.breadcrumbSep {
+  display: flex;
+  align-items: center;
+  height: 20px;
+  color: #b0b8c9;
+  margin: 0 2px;
+}
+
+.arrowIcon {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  color: #b0b8c9;
+  stroke: #b0b8c9;
+  display: block;
+} 

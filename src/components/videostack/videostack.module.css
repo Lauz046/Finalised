@@ -1,0 +1,17 @@
+/* motionScrollCarousel.module.css */
+
+.canvasWrapper {
+  width: 100%;
+  height: 600vh; /* Enough vertical space to scroll through all videos */
+  position: relative;
+  background: #d9c5a0;
+  overflow: hidden;
+}
+
+.canvasWrapper :global(canvas) {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  display: block;
+}

@@ -1,0 +1,311 @@
+/* [project]/src/components/HeroCarousel/HeroCarousel.module.css [client] (css) */
+.HeroCarousel-module__kybdLG__heroWrapper {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.HeroCarousel-module__kybdLG__heroCarousel {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
+
+.HeroCarousel-module__kybdLG__bgCarousel {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.HeroCarousel-module__kybdLG__videoContainer {
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 1s;
+  position: absolute;
+}
+
+.HeroCarousel-module__kybdLG__videoContainer.HeroCarousel-module__kybdLG__active {
+  opacity: 1;
+}
+
+.HeroCarousel-module__kybdLG__video {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.HeroCarousel-module__kybdLG__fgCarousel {
+  z-index: 5;
+  width: 200px;
+  height: 300px;
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%);
+}
+
+.HeroCarousel-module__kybdLG__fgVideoContainer {
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 1s;
+  position: absolute;
+}
+
+.HeroCarousel-module__kybdLG__fgVideoContainer.HeroCarousel-module__kybdLG__active {
+  opacity: 1;
+}
+
+.HeroCarousel-module__kybdLG__fgVideo {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.HeroCarousel-module__kybdLG__textContent {
+  z-index: 10;
+  color: #fff;
+  position: absolute;
+  bottom: 15%;
+  left: 10%;
+}
+
+.HeroCarousel-module__kybdLG__title {
+  letter-spacing: .05em;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  font-weight: 300;
+}
+
+.HeroCarousel-module__kybdLG__cta {
+  gap: 2rem;
+  display: flex;
+}
+
+.HeroCarousel-module__kybdLG__caption {
+  text-transform: uppercase;
+  letter-spacing: .2em;
+  font-size: .75rem;
+}
+
+.HeroCarousel-module__kybdLG__rightControls {
+  z-index: 10;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2rem;
+  display: flex;
+  position: absolute;
+  bottom: 20%;
+  right: 2rem;
+}
+
+.HeroCarousel-module__kybdLG__nav {
+  align-items: center;
+  gap: .5rem;
+  display: flex;
+}
+
+.HeroCarousel-module__kybdLG__prev, .HeroCarousel-module__kybdLG__next {
+  color: #fff;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: .5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.HeroCarousel-module__kybdLG__prev svg, .HeroCarousel-module__kybdLG__next svg {
+  width: .5rem;
+  height: .75rem;
+  transition: transform .3s;
+}
+
+.HeroCarousel-module__kybdLG__prev:hover svg {
+  transform: translateX(-2px);
+}
+
+.HeroCarousel-module__kybdLG__next:hover svg {
+  transform: translateX(2px);
+}
+
+.HeroCarousel-module__kybdLG__divider {
+  background: #ffffff80;
+  width: 1px;
+  height: 40px;
+}
+
+.HeroCarousel-module__kybdLG__navHoverEffect {
+  opacity: 0;
+  z-index: -1;
+  background: #fff;
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: all .3s;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%)scale(0);
+}
+
+.HeroCarousel-module__kybdLG__prev:hover .HeroCarousel-module__kybdLG__navHoverEffect, .HeroCarousel-module__kybdLG__next:hover .HeroCarousel-module__kybdLG__navHoverEffect {
+  opacity: .2;
+  transform: translateX(-50%)scale(1.5);
+}
+
+.HeroCarousel-module__kybdLG__nextUp {
+  flex-direction: column;
+  align-items: flex-end;
+  display: flex;
+}
+
+.HeroCarousel-module__kybdLG__nextTitle {
+  margin: .5rem 0;
+  font-size: 1rem;
+}
+
+.HeroCarousel-module__kybdLG__progressBar {
+  background: #fff;
+  width: 150px;
+  height: 1px;
+  transition: width .1s linear;
+}
+
+.HeroCarousel-module__kybdLG__scrollSectionContainer {
+  z-index: 15;
+  background: #fff;
+  width: 90%;
+  height: 40vh;
+  transition: all .5s cubic-bezier(.16, 1, .3, 1);
+  position: absolute;
+  bottom: 0;
+  left: 5%;
+  overflow: hidden;
+}
+
+.HeroCarousel-module__kybdLG__scrollSectionContainer.HeroCarousel-module__kybdLG__fullView {
+  width: 100%;
+  height: 100vh;
+  left: 0;
+}
+
+
+/* [project]/src/components/ScrollSection/ScrollSection.module.css [client] (css) */
+.ScrollSection-module__5_nnia__container {
+  background: #fff;
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  transition: all .5s cubic-bezier(.16, 1, .3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.ScrollSection-module__5_nnia__container.ScrollSection-module__5_nnia__fullView {
+  padding: 4rem;
+}
+
+.ScrollSection-module__5_nnia__content {
+  flex-direction: column;
+  max-width: 1400px;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+}
+
+.ScrollSection-module__5_nnia__caption {
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  font-size: .75rem;
+}
+
+.ScrollSection-module__5_nnia__title {
+  margin-bottom: 2rem;
+  font-size: 3rem;
+  font-weight: 400;
+  transition: font-size .3s, transform .3s;
+  transform: translateY(0);
+}
+
+.ScrollSection-module__5_nnia__container.ScrollSection-module__5_nnia__fullView .ScrollSection-module__5_nnia__title {
+  font-size: 4rem;
+  transform: translateY(-10%);
+}
+
+.ScrollSection-module__5_nnia__articleRow {
+  flex: 1;
+  align-items: center;
+  gap: 2rem;
+  padding-bottom: 1rem;
+  display: flex;
+  overflow-x: auto;
+}
+
+.ScrollSection-module__5_nnia__articleItem {
+  flex-shrink: 0;
+  min-width: 200px;
+  transition: transform .3s;
+}
+
+.ScrollSection-module__5_nnia__container.ScrollSection-module__5_nnia__fullView .ScrollSection-module__5_nnia__articleItem {
+  min-width: 300px;
+  transform: scale(1.2)translateY(-10px);
+}
+
+.ScrollSection-module__5_nnia__imageWrapper {
+  width: 100%;
+  height: 0;
+  margin-bottom: 1rem;
+  padding-bottom: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.ScrollSection-module__5_nnia__image {
+  object-fit: cover;
+  transition: transform .3s;
+}
+
+.ScrollSection-module__5_nnia__imageWrapper:hover .ScrollSection-module__5_nnia__image {
+  transform: scale(1.05);
+}
+
+.ScrollSection-module__5_nnia__articleTitle {
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-size: .75rem;
+}
+
+@media (width <= 768px) {
+  .ScrollSection-module__5_nnia__container {
+    padding: 1.5rem;
+  }
+
+  .ScrollSection-module__5_nnia__title {
+    font-size: 2rem;
+  }
+
+  .ScrollSection-module__5_nnia__articleRow {
+    flex-direction: column;
+    gap: 1rem;
+    overflow-x: visible;
+  }
+
+  .ScrollSection-module__5_nnia__articleItem {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .ScrollSection-module__5_nnia__container.ScrollSection-module__5_nnia__fullView .ScrollSection-module__5_nnia__articleItem {
+    min-width: auto;
+  }
+}
+
+
+/*# sourceMappingURL=src_components_a5328bc6._.css.map*/

@@ -1,0 +1,175 @@
+type SizePrice {
+  size: String!
+  price: Float!
+}
+
+type Sneaker {
+  id: ID!
+  brand: String!
+  productName: String!
+  sizePrices: [SizePrice!]!  # 👈 Not JSON
+  images: [String!]!
+  soldOut: Boolean!
+  productLink: String!
+  sellerName: String
+  sellerUrl: String
+}
+
+type Watch {
+  id: ID!
+  brand: String!
+  name: String!
+  color: String!
+  salePrice: Float!
+  marketPrice: String!
+  images: [String!]!
+  link: String!
+  sellerName: String
+  sellerUrl: String
+  gender: String
+}
+
+type PerfumeVariant {
+  size: String
+  price: Float
+}
+
+type Perfume {
+  id: ID!
+  brand: String!
+  title: String!
+  fragranceFamily: String!
+  concentration: String
+  subcategory: String
+  variants: [PerfumeVariant!]
+  images: [String!]
+  url: String!
+  sellerName: String
+  sellerUrl: String
+}
+
+type Accessory {
+  id: ID!
+  brand: String!
+  productName: String!
+  subcategory: String!
+  gender: String!
+  sizePrices: [SizePrice!]!
+  images: [String!]!
+  inStock: Boolean!
+  productLink: String!
+  sellerName: String
+  sellerUrl: String
+}
+
+type Apparel {
+  id: ID!
+  brand: String!
+  productName: String!
+  subcategory: String!
+  gender: String!
+  sizePrices: [SizePrice!]!
+  images: [String!]!
+  inStock: Boolean!
+  productLink: String!
+  sellerName: String
+  sellerUrl: String
+}
+
+scalar JSON
+
+type Query {
+  sneakers(
+    brand: String, 
+    size: String, 
+    sortOrder: String, 
+    minPrice: Float, 
+    maxPrice: Float,
+    search: String,
+    limit: Int,
+    offset: Int
+  ): [Sneaker!]!
+  sneaker(id: ID!): Sneaker
+  watches(
+    brand: String, 
+    color: String, 
+    gender: String,
+    sortOrder: String, 
+    minPrice: Float, 
+    maxPrice: Float,
+    search: String,
+    limit: Int,
+    offset: Int
+  ): [Watch!]!
+  watch(id: ID!): Watch
+  perfumes(
+    brand: String, 
+    fragranceFamily: String, 
+    concentration: String,
+    subcategory: String,
+    size: String, 
+    sortOrder: String, 
+    minPrice: Float, 
+    maxPrice: Float,
+    search: String,
+    limit: Int,
+    offset: Int
+  ): [Perfume!]!
+  perfume(id: ID!): Perfume
+  accessories(
+    brand: String, 
+    subcategory: String,
+    gender: String,
+    size: String, 
+    sortOrder: String, 
+    minPrice: Float, 
+    maxPrice: Float,
+    search: String,
+    limit: Int,
+    offset: Int
+  ): [Accessory!]!
+  accessory(id: ID!): Accessory
+  apparel(
+    brand: String, 
+    subcategory: String,
+    gender: String,
+    size: String, 
+    sortOrder: String, 
+    minPrice: Float, 
+    maxPrice: Float,
+    search: String,
+    limit: Int,
+    offset: Int
+  ): [Apparel!]!
+  apparelItem(id: ID!): Apparel
+  allSneakerBrands: [String!]!
+  allSneakerSizes(brand: String): [String!]!
+  allWatchBrands: [String!]!
+  allPerfumeBrands: [String!]!
+  allAccessoryBrands: [String!]!
+  allApparelBrands: [String!]!
+  allSneakerSubcategories: [String!]!
+  allApparelSubcategories: [String!]!
+  allAccessorySubcategories: [String!]!
+  allWatchSubcategories: [String!]!
+  allPerfumeSubcategories: [String!]!
+  allApparelGenders: [String!]!
+  allAccessoryGenders: [String!]!
+  allWatchGenders: [String!]!
+  allSneakerGenders: [String!]!
+  allPerfumeGenders: [String!]!
+  allPerfumeFragranceFamilies: [String!]!
+}
+
+type Mutation {
+  createEnquiry(
+    name: String!
+    email: String!
+    phone: String
+    message: String!
+    productId: String
+    productName: String
+    productCategory: String
+  ): Boolean!
+}
+

@@ -1,0 +1,325 @@
+/* [project]/src/components/HeroCarousel/HeroCarousel.module.css [client] (css) */
+.HeroCarousel-module__kybdLG__heroWrapper {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.HeroCarousel-module__kybdLG__heroCarousel {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
+
+.HeroCarousel-module__kybdLG__bgCarousel {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.HeroCarousel-module__kybdLG__videoContainer {
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 1s;
+  position: absolute;
+}
+
+.HeroCarousel-module__kybdLG__videoContainer.HeroCarousel-module__kybdLG__active {
+  opacity: 1;
+}
+
+.HeroCarousel-module__kybdLG__video {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.HeroCarousel-module__kybdLG__fgCarousel {
+  z-index: 5;
+  width: 200px;
+  height: 300px;
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%);
+}
+
+.HeroCarousel-module__kybdLG__fgVideoContainer {
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 1s;
+  position: absolute;
+}
+
+.HeroCarousel-module__kybdLG__fgVideoContainer.HeroCarousel-module__kybdLG__active {
+  opacity: 1;
+}
+
+.HeroCarousel-module__kybdLG__fgVideo {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.HeroCarousel-module__kybdLG__textContent {
+  z-index: 10;
+  color: #fff;
+  position: absolute;
+  bottom: 15%;
+  left: 10%;
+}
+
+.HeroCarousel-module__kybdLG__title {
+  letter-spacing: .05em;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  font-weight: 300;
+  line-height: 1.2;
+}
+
+.HeroCarousel-module__kybdLG__cta {
+  gap: 2rem;
+  display: flex;
+}
+
+.HeroCarousel-module__kybdLG__caption {
+  text-transform: uppercase;
+  letter-spacing: .2em;
+  font-size: .75rem;
+}
+
+.HeroCarousel-module__kybdLG__rightControls {
+  z-index: 10;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2rem;
+  display: flex;
+  position: absolute;
+  bottom: 20%;
+  right: 2rem;
+}
+
+.HeroCarousel-module__kybdLG__nav {
+  align-items: center;
+  gap: .5rem;
+  display: flex;
+}
+
+.HeroCarousel-module__kybdLG__prev, .HeroCarousel-module__kybdLG__next {
+  color: #fff;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: .5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.HeroCarousel-module__kybdLG__prev svg, .HeroCarousel-module__kybdLG__next svg {
+  width: .5rem;
+  height: .75rem;
+  transition: transform .3s;
+}
+
+.HeroCarousel-module__kybdLG__prev:hover svg {
+  transform: translateX(-2px);
+}
+
+.HeroCarousel-module__kybdLG__next:hover svg {
+  transform: translateX(2px);
+}
+
+.HeroCarousel-module__kybdLG__divider {
+  background: #ffffff80;
+  width: 1px;
+  height: 40px;
+}
+
+.HeroCarousel-module__kybdLG__navHoverEffect {
+  opacity: 0;
+  z-index: -1;
+  background: #fff;
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: all .3s;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%)scale(0);
+}
+
+.HeroCarousel-module__kybdLG__prev:hover .HeroCarousel-module__kybdLG__navHoverEffect, .HeroCarousel-module__kybdLG__next:hover .HeroCarousel-module__kybdLG__navHoverEffect {
+  opacity: .2;
+  transform: translateX(-50%)scale(1.5);
+}
+
+.HeroCarousel-module__kybdLG__nextUp {
+  flex-direction: column;
+  align-items: flex-end;
+  display: flex;
+}
+
+.HeroCarousel-module__kybdLG__nextTitle {
+  margin: .5rem 0;
+  font-size: 1rem;
+}
+
+.HeroCarousel-module__kybdLG__progressBar {
+  background: #fff;
+  width: 150px;
+  height: 1px;
+  transition: width .1s linear;
+}
+
+.HeroCarousel-module__kybdLG__expandContainer {
+  z-index: 15;
+  will-change: height;
+  background: #fff;
+  width: 100%;
+  height: 40vh;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+@media (width <= 768px) {
+  .HeroCarousel-module__kybdLG__fgCarousel {
+    width: 150px;
+    height: 225px;
+    left: 5%;
+  }
+
+  .HeroCarousel-module__kybdLG__textContent {
+    bottom: 10%;
+    left: 5%;
+  }
+
+  .HeroCarousel-module__kybdLG__title {
+    font-size: 1.8rem;
+  }
+
+  .HeroCarousel-module__kybdLG__rightControls {
+    bottom: 15%;
+    right: 1rem;
+  }
+
+  .HeroCarousel-module__kybdLG__nextTitle {
+    font-size: .875rem;
+  }
+
+  .HeroCarousel-module__kybdLG__progressBar {
+    width: 100px;
+  }
+
+  .HeroCarousel-module__kybdLG__expandContainer {
+    height: 35vh;
+  }
+}
+
+
+/* [project]/src/components/ScrollSection/ExpandingSection.module.css [client] (css) */
+.ExpandingSection-module__RRCxxG__wrapper {
+  box-sizing: border-box;
+  transform-origin: bottom;
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+}
+
+.ExpandingSection-module__RRCxxG__content {
+  flex-direction: column;
+  max-width: 1400px;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+}
+
+.ExpandingSection-module__RRCxxG__caption {
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: .875rem;
+}
+
+.ExpandingSection-module__RRCxxG__title {
+  color: #333;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.ExpandingSection-module__RRCxxG__title i {
+  font-style: italic;
+}
+
+.ExpandingSection-module__RRCxxG__grid {
+  flex: 1;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  display: grid;
+}
+
+.ExpandingSection-module__RRCxxG__item {
+  will-change: transform, opacity;
+}
+
+.ExpandingSection-module__RRCxxG__imageContainer {
+  width: 100%;
+  height: 0;
+  margin-bottom: .5rem;
+  padding-bottom: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.ExpandingSection-module__RRCxxG__image {
+  object-fit: cover;
+  transition: transform .5s;
+}
+
+.ExpandingSection-module__RRCxxG__item:hover .ExpandingSection-module__RRCxxG__image {
+  transform: scale(1.05);
+}
+
+.ExpandingSection-module__RRCxxG__label {
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #333;
+  font-size: .7rem;
+}
+
+@media (width <= 1024px) {
+  .ExpandingSection-module__RRCxxG__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (width <= 768px) {
+  .ExpandingSection-module__RRCxxG__wrapper {
+    padding: 1.5rem;
+  }
+
+  .ExpandingSection-module__RRCxxG__title {
+    font-size: 1.5rem;
+  }
+
+  .ExpandingSection-module__RRCxxG__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ExpandingSection-module__RRCxxG__imageContainer {
+    padding-bottom: 70%;
+  }
+}
+
+
+/*# sourceMappingURL=src_components_9212ef06._.css.map*/

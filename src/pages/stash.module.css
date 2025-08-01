@@ -1,0 +1,25 @@
+.container {
+  font-family: 'Montserrat', sans-serif;
+  min-height: 100vh;
+  background: #07202c;
+  padding-top: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding-top: 100px;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100%;
+  }
+} 

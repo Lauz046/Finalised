@@ -1,0 +1,82 @@
+.container {
+  background: #fff;
+  border: 1px solid #464646;
+  padding: 0 0 0 0;
+  margin: 24px 0;
+  color: #051F2D;
+  width: 100%;
+  font-family: 'Montserrat', sans-serif;
+  border-radius: 0px;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  width: 100%;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: #051F2D;
+  transition: background 0.2s;
+}
+
+.header, .arrowSvg, .table, .table th, .table td {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.arrowSvg {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.2s;
+}
+
+.arrowOpen .arrowSvg {
+  transform: rotate(0deg);
+}
+
+.arrowClosed .arrowSvg {
+  transform: rotate(-90deg);
+}
+
+.scrollTableWrap {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 0 0 20px 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+  table-layout: fixed;
+}
+
+.table th {
+  background: #F5F5F5;
+  font-weight: 700;
+  border: none;
+  padding: 16px 0;
+  text-align: center;
+}
+
+.table td {
+  border: none;
+  padding: 16px 0;
+  text-align: center;
+  color: #051F2D;
+  font-weight: 500;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+} 

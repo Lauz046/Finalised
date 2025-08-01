@@ -1,0 +1,158 @@
+.container {
+  background: #051F2D;
+  color: #fff;
+  padding: 24px;
+  margin: 24px 0;
+  border-radius: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+  .container {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+.header {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.sellerCard {
+  background: #fff;
+  border-radius: 0;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sellerInfoWrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 0;
+  flex-shrink: 0;
+}
+
+.sellerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.sellerName {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #051F2D;
+  font-family: 'Montserrat', sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.priceBtn {
+  background: #051F2D;
+  color: #fff;
+  border: none;
+  border-radius: 0;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  min-width: fit-content;
+  flex-shrink: 0;
+}
+
+.priceText {
+  color: #fff;
+  font-weight: 500;
+}
+
+.priceIcon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+    margin: 12px 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .header {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+  
+  .sellerCard {
+    padding: 10px;
+    gap: 6px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .sellerInfoWrap {
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+  }
+  
+  .logo {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .sellerInfo {
+    gap: 1px;
+    min-width: 0;
+    flex: 1;
+  }
+  
+  .sellerName {
+    font-size: 0.75rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
+  
+  .priceBtn {
+    padding: 5px 8px;
+    font-size: 0.7rem;
+    gap: 3px;
+    min-width: fit-content;
+  }
+  
+  .priceIcon {
+    width: 12px;
+    height: 12px;
+  }
+} 

@@ -1,0 +1,144 @@
+/* HornLoader.module.css */
+
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hornContainer {
+  position: relative;
+  width: 215px;
+  height: 193px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hornFrame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 4px 12px rgba(5, 31, 45, 0.08));
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.hornFrame.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Smooth horn building animation */
+@keyframes hornBuild {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(8px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.02) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.hornFrame.active {
+  animation: hornBuild 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Brand Reveal Styles */
+.brandContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.brandLogo {
+  width: 180px;
+  height: auto;
+  filter: drop-shadow(0 6px 18px rgba(5, 31, 45, 0.12));
+  transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Premium Effects */
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.005) 100%);
+  pointer-events: none;
+}
+
+/* Brand Logo Glow Effect - more subtle */
+@keyframes brandGlow {
+  0%, 100% {
+    filter: drop-shadow(0 6px 18px rgba(5, 31, 45, 0.12));
+  }
+  50% {
+    filter: drop-shadow(0 6px 22px rgba(5, 31, 45, 0.18));
+  }
+}
+
+.brandLogo {
+  animation: brandGlow 4s ease-in-out infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hornContainer {
+    width: 180px;
+    height: 162px;
+  }
+  
+  .brandLogo {
+    width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hornContainer {
+    width: 150px;
+    height: 135px;
+  }
+  
+  .brandLogo {
+    width: 120px;
+  }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .hornFrame {
+    filter: drop-shadow(0 4px 16px rgba(5, 31, 45, 0.12));
+  }
+  
+  .brandLogo {
+    filter: drop-shadow(0 8px 32px rgba(5, 31, 45, 0.2));
+  }
+} 

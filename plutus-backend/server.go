@@ -369,17 +369,32 @@ func main() {
 	resolver := &graph.Resolver{DB: db}
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: resolver}))
 
-	// ✅ Add CORS here
+	// ✅ Add CORS here with multiple origins for deployment
 	corsOrigin := os.Getenv("CORS_ORIGIN")
 	if corsOrigin == "" {
 		corsOrigin = "http://localhost:3000"
 	}
 
+	// Parse multiple origins if comma-separated
+	allowedOrigins := []string{
+		"http://localhost:3000",
+		"https://localhost:3000",
+		"https://plutus-frontend.onrender.com",
+		"https://plutus-frontend.vercel.app",
+		"https://plutus-frontend-git-main-lauz046.vercel.app",
+		"https://plutus-frontend-git-develop-lauz046.vercel.app",
+	}
+
+	// Add custom origin if provided
+	if corsOrigin != "" {
+		allowedOrigins = append(allowedOrigins, corsOrigin)
+	}
+
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins:   []string{corsOrigin, "http://localhost:3000", "https://localhost:3000"},
+		AllowedOrigins:   allowedOrigins,
 		AllowCredentials: true,
-		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
-		AllowedHeaders:   []string{"Content-Type", "Authorization", "X-Requested-With"},
+		AllowedMethods:   []string{"GET", "POST", "OPTIONS", "PUT", "DELETE"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization", "X-Requested-With", "Origin", "Accept"},
 		MaxAge:           86400, // 24 hours
 	}).Handler(srv)
 

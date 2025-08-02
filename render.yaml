@@ -1,0 +1,40 @@
+services:
+  # Frontend Next.js Application
+  - type: web
+    name: plutus-frontend
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_GRAPHQL_ENDPOINT
+        value: https://plutus-backend.onrender.com/query
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+    healthCheckPath: /
+    autoDeploy: true
+
+  # Backend Go GraphQL Server
+  - type: web
+    name: plutus-backend
+    env: go
+    buildCommand: cd plutus-backend && go mod download && go build -o server .
+    startCommand: cd plutus-backend && ./server
+    envVars:
+      - key: PORT
+        value: 8090
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        value: https://plutus-frontend.onrender.com
+    healthCheckPath: /query
+    autoDeploy: true 

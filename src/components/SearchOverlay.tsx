@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FixedSizeList as List } from 'react-window';
-import { useProductContext } from '../context/ProductContext';
+
 import styles from './SearchOverlay.module.css';
 
 interface SearchOverlayProps {
@@ -35,13 +34,11 @@ const CATEGORIES = [
 ];
 
 const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
-  const { searchData } = useProductContext();
+
   const router = useRouter();
   const [input, setInput] = useState('');
-  const [results, setResults] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>('sneakers');
-  const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [totalResults, setTotalResults] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -54,6 +51,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
   const [allResults, setAllResults] = useState<Product[]>([]);
   const [displayedResults, setDisplayedResults] = useState<Product[]>([]);
   const ITEMS_PER_PAGE = 50;
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
 
   // Fetch product counts for each category
   const fetchProductCounts = useCallback(async () => {
@@ -68,6 +66,12 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
 
   // Search function with API pagination
   const performSearch = useCallback(async (query: string, category: string = '', page: number = 1) => {
+    // Prevent unnecessary API calls
+    if (loading) {
+      console.log('🔍 SearchOverlay: Skipping search - already loading');
+      return;
+    }
+
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -76,33 +80,40 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
       params.append('page', page.toString());
       params.append('limit', ITEMS_PER_PAGE.toString());
 
+      console.log('🔍 SearchOverlay: Searching with params:', params.toString());
       const res = await fetch(`/api/search?${params.toString()}`);
       const data = await res.json();
+      
+      console.log('🔍 SearchOverlay: Search results:', data);
+      console.log('🔍 SearchOverlay: Products count:', data.products?.length || 0);
       
       if (page === 1) {
         setAllResults(data.products || []);
         setDisplayedResults(data.products || []);
         setTotalResults(data.total || 0);
-        setHasMore(data.total > ITEMS_PER_PAGE);
+        setHasMore((data.products?.length || 0) === ITEMS_PER_PAGE);
       } else {
-        setAllResults(prev => [...prev, ...(data.products || [])]);
-        setDisplayedResults(prev => [...prev, ...(data.products || [])]);
-        setHasMore(data.total > (page * ITEMS_PER_PAGE));
+        const newResults = [...allResults, ...(data.products || [])];
+        setAllResults(newResults);
+        setDisplayedResults(newResults);
+        setHasMore((data.products?.length || 0) === ITEMS_PER_PAGE);
       }
       
       setCurrentPage(page);
+      console.log('🔍 SearchOverlay: Updated displayedResults count:', displayedResults.length);
     } catch (error) {
-      console.error('Search error:', error);
-      setResults([]);
+      console.error('🔍 SearchOverlay: Search error:', error);
+      setDisplayedResults([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [allResults, ITEMS_PER_PAGE, loading]);
 
   // Load more results
   const loadMore = useCallback(() => {
-    if (!loading && hasMore && (input.trim() || activeCategory)) {
+    if (!loading && hasMore) {
       const nextPage = currentPage + 1;
+      console.log('Loading more results, page:', nextPage);
       performSearch(input, activeCategory, nextPage);
     }
   }, [loading, hasMore, input, activeCategory, currentPage, performSearch]);
@@ -110,27 +121,44 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
   // Handle input changes with API search
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    console.log('🔍 SearchOverlay: Input changed to:', value);
     setInput(value);
     setCurrentPage(1);
+    setAllResults([]);
     
-    if (value.trim()) {
-      // Perform API search
-      performSearch(value, activeCategory, 1);
-      
-      // Add to search history
-      if (!searchHistory.includes(value.trim())) {
-        setSearchHistory(prev => [value.trim(), ...prev.slice(0, 4)]);
-      }
-    } else {
-      // Show all products for current category
-      performSearch('', activeCategory, 1);
+    // Clear existing timeout
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
     }
+    
+    // Set new timeout for debounced search
+    const timeout = setTimeout(() => {
+      if (value.trim()) {
+        console.log('🔍 SearchOverlay: Performing search for:', value);
+        // Perform API search
+        performSearch(value, activeCategory, 1);
+        
+        // Add to search history
+        if (!searchHistory.includes(value.trim())) {
+          setSearchHistory(prev => [value.trim(), ...prev.slice(0, 4)]);
+        }
+      } else {
+        console.log('🔍 SearchOverlay: Showing all products for category:', activeCategory);
+        // Show all products for current category
+        performSearch('', activeCategory, 1);
+      }
+    }, 300); // 300ms debounce
+    
+    setSearchTimeout(timeout);
   };
 
   // Handle category selection
   const handleCategoryClick = (cat: string) => {
+    if (cat === activeCategory) return; // Don't reload if same category
+    
     setActiveCategory(cat);
     setCurrentPage(1);
+    setAllResults([]);
     performSearch(input, cat, 1);
   };
 
@@ -138,6 +166,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
   const handleSearchHistoryClick = (query: string) => {
     setInput(query);
     setCurrentPage(1);
+    setAllResults([]);
     performSearch(query, activeCategory, 1);
   };
 
@@ -187,7 +216,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
   const handleCloseClick = () => {
     onClose();
     setInput('');
-    setResults([]);
+    setDisplayedResults([]);
   };
 
   // Focus input when overlay opens
@@ -195,18 +224,36 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [isOpen]);
+    
+    // Cleanup timeout on unmount
+    return () => {
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+    };
+  }, [isOpen, searchTimeout]);
 
   // Initialize with data when overlay opens
   useEffect(() => {
     if (isOpen) {
-      // Fetch product counts
+      // Fetch product counts only once when overlay opens
       fetchProductCounts();
       
-      // Load initial products for current category
-      performSearch('', activeCategory, 1);
+      // Load initial products for current category only once
+      if (displayedResults.length === 0) {
+        performSearch('', activeCategory, 1);
+      }
     }
-  }, [isOpen, activeCategory, fetchProductCounts, performSearch]);
+  }, [isOpen]); // Remove activeCategory and performSearch from dependencies
+
+  // Handle category changes separately
+  useEffect(() => {
+    if (isOpen && activeCategory) {
+      setCurrentPage(1);
+      setAllResults([]);
+      performSearch(input, activeCategory, 1);
+    }
+  }, [activeCategory, isOpen]); // Only depend on activeCategory and isOpen
 
   // Render individual product item
   const renderProductItem = ({ index, style }: { index: number; style: React.CSSProperties }) => {
@@ -260,7 +307,9 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
                 className={styles.input}
               />
               <button onClick={handleCloseClick} className={styles.closeButton}>
-                ✕
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={styles.closeIcon}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
           </div>
@@ -308,14 +357,15 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
 
             {/* Results */}
             <div className={styles.resultsWrapper}>
-              {loading && results.length === 0 ? (
+              {(() => { console.log('🔍 SearchOverlay: Rendering results - displayedResults.length:', displayedResults.length, 'loading:', loading, 'input:', input); return null; })()}
+              {loading && displayedResults.length === 0 ? (
                 <div className={styles.loadingContainer}>
                   <div className={styles.loadingSpinner}>
                     <div className={styles.spinner}></div>
                     <span>Searching...</span>
                   </div>
                 </div>
-              ) : results.length > 0 ? (
+              ) : displayedResults.length > 0 ? (
                 <>
                   <div className={styles.resultsCount}>
                     {totalResults} results found
@@ -329,7 +379,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
                     onScroll={({ scrollOffset, scrollUpdateWasRequested }) => {
                       if (!scrollUpdateWasRequested) {
                         const maxOffset = displayedResults.length * ITEM_HEIGHT - LIST_HEIGHT;
-                        if (scrollOffset >= maxOffset - 100 && hasMore) {
+                        if (scrollOffset >= maxOffset - 100 && hasMore && !loading) {
                           loadMore();
                         }
                       }
@@ -337,10 +387,16 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
                   >
                     {renderProductItem}
                   </List>
+                  {loading && displayedResults.length > 0 && (
+                    <div className={styles.loadingMore}>
+                      <div className={styles.spinner}></div>
+                      <span>Loading more...</span>
+                    </div>
+                  )}
                 </>
               ) : input.trim() ? (
                 <div className={styles.emptyState}>
-                  No products found for "{input}"
+                  No products found for &quot;{input}&quot;
                 </div>
               ) : null}
             </div>

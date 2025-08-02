@@ -39,6 +39,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-export default function PerfumeProductSSRPage(props: any) {
+export default function PerfumeProductSSRPage(props: unknown) {
   return <ProductPage {...props} />;
 } 

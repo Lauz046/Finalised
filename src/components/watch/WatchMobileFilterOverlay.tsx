@@ -154,7 +154,7 @@ const WatchMobileFilterOverlay: React.FC<WatchMobileFilterOverlayProps> = ({
                           checked={selectedColors.includes(color)}
                           onChange={() => onColorChange(color)}
                         />
-                        <ColorCircle color={color} />
+                        {/* <ColorCircle color={color} /> */}
                         {color}
                       </label>
                     ))}

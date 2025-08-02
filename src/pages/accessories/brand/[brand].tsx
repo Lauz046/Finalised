@@ -1,30 +1,14 @@
-import AccessoriesBrandProductPage from '../../../components/accessories/AccessoriesBrandProductPage';
-import { gql } from '@apollo/client';
+import AccessoriesBrandProductPage, { ACCESSORIES_QUERY } from '../../../components/accessories/AccessoriesBrandProductPage';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import { initializeApollo } from '../../../lib/apolloClient';
-import { getBrandFromUrl } from '../../../utils/brandUtils';
-
-const ACCESSORIES_QUERY = gql`
-  query Accessories($brand: String, $subcategory: String, $gender: String, $size: String, $sortOrder: String, $limit: Int, $offset: Int) {
-    accessories(brand: $brand, subcategory: $subcategory, gender: $gender, size: $size, sortOrder: $sortOrder, limit: $limit, offset: $offset) {
-      id
-      brand
-      productName
-      subcategory
-      gender
-      sizePrices { size price }
-      images
-      productLink
-      inStock
-    }
-  }
-`;
+import { getBrandFromUrl, normalizeBrandForDatabase } from '../../../utils/brandUtils';
+import { ErrorBoundary } from '../../../components/ErrorBoundary';
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  // Pre-generate paths for popular accessories brands
+  // Pre-generate paths for popular brands
   const popularBrands = [
-    'louis-vuitton', 'gucci', 'hermes', 'chanel', 'prada', 'fendi',
-    'goyard', 'moynat', 'delvaux', 'valextra', 'bottega-veneta', 'saint-laurent'
+    'gucci', 'prada', 'balenciaga', 'louis-vuitton', 'fendi', 'valentino',
+    'saint-laurent', 'bottega-veneta', 'hermes', 'chanel'
   ];
 
   const paths = popularBrands.map((brand) => ({
@@ -38,25 +22,28 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const apolloClient = initializeApollo();
-  const brandUrl = context.params?.brand as string;
-  const brand = getBrandFromUrl(brandUrl);
-  
   try {
+    const apolloClient = initializeApollo();
+    const brandUrl = context.params?.brand as string;
+    const brand = getBrandFromUrl(brandUrl);
+    const normalizedBrand = normalizeBrandForDatabase(brand);
+    
     // Only fetch first page of products to reduce data size
     const { data } = await apolloClient.query({
       query: ACCESSORIES_QUERY,
       variables: { 
-        brand,
+        brand: normalizedBrand,
         limit: 21, // First page only
         offset: 0
       },
+      errorPolicy: 'all', // Handle errors gracefully
     });
     
     return {
       props: {
-        initialAccessoriesData: data.accessories || [],
-        brand,
+        initialAccessoriesData: data?.accessories || [],
+        brand: normalizedBrand,
+        apolloState: apolloClient.cache.extract(),
       },
       // Cache for 5 minutes
       revalidate: 300,
@@ -66,13 +53,30 @@ export const getStaticProps: GetStaticProps = async (context) => {
     return {
       props: {
         initialAccessoriesData: [],
-        brand,
+        brand: context.params?.brand as string,
+        apolloState: null,
       },
       revalidate: 60, // Shorter cache on error
     };
   }
 };
 
-export default function AccessoriesBrandPage({ brand }: { brand: string }) {
-  return <AccessoriesBrandProductPage brand={brand} />;
+export default function AccessoriesBrandPage({ 
+  initialAccessoriesData, 
+  brand, 
+  apolloState 
+}: { 
+  initialAccessoriesData: unknown[]; 
+  brand: string;
+  apolloState?: unknown;
+}) {
+  return (
+    <ErrorBoundary>
+      <AccessoriesBrandProductPage 
+        brand={brand} 
+        initialAccessoriesData={initialAccessoriesData}
+        apolloState={apolloState}
+      />
+    </ErrorBoundary>
+  );
 } 

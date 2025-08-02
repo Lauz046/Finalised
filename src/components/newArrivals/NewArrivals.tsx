@@ -61,11 +61,11 @@ const NewArrivals: React.FC = () => {
     async function fetchMissing() {
       const promises = BRAND_CONFIGS.map(async cfg => {
         const ctxKey = cfg.category === 'perfume' ? 'perfumes' : cfg.category;
-        const existing = (categoryData as any)[ctxKey] || [];
+        const existing = (categoryData as unknown)[ctxKey] || [];
         const preImgs = existing
-          .filter((it: any) => it.brand?.toLowerCase() === cfg.brand.toLowerCase() && it.images?.length)
+          .filter((it: unknown) => it.brand?.toLowerCase() === cfg.brand.toLowerCase() && it.images?.length)
           .slice(0, MAX_IMAGES)
-          .map((it: any) => it.images[0]);
+          .map((it: unknown) => it.images[0]);
         if (preImgs.length >= MAX_IMAGES) {
           setBrandImageMap(prev => ({ ...prev, [cfg.id]: preImgs }));
           return;
@@ -107,7 +107,7 @@ const NewArrivals: React.FC = () => {
     return BRAND_CONFIGS.map<Card>(cfg => {
       // Map category key for context
       const ctxKey = cfg.category === 'perfume' ? 'perfumes' : cfg.category; // plural alignment
-      const items: any[] = (categoryData as any)[ctxKey] || [];
+      const items: unknown[] = (categoryData as unknown)[ctxKey] || [];
 
       // Filter by brand (case-insensitive) & with images
       const brandItems = items.filter(item => item.brand && item.images && item.images.length && item.brand.toLowerCase() === cfg.brand.toLowerCase());

@@ -89,26 +89,25 @@ const CategoriesPage = () => {
             marginBottom: '60px'
           }}>
             {categories.map((category) => (
-              <Link key={category.name} href={category.href} passHref legacyBehavior>
-                <a style={{
-                  display: 'block',
-                  background: '#fff',
-                  borderRadius: '12px',
-                  padding: '30px',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                  transition: 'all 0.3s ease',
-                  border: '1px solid #e8e8e8'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-5px)';
-                  e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.12)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)';
-                }}>
+              <Link key={category.name} href={category.href} style={{
+                display: 'block',
+                background: '#fff',
+                borderRadius: '12px',
+                padding: '30px',
+                textDecoration: 'none',
+                color: 'inherit',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                transition: 'all 0.3s ease',
+                border: '1px solid #e8e8e8'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-5px)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.12)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)';
+              }}>
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -183,7 +182,7 @@ const CategoriesPage = () => {
                       gap: '10px',
                       marginTop: '15px'
                     }}>
-                      {category.featuredProducts.map((product: any, index: number) => (
+                      {category.featuredProducts.map((product: unknown, index: number) => (
                         <div key={index} style={{
                           width: '60px',
                           height: '60px',
@@ -233,22 +232,20 @@ const CategoriesPage = () => {
             }}>
               Use our search feature to find specific products or brands
             </p>
-            <Link href="/search" passHref legacyBehavior>
-              <a style={{
-                display: 'inline-block',
-                background: '#22304a',
-                color: '#fff',
-                padding: '12px 30px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                fontWeight: 500,
-                fontFamily: 'Montserrat',
-                transition: 'background 0.3s ease'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.background = '#1a2533'}
-              onMouseLeave={(e) => e.currentTarget.style.background = '#22304a'}>
-                Search Products
-              </a>
+            <Link href="/search" style={{
+              display: 'inline-block',
+              background: '#22304a',
+              color: '#fff',
+              padding: '12px 30px',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontWeight: 500,
+              fontFamily: 'Montserrat',
+              transition: 'background 0.3s ease'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#1a2533'}
+            onMouseLeave={(e) => e.currentTarget.style.background = '#22304a'}>
+              Search Products
             </Link>
           </div>
         </div>

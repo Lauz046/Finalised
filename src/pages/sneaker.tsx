@@ -126,8 +126,8 @@ const SneakerPage = () => {
       return { minPrice: 0, maxPrice: 50000 };
     }
 
-    const allPrices = categoryData.sneakers.flatMap((sneaker: any) =>
-      sneaker.sizePrices.map((sp: any) => sp.price)
+    const allPrices = categoryData.sneakers.flatMap((sneaker: unknown) =>
+      sneaker.sizePrices.map((sp: unknown) => sp.price)
     );
 
     const min = Math.min(...allPrices);

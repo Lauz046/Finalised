@@ -98,6 +98,13 @@ export const getBrandImage = (brandName: string, category: string): string => {
   }
   
   // If no match found, return a random image from the category folder
+  const categoryFallbacks = getCategoryFallbacks(category);
+  const randomIndex = Math.floor(Math.random() * categoryFallbacks.length);
+  return categoryFallbacks[randomIndex];
+};
+
+// Helper function to get category fallback images
+const getCategoryFallbacks = (category: string): string[] => {
   const fallbackImages: { [category: string]: string[] } = {
     sneaker: [
       '/sneakerticker/NIKE.png',
@@ -140,7 +147,5 @@ export const getBrandImage = (brandName: string, category: string): string => {
     ]
   };
   
-  const categoryFallbacks = fallbackImages[category] || ['/image1.jpeg'];
-  const randomIndex = Math.floor(Math.random() * categoryFallbacks.length);
-  return categoryFallbacks[randomIndex];
+  return fallbackImages[category] || ['/image1.jpeg'];
 }; 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { gql, useQuery } from '@apollo/client';
+import { useRouter } from 'next/router';
 
 import AccessoriesBrandTicker from '../components/accessories/AccessoriesBrandTicker';
 import { getBrandUrl } from '../utils/brandUtils';
@@ -47,6 +48,7 @@ const PRODUCTS_PER_PAGE = 21;
 
 const AccessoriesPage = () => {
   const { categoryData, isPreloaded, loadCategoryData, isCategoryLoaded } = useProductContext();
+  const router = useRouter();
   
   // Mobile overlay tab state
   const [mobileOverlayTab, setMobileOverlayTab] = useState<'filter' | 'sort'>('filter');
@@ -91,6 +93,24 @@ const AccessoriesPage = () => {
     }
   }, [loadCategoryData, isCategoryLoaded]);
 
+  /*
+    Apply subcategory filter if it comes via query string, eg. /accessories?subcategory=bag
+    We only apply it on initial load (when no subcategory has been selected yet) to
+    avoid overriding user interactions.
+  */
+  useEffect(() => {
+    if (!router.isReady) return;
+    const sp = router.query.subcategory;
+    if (sp && selectedSubcategories.length === 0) {
+      const raw = Array.isArray(sp) ? sp[0] : sp;
+      if (typeof raw === 'string' && raw.trim() !== '') {
+        setSelectedSubcategories([raw]);
+      }
+    }
+    // We only want to run this once when router is ready.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady]);
+
   // Determine if we should use preloaded data or fetch from API
   const shouldUsePreloadedData = isPreloaded && 
     selectedBrands.length === 0 && 
@@ -126,18 +146,18 @@ const AccessoriesPage = () => {
   // Derive unique sizes and min/max prices from accessories
   const allSizes = useMemo(() => {
     const set = new Set<string>();
-    accessories.forEach((a: any) => a.sizePrices.forEach((sp: any) => set.add(sp.size)));
+    accessories.forEach((a: unknown) => a.sizePrices.forEach((sp: unknown) => set.add(sp.size)));
     return Array.from(set).sort();
   }, [accessories]);
   
   const [minPrice, maxPrice] = useMemo(() => {
-    let min = Infinity, max = -Infinity;
-    accessories.forEach((a: any) => a.sizePrices.forEach((sp: any) => {
-      if (sp.price < min) min = sp.price;
+    let _min = Infinity, max = -Infinity;
+    accessories.forEach((a: unknown) => a.sizePrices.forEach((sp: unknown) => {
+      if (sp.price < _min) _min = sp.price;
       if (sp.price > max) max = sp.price;
     }));
-    if (!isFinite(min) || !isFinite(max)) return [0, 50000];
-    return [Math.floor(min), Math.ceil(max)];
+    if (!isFinite(_min) || !isFinite(max)) return [0, 50000];
+    return [Math.floor(_min), Math.ceil(max)];
   }, [accessories]);
   
   useEffect(() => {
@@ -150,7 +170,7 @@ const AccessoriesPage = () => {
   // Filter for in-stock (frontend, as backend does not support it)
   const filteredAccessories = useMemo(() => {
     let filtered = accessories;
-    if (inStockOnly) filtered = filtered.filter((a: any) => a.inStock);
+    if (inStockOnly) filtered = filtered.filter((a: unknown) => a.inStock);
     return filtered;
   }, [accessories, inStockOnly]);
 
@@ -170,8 +190,8 @@ const AccessoriesPage = () => {
     // If we got fewer results than expected, this is the last page
     return currentPage;
   }, [filteredAccessories.length, currentPage]);
-  const accessoryProducts = filteredAccessories.map((a: any) => {
-    const lowest = a.sizePrices.reduce((min: number, sp: any) => sp.price < min ? sp.price : min, Infinity);
+  const accessoryProducts = filteredAccessories.map((a: unknown) => {
+    const lowest = a.sizePrices.reduce((min: number, sp: unknown) => sp.price < min ? sp.price : min, Infinity);
     return {
       id: a.id,
       brand: a.brand,

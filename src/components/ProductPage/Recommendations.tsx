@@ -30,33 +30,31 @@ export const Recommendations: React.FC<{ products: Recommendation[]; currentBran
         {show.length === 0 ? (
           <div style={{ color: '#888', fontSize: '1rem', padding: '32px' }}>No recommendations found.</div>
         ) : show.map((p) => (
-          <Link href={`/${productType}/${p.id}`} key={p.id} legacyBehavior>
-            <a className={styles.card} style={{ textDecoration: 'none' }}>
-              <div className={styles.imageWrapper}>
-                {isViewableImage(p.image) ? (
-                  <img src={p.image} alt={p.name} className={styles.image} />
-                ) : (
-                  <img
-                    src={p.image || "/blue_nav_icons/Blue PLUTUS LOGO.svg"}
-                    alt={p.name || "House of Plutus"}
-                    className={styles.image}
-                    style={{ width: 120, height: 120, objectFit: 'contain' }}
-                    onError={e => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = "/blue_nav_icons/Blue PLUTUS LOGO.svg";
-                      target.style.width = `120px`;
-                      target.style.height = `120px`;
-                    }}
-                  />
-                )}
+          <Link href={`/${productType}/${p.id}`} key={p.id} className={styles.card} style={{ textDecoration: 'none' }}>
+            <div className={styles.imageWrapper}>
+              {isViewableImage(p.image) ? (
+                <img src={p.image} alt={p.name} className={styles.image} />
+              ) : (
+                <img
+                  src={p.image || "/blue_nav_icons/Blue PLUTUS LOGO.svg"}
+                  alt={p.name || "House of Plutus"}
+                  className={styles.image}
+                  style={{ width: 120, height: 120, objectFit: 'contain' }}
+                  onError={e => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "/blue_nav_icons/Blue PLUTUS LOGO.svg";
+                    target.style.width = `120px`;
+                    target.style.height = `120px`;
+                  }}
+                />
+              )}
+            </div>
+            <div className={styles.info}>
+              <div className={styles.infoText}>
+                <div className={styles.brand}>{p.brand}</div>
+                <div className={styles.name}>{limitToSixWords(p.name)}</div>
               </div>
-              <div className={styles.info}>
-                <div className={styles.infoText}>
-                  <div className={styles.brand}>{p.brand}</div>
-                  <div className={styles.name}>{limitToSixWords(p.name)}</div>
-                </div>
-              </div>
-            </a>
+            </div>
           </Link>
         ))}
       </div>

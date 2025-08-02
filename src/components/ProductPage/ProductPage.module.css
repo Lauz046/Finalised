@@ -73,14 +73,14 @@
 }
 
 .brandName {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 400;
-  color: #22304a;
-  margin-bottom: 0px;
+  color: #6b7280;
+  margin-bottom: 4px;
   margin-left: 4px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  font-family: Monsterrat;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .rightCol {
@@ -92,6 +92,15 @@
   min-width: 0;
   width: 100%;
   margin-top: 0px;
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 8px;
+  line-height: 1.1;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .addToStashBtn {
@@ -141,9 +150,13 @@
     align-items: stretch;
     gap: 20px;
   }
+  .brandName {
+    font-size: 0.6rem;
+    margin-bottom: 2px;
+  }
   .title {
-    font-size: 1.3rem;
-    margin-bottom: 12px;
+    font-size: 1.8rem;
+    margin-bottom: 8px;
   }
   .addToStashBtn, .enquireBtn {
     padding: 14px 0;
@@ -161,8 +174,11 @@
     max-width: 100%;
     align-items: stretch;
   }
+  .brandName {
+    font-size: 0.65rem;
+  }
   .title {
-    font-size: 1.7rem;
-    margin-bottom: 18px;
+    font-size: 2rem;
+    margin-bottom: 8px;
   }
 } 

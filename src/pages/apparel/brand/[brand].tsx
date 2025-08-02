@@ -1,30 +1,14 @@
-import ApparelBrandProductPage from '../../../components/apparel/ApparelBrandProductPage';
-import { gql } from '@apollo/client';
+import ApparelBrandProductPage, { APPAREL_QUERY } from '../../../components/apparel/ApparelBrandProductPage';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import { initializeApollo } from '../../../lib/apolloClient';
-import { getBrandFromUrl } from '../../../utils/brandUtils';
-
-const APPAREL_QUERY = gql`
-  query Apparel($brand: String, $subcategory: String, $gender: String, $size: String, $sortOrder: String, $limit: Int, $offset: Int) {
-    apparel(brand: $brand, subcategory: $subcategory, gender: $gender, size: $size, sortOrder: $sortOrder, limit: $limit, offset: $offset) {
-      id
-      brand
-      productName
-      subcategory
-      gender
-      sizePrices { size price }
-      images
-      productLink
-      inStock
-    }
-  }
-`;
+import { getBrandFromUrl, normalizeBrandForDatabase } from '../../../utils/brandUtils';
+import { ErrorBoundary } from '../../../components/ErrorBoundary';
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  // Pre-generate paths for popular apparel brands
+  // Pre-generate paths for popular brands
   const popularBrands = [
-    'supreme', 'palace', 'off-white', 'balenciaga', 'gucci', 'louis-vuitton',
-    'nike', 'adidas', 'stone-island', 'moncler', 'canada-goose', 'the-north-face'
+    'gucci', 'prada', 'balenciaga', 'louis-vuitton', 'fendi', 'valentino',
+    'saint-laurent', 'bottega-veneta', 'stone-island', 'canada-goose'
   ];
 
   const paths = popularBrands.map((brand) => ({
@@ -38,25 +22,28 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const apolloClient = initializeApollo();
-  const brandUrl = context.params?.brand as string;
-  const brand = getBrandFromUrl(brandUrl);
-  
   try {
+    const apolloClient = initializeApollo();
+    const brandUrl = context.params?.brand as string;
+    const brand = getBrandFromUrl(brandUrl);
+    const normalizedBrand = normalizeBrandForDatabase(brand);
+    
     // Only fetch first page of products to reduce data size
     const { data } = await apolloClient.query({
       query: APPAREL_QUERY,
       variables: { 
-        brand,
+        brand: normalizedBrand,
         limit: 21, // First page only
         offset: 0
       },
+      errorPolicy: 'all', // Handle errors gracefully
     });
     
     return {
       props: {
-        initialApparelData: data.apparel || [],
-        brand,
+        initialApparelData: data?.apparel || [],
+        brand: normalizedBrand,
+        apolloState: apolloClient.cache.extract(),
       },
       // Cache for 5 minutes
       revalidate: 300,
@@ -66,13 +53,30 @@ export const getStaticProps: GetStaticProps = async (context) => {
     return {
       props: {
         initialApparelData: [],
-        brand,
+        brand: context.params?.brand as string,
+        apolloState: null,
       },
       revalidate: 60, // Shorter cache on error
     };
   }
 };
 
-export default function ApparelBrandPage({ brand }: { brand: string }) {
-  return <ApparelBrandProductPage brand={brand} />;
+export default function ApparelBrandPage({ 
+  initialApparelData, 
+  brand, 
+  apolloState 
+}: { 
+  initialApparelData: unknown[]; 
+  brand: string;
+  apolloState?: unknown;
+}) {
+  return (
+    <ErrorBoundary>
+      <ApparelBrandProductPage 
+        brand={brand} 
+        initialApparelData={initialApparelData}
+        apolloState={apolloState}
+      />
+    </ErrorBoundary>
+  );
 }

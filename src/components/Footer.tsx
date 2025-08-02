@@ -3,7 +3,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { gql, useQuery } from '@apollo/client';
 import styles from './Footer.module.css';
-import { useRouter } from 'next/router';
 
 const ALL_SNEAKER_BRANDS = gql`
   query AllSneakerBrands {
@@ -35,10 +34,8 @@ const Footer = () => {
   const { data: watchBrands } = useQuery(ALL_WATCH_BRANDS);
   const { data: apparelBrands } = useQuery(ALL_APPAREL_BRANDS);
 
-  const router = useRouter();
-  // Detect product detail pages: /category/[id]
-  const productDetailRegex = /^\/(accessories|apparel|perfume|sneaker|watch)\/[^/]+$/;
-  const isProductPage = productDetailRegex.test(router.pathname);
+
+
 
   // Get top brands for each category with fallbacks
   const topSneakerBrands = sneakerBrands?.allSneakerBrands?.slice(0, 4) || ['Balenciaga', 'New Balance', 'Air Jordan', 'Nike'];

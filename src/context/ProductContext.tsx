@@ -139,12 +139,12 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       const query = queryMap[category];
       if (!query) return;
 
-      const categoryData = await cacheUtils.getWithFallback(
+            const fetchedCategoryData = await cacheUtils.getWithFallback(
         categoryCache,
         `${category}_data`,
         async () => {
           const result = await apolloClient.query({ 
-            query, 
+            query: query, 
             variables: { limit: 21, offset: 0 } 
           });
           return result.data?.[category] || [];
@@ -152,9 +152,9 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         2 * 60 * 60 * 1000 // Auto-refresh every 2 hours
       );
 
-      const processed = categoryData;
+      const processed = fetchedCategoryData;
       // if (category === 'watches') {
-      //   processed = categoryData.filter((w: any) => hasViewableImage(w.images));
+      //   processed = categoryData.filter((w: unknown) => hasViewableImage(w.images));
       // }
 
       setCategoryData(prev => ({
@@ -204,11 +204,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
               
               if (productsResult.data) {
                 const all = [
-                  ...(productsResult.data.sneakers?.map((p: any) => ({ ...p, type: 'sneakers' })) || []),
-                  ...(productsResult.data.apparel?.map((p: any) => ({ ...p, type: 'apparel' })) || []),
-                  ...(productsResult.data.accessories?.map((p: any) => ({ ...p, type: 'accessories' })) || []),
-                  ...(productsResult.data.perfumes?.map((p: any) => ({ ...p, type: 'perfumes' })) || []),
-                  ...(productsResult.data.watches?.map((p: any) => ({ ...p, type: 'watches' })) || []),
+                  ...(productsResult.data.sneakers?.map((p: unknown) => ({ ...p, type: 'sneakers' })) || []),
+                  ...(productsResult.data.apparel?.map((p: unknown) => ({ ...p, type: 'apparel' })) || []),
+                  ...(productsResult.data.accessories?.map((p: unknown) => ({ ...p, type: 'accessories' })) || []),
+                  ...(productsResult.data.perfumes?.map((p: unknown) => ({ ...p, type: 'perfumes' })) || []),
+                  ...(productsResult.data.watches?.map((p: unknown) => ({ ...p, type: 'watches' })) || []),
                 ];
                 
                 return {
@@ -270,8 +270,8 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       loadTime, 
       isPreloaded, 
       categoryData,
-      loadCategoryData,
-      isCategoryLoaded
+      loadCategoryData: loadCategoryData,
+      isCategoryLoaded: isCategoryLoaded
     }}>
       {children}
     </ProductContext.Provider>

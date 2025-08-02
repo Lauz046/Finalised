@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import './ProductSlider.css';
+import styles from './ProductSlider.module.css';
+import OptimizedImage from '../OptimizedImage';
+import { useImageOptimizer } from '../../utils/imageOptimizer';
 
 // Configure Swiper
 // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -29,40 +30,43 @@ const useIsMobile = () => {
   return isMobile;
 };
 
-// CDN base URL
-const CDN_BASE_URL = 'https://houseofplutus.mos.ap-southeast-2.sufybkt.com';
-
-// Product data with CDN images
+// Optimized product data with local images
 const products = [
   { 
-    name: 'New Balance', 
-    thumb: `${CDN_BASE_URL}/550shoesimage_01.png`, 
-    images360: Array.from({ length: 36 }, (_, i) => `${CDN_BASE_URL}/550shoesimage_${(i + 1).toString().padStart(2, '0')}.png`)
+    name: 'Air Jordan', 
+    thumb: '/clean_sneakers/Jordan_4_Retro_Sb_Pine_Green/image_01.png', 
+    images360: Array.from({ length: 36 }, (_, i) => `/clean_sneakers/Jordan_4_Retro_Sb_Pine_Green/image_${(i + 1).toString().padStart(2, '0')}.png`),
+    category: 'sneakers'
   },
   { 
     name: 'Yeezy', 
-    thumb: `${CDN_BASE_URL}/yeezyimage_01.png`, 
-    images360: Array.from({ length: 36 }, (_, i) => `${CDN_BASE_URL}/yeezyimage_${(i + 1).toString().padStart(2, '0')}.png`)
+    thumb: '/clean_sneakers/Yeezy_450_Resin/image_01.png', 
+    images360: Array.from({ length: 36 }, (_, i) => `/clean_sneakers/Yeezy_450_Resin/image_${(i + 1).toString().padStart(2, '0')}.png`),
+    category: 'sneakers'
   },
   { 
     name: 'New Balance', 
-    thumb: `${CDN_BASE_URL}/newbalanceshoe1image_01.png`, 
-    images360: Array.from({ length: 36 }, (_, i) => `${CDN_BASE_URL}/newbalanceshoe1image_${(i + 1).toString().padStart(2, '0')}.png`)
+    thumb: '/clean_sneakers/New_Balance_550_Burnt_Orange/image_01.png', 
+    images360: Array.from({ length: 36 }, (_, i) => `/clean_sneakers/New_Balance_550_Burnt_Orange/image_${(i + 1).toString().padStart(2, '0')}.png`),
+    category: 'sneakers'
+  },
+  { 
+    name: 'New Balance', 
+    thumb: '/clean_sneakers/New_Balance_9060_Driftwood_Castlerock/image_01.png', 
+    images360: Array.from({ length: 36 }, (_, i) => `/clean_sneakers/New_Balance_9060_Driftwood_Castlerock/image_${(i + 1).toString().padStart(2, '0')}.png`),
+    category: 'sneakers'
   },
   { 
     name: 'Louis Vuitton', 
-    thumb: `${CDN_BASE_URL}/louisimage_01.png`, 
-    images360: Array.from({ length: 36 }, (_, i) => `${CDN_BASE_URL}/louisimage_${(i + 1).toString().padStart(2, '0')}.png`)
+    thumb: '/clean_sneakers/Louis_Vuitton_Skate_Sneaker_\'Marine\'/image_01.png', 
+    images360: Array.from({ length: 36 }, (_, i) => `/clean_sneakers/Louis_Vuitton_Skate_Sneaker_\'Marine\'/image_${(i + 1).toString().padStart(2, '0')}.png`),
+    category: 'sneakers'
   },
   { 
     name: 'Air Jordan', 
-    thumb: `${CDN_BASE_URL}/airjordanpinegreenimage_01.png`, 
-    images360: Array.from({ length: 36 }, (_, i) => `${CDN_BASE_URL}/airjordanpinegreenimage_${(i + 1).toString().padStart(2, '0')}.png`)
-  },
-  { 
-    name: 'Air Jordan', 
-    thumb: `${CDN_BASE_URL}/airjordan221image_02.png`, 
-    images360: Array.from({ length: 19 }, (_, i) => `${CDN_BASE_URL}/airjordan221image_${(i + 2).toString().padStart(2, '0')}.png`) // Frames 2-20
+    thumb: '/clean_sneakers/Travis_Scott_X_Air_Jordan_1_Low_Og_Olive/image_02.png', 
+    images360: Array.from({ length: 31 }, (_, i) => `/clean_sneakers/Travis_Scott_X_Air_Jordan_1_Low_Og_Olive/image_${(i + 2).toString().padStart(2, '0')}.png`),
+    category: 'sneakers'
   },
 ];
 
@@ -70,125 +74,150 @@ const ProductSlider360 = () => {
   const [selectedProduct, setSelectedProduct] = useState(products[0]);
   const [frameIndex, setFrameIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
-  const [preloadedImages, setPreloadedImages] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
-  const [preloadedImageElements, setPreloadedImageElements] = useState<Map<string, HTMLImageElement>>(new Map());
   const [currentImageSrc, setCurrentImageSrc] = useState<string>('');
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [loadProgress, setLoadProgress] = useState(0);
+  const [imagesLoaded, setImagesLoaded] = useState(0);
+  
   const containerRef = useRef<HTMLDivElement | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const lastXRef = useRef<number | null>(null);
-  const frameUpdateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isMobile = useIsMobile();
+
+  // Image optimizer hook
+  const { preloadImages, getLoadingProgress } = useImageOptimizer();
 
   // Filter products for mobile (show only 4)
   const displayProducts = isMobile ? products.slice(0, 4) : products;
 
   // Preload images for current product
-  const preloadImages = useCallback((product: typeof products[0]) => {
-    const newPreloaded = new Map<string, HTMLImageElement>();
-    let loadedCount = 0;
+  const preloadProductImages = useCallback(async (product: typeof products[0]) => {
+    setIsLoading(true);
+    setLoadProgress(0);
+    setImagesLoaded(0);
     
-    // Preload ALL frames immediately for smooth 360° rotation
-    product.images360.forEach((src, index) => {
-      const img = new window.Image();
-      img.onload = () => {
-        loadedCount++;
-        if (loadedCount >= 5) {
-          setIsLoading(false);
-        }
+    try {
+      // Preload first 5 frames immediately
+      const priorityFrames = product.images360.slice(0, 5);
+      let loadedCount = 0;
+      
+      const loadFrame = (src: string) => {
+        return new Promise<void>((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            loadedCount++;
+            setImagesLoaded(loadedCount);
+            setLoadProgress((loadedCount / product.images360.length) * 100);
+            if (loadedCount >= 5) {
+              setIsLoading(false);
+            }
+            resolve();
+          };
+          img.onerror = () => resolve();
+          img.src = src;
+        });
       };
-      img.src = src;
-      newPreloaded.set(src, img);
-    });
 
-    setPreloadedImages(new Set(newPreloaded.keys()));
-    setPreloadedImageElements(newPreloaded);
+      // Load priority frames
+      await Promise.all(priorityFrames.map(loadFrame));
+      
+      // Load remaining frames in background
+      setTimeout(() => {
+        product.images360.slice(5).forEach(loadFrame);
+      }, 100);
+      
+    } catch (error) {
+      console.error('Failed to preload images:', error);
+      setIsLoading(false);
+    }
   }, []);
 
   useEffect(() => {
-    preloadImages(selectedProduct);
+    preloadProductImages(selectedProduct);
     setCurrentImageSrc(selectedProduct.images360[0]);
-  }, [selectedProduct, preloadImages]);
+    setFrameIndex(0);
+  }, [selectedProduct, preloadProductImages]);
 
+  // Auto-rotation when not hovering
   useEffect(() => {
-    if (!isHovering) {
+    if (!isHovering && !isLoading) {
       intervalRef.current = setInterval(() => {
         setFrameIndex((prev) => (prev + 1) % selectedProduct.images360.length);
-      }, 150); // Slightly slower for better performance
+      }, 150);
     }
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isHovering, selectedProduct]);
+  }, [isHovering, selectedProduct, isLoading]);
 
-  // Update current image src when frame index changes (debounced)
+  // Update current image when frame changes
   useEffect(() => {
-    if (frameUpdateTimeoutRef.current) {
-      clearTimeout(frameUpdateTimeoutRef.current);
-    }
-    
-    frameUpdateTimeoutRef.current = setTimeout(() => {
+    if (selectedProduct && selectedProduct.images360[frameIndex]) {
       setCurrentImageSrc(selectedProduct.images360[frameIndex]);
-    }, 50); // Debounce frame updates
-
-    return () => {
-      if (frameUpdateTimeoutRef.current) {
-        clearTimeout(frameUpdateTimeoutRef.current);
-      }
-    };
+    }
   }, [frameIndex, selectedProduct]);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isHovering) return;
+  // Mouse handling for manual rotation
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isHovering || isLoading) return;
+    
     const x = e.clientX;
     if (lastXRef.current !== null) {
       const delta = x - lastXRef.current;
-      if (Math.abs(delta) > 8) { // Increased threshold for better performance
-        setFrameIndex((prev) => (prev + (delta > 0 ? 1 : -1) + selectedProduct.images360.length) % selectedProduct.images360.length);
+      if (Math.abs(delta) > 3) { // Reduced threshold for smoother control
+        setFrameIndex((prev) => {
+          const newIndex = prev + (delta > 0 ? 1 : -1);
+          return (newIndex + selectedProduct.images360.length) % selectedProduct.images360.length;
+        });
         lastXRef.current = x;
       }
     } else {
       lastXRef.current = x;
     }
-  };
+  }, [isHovering, selectedProduct, isLoading]);
 
-  const handleMouseLeave = () => {
+  const handleMouseEnter = useCallback(() => {
+    setIsHovering(true);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
     setIsHovering(false);
     lastXRef.current = null;
-  };
+  }, []);
 
   return (
-    <div className="home__products white-bg">
-      <div className="home__products-title__inner">PLUTUS CHOICE</div>
-
-      <div className={`swiper-slide-title ${selectedProduct.name === 'Louis Vuitton' ? 'louis-text' : selectedProduct.name === 'New Balance' ? 'long-text' : ''}`}>
+    <div className={`${styles.home__products} ${styles.whiteBg}`}>
+      <div className={styles.home__productsTitleInner}>PLUTUS CHOICE</div>
+      
+      <div className={`${styles.swiperSlideTitle} ${selectedProduct.name === 'Louis Vuitton' ? styles.louisText : selectedProduct.name === 'New Balance' ? styles.longText : ''}`}>
         {selectedProduct.name}
       </div>
 
       <Swiper
         slidesPerView={1}
-        pagination={{
-          clickable: true,
-          renderBullet: (index, className) => {
-            return `<span class="${className}"><img src="${displayProducts[index].thumb}" class="pagination-thumb"/></span>`;
-          },
-        }}
         onSlideChange={(swiper) => {
           setSelectedProduct(displayProducts[swiper.activeIndex]);
+          setActiveSlide(swiper.activeIndex);
           setFrameIndex(0);
           setIsLoading(true);
+          setLoadProgress(0);
+          setImagesLoaded(0);
         }}
         className="product-swiper"
       >
         {displayProducts.map((product, index) => (
           <SwiperSlide key={index}>
-            <div className="product-preview">
+            <div className={styles.productPreview}>
               <div
-                className="image-360"
+                className={styles.image360}
                 ref={containerRef}
-                onMouseEnter={() => setIsHovering(true)}
+                onMouseEnter={handleMouseEnter}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
               >
@@ -200,32 +229,80 @@ const ProductSlider360 = () => {
                     transform: 'translate(-50%, -50%)',
                     zIndex: 1,
                     fontSize: '1.2rem',
-                    color: '#666'
+                    color: '#666',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '10px'
                   }}>
-                    Loading...
+                    <div>Loading...</div>
+                    <div style={{
+                      width: '100px',
+                      height: '4px',
+                      backgroundColor: '#eee',
+                      borderRadius: '2px',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        width: `${loadProgress}%`,
+                        height: '100%',
+                        backgroundColor: '#007bff',
+                        transition: 'width 0.3s ease'
+                      }} />
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#999' }}>
+                      {imagesLoaded}/{product.images360.length} frames
+                    </div>
                   </div>
                 )}
                 <img
-                  src={currentImageSrc || product.images360[frameIndex]}
+                  src={currentImageSrc || product.images360[0]}
                   alt={product.name}
-                  className="product-preview__image"
+                  className={styles.productPreviewImage}
                   style={{
                     opacity: isLoading ? 0.3 : 1,
                     transition: 'opacity 0.3s ease',
                     maxWidth: '55%',
-                    height: 'auto'
+                    height: 'auto',
+                    filter: isLoading ? 'blur(2px)' : 'none'
                   }}
                   onLoad={() => {
-                    if (isLoading) {
+                    if (isLoading && imagesLoaded >= 5) {
                       setIsLoading(false);
                     }
                   }}
+                  loading="eager"
+                  decoding="async"
                 />
               </div>
             </div>
           </SwiperSlide>
         ))}
       </Swiper>
+      
+      <div className={styles['swiper-pagination']}>
+        {displayProducts.map((product, index) => (
+          <div
+            key={index}
+            className={`${styles['swiper-pagination-bullet']} ${activeSlide === index ? styles['swiper-pagination-bullet-active'] : ''}`}
+            onClick={() => {
+              setSelectedProduct(product);
+              setActiveSlide(index);
+              setFrameIndex(0);
+              setIsLoading(true);
+              setLoadProgress(0);
+              setImagesLoaded(0);
+            }}
+          >
+            <img 
+              src={product.thumb} 
+              alt={product.name} 
+              className={styles['pagination-thumb']}
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

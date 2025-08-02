@@ -68,12 +68,12 @@ function Card({
 
     if (isMobile) {
       // Mobile layout: 5 cards in a horizontal line
-      let delta = index - activeIndex;
+      const delta = index - activeIndex;
       if (delta > config.NUM_CARDS / 2) delta -= config.NUM_CARDS;
       if (delta < -config.NUM_CARDS / 2) delta += config.NUM_CARDS;
 
       // Horizontal spacing for mobile with non-uniform distribution
-      let x = 0;
+      const x = 0;
       if (delta === 0) x = 0; // Center card
       else if (delta === 1) x = 1.7; // Right card - more space from center
       else if (delta === -1) x = -1.7; // Left card - more space from center
@@ -84,14 +84,14 @@ function Card({
       const y = 0;
 
       // Mobile tilt logic
-      let rotY = 0;
+      const rotY = 0;
       if (delta === 0) rotY = 0; // Center card no tilt
       else if (delta === 1) rotY = -1.4; // Right card slight tilt
       else if (delta === -1) rotY = 1.4; // Left card slight tilt
       else if (delta === 2) rotY = -1.3; // Far right more tilt
       else if (delta === -2) rotY = 1.3; // Far left more tilt
 
-      let scale = 0.8;
+      const scale = 0.8;
       if (delta === 0) scale = 1.3; // Center card larger
       else if (Math.abs(delta) === 1) scale = 1.3;
       else if (Math.abs(delta) === 2) scale = 1.4;
@@ -108,7 +108,7 @@ function Card({
       mesh.scale.setScalar(THREE.MathUtils.lerp(mesh.scale.x, scale, 0.15));
     } else {
       // Desktop layout: Original curved layout
-      let delta = index - activeIndex;
+      const delta = index - activeIndex;
       if (delta > config.NUM_CARDS / 2) delta -= config.NUM_CARDS;
       if (delta < -config.NUM_CARDS / 2) delta += config.NUM_CARDS;
 
@@ -120,7 +120,7 @@ function Card({
       const z = Math.cos(angle) * radius - radius;
       const rotY = -angle;
 
-      let tiltMultiplier = 1;
+      const tiltMultiplier = 1;
       if (Math.abs(delta) === 1) tiltMultiplier = 3;
       else if (Math.abs(delta) === 2) tiltMultiplier = 2.1;
       else if (Math.abs(delta) === 3) tiltMultiplier = 1.3; // less tilt for outermost
@@ -128,7 +128,7 @@ function Card({
       const adjustedRotY = rotY * tiltMultiplier;
       const y = delta === 0 ? -0.2 : -0.3;
 
-      let scale = 0.6;
+      const scale = 0.6;
       if (delta === 0) scale = 1.1;
       else if (Math.abs(delta) === 1) scale = 1;
       else if (Math.abs(delta) === 2) scale = 1;
@@ -214,11 +214,11 @@ export default function FlipbookComponent() {
   //       pin: true,
   //       scrub: isMobile ? 0.3 : 0.5,
   //       snap: {
-  //         snapTo: (value: any) => Math.round(value * config.NUM_CARDS) / config.NUM_CARDS,
+  //         snapTo: (value: unknown) => Math.round(value * config.NUM_CARDS) / config.NUM_CARDS,
   //         duration: { min: 0.2, max: 0.4 },
   //         delay: 0.05,
   //       },
-  //       onUpdate: (self: any) => {
+  //       onUpdate: (self: unknown) => {
   //         let idx;
   //         if (isMobile) {
   //           idx = Math.round(self.progress * (config.NUM_CARDS - 1));

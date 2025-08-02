@@ -11,22 +11,18 @@ const InfiniteCardSection: React.FC = () => {
       </h2>
       <div className={styles.cardsRow}>
         {/* Desktop: Left Card */}
-        <Link href="/perfume?filter=designer" legacyBehavior>
-          <a className={styles.cardTiltLeft}>
-            <Image src="/image1.jpeg" alt="Designer Perfumes" fill className={styles.cardImageStatic} />
-            <div className={styles.cardCta}>Designer Perfumes</div>
-          </a>
+        <Link href="/perfume?filter=designer" className={styles.cardTiltLeft}>
+          <Image src="/image1.jpeg" alt="Designer Perfumes" fill className={styles.cardImageStatic} />
+          <div className={styles.cardCta}>Designer Perfumes</div>
         </Link>
         {/* Desktop: Middle Card (Perfume Image) */}
         <div className={styles.cardCenter}>
           <Image src="/PERFUMES_FRAGRANCE_WOF__ANIMATION.png" alt="Perfume Collection" fill className={styles.cardImageStatic} />
         </div>
         {/* Desktop: Right Card */}
-        <Link href="/perfume?filter=niche" legacyBehavior>
-          <a className={styles.cardTiltRight}>
-            <Image src="/image7.jpeg" alt="Niche Perfumes" fill className={styles.cardImageStatic} />
-            <div className={styles.cardCta}>Niche Perfumes</div>
-          </a>
+        <Link href="/perfume?filter=niche" className={styles.cardTiltRight}>
+          <Image src="/image7.jpeg" alt="Niche Perfumes" fill className={styles.cardImageStatic} />
+          <div className={styles.cardCta}>Niche Perfumes</div>
         </Link>
         
         {/* Mobile: Top Center Card */}
@@ -36,24 +32,18 @@ const InfiniteCardSection: React.FC = () => {
         {/* Mobile: Bottom Row */}
         <div className={styles.bottomRow}>
           {/* Mobile: Left Card */}
-          <Link href="/perfume?filter=designer" legacyBehavior>
-            <a className={styles.cardBottomLeft}>
-              <Image src="/image1.jpeg" alt="Designer Perfumes" fill className={styles.cardImageStatic} />
-              <div className={styles.cardCta}>Designer Perfumes</div>
-            </a>
+          <Link href="/perfume?filter=designer" className={styles.cardBottomLeft}>
+            <Image src="/image1.jpeg" alt="Designer Perfumes" fill className={styles.cardImageStatic} />
+            <div className={styles.cardCta}>Designer Perfumes</div>
           </Link>
           {/* Mobile: Right Card */}
-          <Link href="/perfume?filter=niche" legacyBehavior>
-            <a className={styles.cardBottomRight}>
-              <Image src="/image7.jpeg" alt="Niche Perfumes" fill className={styles.cardImageStatic} />
-              <div className={styles.cardCta}>Niche Perfumes</div>
-            </a>
+          <Link href="/perfume?filter=niche" className={styles.cardBottomRight}>
+            <Image src="/image7.jpeg" alt="Niche Perfumes" fill className={styles.cardImageStatic} />
+            <div className={styles.cardCta}>Niche Perfumes</div>
           </Link>
         </div>
       </div>
-      <Link href="/perfume" legacyBehavior>
-        <a className={styles.ctaMain}>Explore the Collection</a>
-      </Link>
+      <Link href="/perfume" className={styles.ctaMain}>Explore the Collection</Link>
     </section>
   );
 };

@@ -29,14 +29,12 @@ const WatchBrandTicker: React.FC<WatchBrandTickerProps> = ({ brands, onBrandClic
 
   // Transform-based animation for smooth endless movement (same as sneaker)
   useEffect(() => {
-    if (paused || brands.length === 0) return;
-    
     const ticker = tickerRef.current;
-    if (!ticker) return;
+    if (!ticker || paused) return;
     
-    let animationFrame: number;
     let translateX = 0;
-    const speed = 1; // px per frame - same as sneaker
+    let animationFrame: number;
+    const speed = 0.5;
     
     function animate() {
       if (!ticker) return;

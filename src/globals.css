@@ -16,8 +16,8 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
     Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  background: #000;
-  color: #fff;
+  background: #fff;
+  color: #000;
   width: 100%;
   max-width: 100%; /* Prevent overflow */
   scroll-behavior: smooth;
@@ -42,14 +42,14 @@ body {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #000;
+  background: #f1f1f1;
 }
 ::-webkit-scrollbar-thumb {
-  background: #555;
+  background: #c1c1c1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #777;
+  background: #a8a8a8;
 }
 
 /* Utility to hide scrollbar */

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { gql, useQuery } from '@apollo/client';
+import { useRouter } from 'next/router';
 
 import WatchBrandTicker from '../components/watch/WatchBrandTicker';
 import { getBrandUrl } from '../utils/brandUtils';
@@ -41,6 +42,7 @@ const PRODUCTS_PER_PAGE = 21;
 
 const WatchPage = () => {
   const { categoryData, isPreloaded, loadCategoryData, isCategoryLoaded } = useProductContext();
+  const router = useRouter();
   
   // Mobile overlay tab state
   const [mobileOverlayTab, setMobileOverlayTab] = useState<'filter' | 'sort'>('filter');
@@ -80,6 +82,24 @@ const WatchPage = () => {
     }
   }, [loadCategoryData, isCategoryLoaded]);
 
+  /*
+    Apply subcategory filter if it comes via query string, eg. /watch?subcategory=MALE
+    We only apply it on initial load (when no gender has been selected yet) to
+    avoid overriding user interactions.
+  */
+  useEffect(() => {
+    if (!router.isReady) return;
+    const sp = router.query.subcategory;
+    if (sp && selectedGenders.length === 0) {
+      const raw = Array.isArray(sp) ? sp[0] : sp;
+      if (typeof raw === 'string' && raw.trim() !== '') {
+        setSelectedGenders([raw]);
+      }
+    }
+    // We only want to run this once when router is ready.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady]);
+
   // Always fetch watches from the backend; we'll fall back to any cached/pre-loaded data only while the query is loading.
   const { data: watchesData, loading: apiLoading } = useQuery(WATCHES_QUERY, {
     variables: {
@@ -96,7 +116,7 @@ const WatchPage = () => {
   const watches = useMemo(() => {
     const list = (watchesData?.watches || categoryData.watches || []);
     if (sortBy === '') {
-      return [...list].sort((a: any, b: any) => {
+      return [...list].sort((a: unknown, b: unknown) => {
         const aId = parseInt(a.id, 10);
         const bId = parseInt(b.id, 10);
         // Fallback for non-numeric ids
@@ -110,20 +130,20 @@ const WatchPage = () => {
   // Derive unique colors and min/max prices from watches
   const allColors = useMemo(() => {
     const set = new Set<string>();
-    watches.forEach((w: any) => {
+    watches.forEach((w: unknown) => {
       if (w.color) set.add(w.color);
     });
     return Array.from(set).sort();
   }, [watches]);
   
   const [minPrice, maxPrice] = useMemo(() => {
-    let min = Infinity, max = -Infinity;
-    watches.forEach((w: any) => {
-      if (w.salePrice < min) min = w.salePrice;
+    let _min = Infinity, max = -Infinity;
+    watches.forEach((w: unknown) => {
+      if (w.salePrice < _min) _min = w.salePrice;
       if (w.salePrice > max) max = w.salePrice;
     });
-    if (!isFinite(min) || !isFinite(max)) return [0, 50000];
-    return [Math.floor(min), Math.ceil(max)];
+    if (!isFinite(_min) || !isFinite(max)) return [0, 50000];
+    return [Math.floor(_min), Math.ceil(max)];
   }, [watches]);
   
   useEffect(() => {
@@ -136,7 +156,7 @@ const WatchPage = () => {
   // Filter for in-stock (frontend, as backend does not support it)
   const filteredWatches = useMemo(() => {
     let filtered = watches;
-    if (inStockOnly) filtered = filtered.filter((w: any) => w.inStock);
+    if (inStockOnly) filtered = filtered.filter((w: unknown) => w.inStock);
     return filtered;
   }, [watches, inStockOnly]);
 
@@ -237,7 +257,7 @@ const WatchPage = () => {
   };
 
   // Prepare watch products for grid
-  const watchProducts = paginatedWatches.map((w: any) => {
+  const watchProducts = paginatedWatches.map((w: unknown) => {
     return {
       id: w.id,
       brand: w.brand,

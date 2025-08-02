@@ -36,12 +36,16 @@ const icons = [
 const star = { src: '/scroll line/Star.png', alt: 'Star' };
 const horn = { src: '/scroll line/Plutus horn.png', alt: 'Plutus Horn' };
 
-const PremiumIconRow = () => {
+interface PremiumIconRowProps {
+  uniqueId?: string; // Add unique identifier prop
+}
+
+const PremiumIconRow: React.FC<PremiumIconRowProps> = ({ uniqueId = 'default' }) => {
   // Build the alternating icon row: icon, star, icon, horn, icon, star, icon, horn, ...
   const iconRow = [];
   for (let i = 0; i < icons.length; i++) {
     iconRow.push(
-      <div className={styles.iconItem} key={`icon-${i}`}>
+      <div className={styles.iconItem} key={`${uniqueId}-icon-${i}`}>
         <Image 
           src={icons[i].src} 
           alt={icons[i].alt} 
@@ -55,7 +59,7 @@ const PremiumIconRow = () => {
     // Alternate between star and horn
     const betweenIcon = i % 2 === 0 ? star : horn;
     iconRow.push(
-      <div className={styles.iconItem} key={`between-${i}`}>
+      <div className={styles.iconItem} key={`${uniqueId}-between-${i}`}>
         <Image 
           src={betweenIcon.src} 
           alt={betweenIcon.alt} 
@@ -67,8 +71,16 @@ const PremiumIconRow = () => {
       </div>
     );
   }
-  // Infinite marquee
-  const infiniteIcons = [...iconRow, ...iconRow];
+  
+  // Create infinite row with unique keys for duplicated elements
+  const infiniteIcons = [
+    ...iconRow,
+    ...iconRow.map((item, index) => 
+      React.cloneElement(item, { 
+        key: `${uniqueId}-duplicate-${index}` 
+      })
+    )
+  ];
 
   return (
     <div className={styles.premiumScrollWrapper}>
@@ -76,7 +88,7 @@ const PremiumIconRow = () => {
       <div className={styles.marqueeWrapper}>
         <div className={`${styles.marquee} ${styles.left}`}>
           {[...brands, ...brands].map((brand, idx) => (
-            <div className={styles.brandLogoSmall} key={idx}>
+            <div className={styles.brandLogoSmall} key={`${uniqueId}-brand-${idx}`}>
               <Image 
                 src={brand.src} 
                 alt={brand.alt} 

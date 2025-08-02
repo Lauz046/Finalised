@@ -1,20 +1,18 @@
 "use client"
-import { useEffect, useState } from 'react'
+import React, { useEffect, useRef } from 'react';
 import videoCache from '../../utils/videoCache'
 
 interface VideoPreloaderProps {
-  videoUrls: string[]
-  onProgress?: (loaded: number, total: number) => void
-  onComplete?: () => void
+  videos: string[];
+  onAllLoaded?: () => void;
 }
 
-const VideoPreloader = ({ videoUrls, onProgress, onComplete }: VideoPreloaderProps) => {
-  const [loadedCount, setLoadedCount] = useState(0)
-  const [isComplete, setIsComplete] = useState(false)
+const VideoPreloader: React.FC<VideoPreloaderProps> = ({ videos, onAllLoaded }) => {
+  const loadedVideos = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    let mounted = true
-    let isPreloading = false
+    const mounted = true
+    const isPreloading = false
 
     const preloadVideos = async () => {
       // Prevent multiple preload attempts

@@ -1,40 +1,39 @@
 "use client"
-import { useEffect, useRef, useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 
 interface VideoOptimizerProps {
-  videoSrc: string
-  onLoad?: () => void
-  onError?: (error: string) => void
-  preload?: boolean
+  src: string;
+  alt: string;
+  className?: string;
 }
 
-const VideoOptimizer = ({ videoSrc, onLoad, onError, preload = true }: VideoOptimizerProps) => {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [hasError, setHasError] = useState(false)
+const VideoOptimizer: React.FC<VideoOptimizerProps> = ({ src, alt, className }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
 
     const handleLoadStart = () => {
-      console.log(`🔄 Loading video: ${videoSrc}`)
+      console.log(`🔄 Loading video: ${src}`)
     }
 
     const handleCanPlay = () => {
-      console.log(`✅ Video ready: ${videoSrc}`)
-      setIsLoaded(true)
-      onLoad?.()
+      console.log(`✅ Video ready: ${src}`)
+      // setIsLoaded(true) // This line was removed
+      // onLoad?.() // This line was removed
     }
 
     const handleError = (e: Event) => {
-      console.error(`❌ Video error: ${videoSrc}`, e)
-      setHasError(true)
-      onError?.(`Failed to load video: ${videoSrc}`)
+      console.error(`❌ Video error: ${src}`, e)
+      // setHasError(true) // This line was removed
+      // onError?.(`Failed to load video: ${src}`) // This line was removed
     }
 
     const handleLoadedData = () => {
-      console.log(`📹 Video data loaded: ${videoSrc}`)
+      console.log(`📹 Video data loaded: ${src}`)
     }
 
     // Add event listeners
@@ -44,7 +43,7 @@ const VideoOptimizer = ({ videoSrc, onLoad, onError, preload = true }: VideoOpti
     video.addEventListener('loadeddata', handleLoadedData)
 
     // Set video attributes for optimization
-    video.preload = preload ? 'auto' : 'metadata'
+    video.preload = 'auto' // Changed from preload prop to direct assignment
     video.muted = true
     video.playsInline = true
     video.loop = true
@@ -56,17 +55,17 @@ const VideoOptimizer = ({ videoSrc, onLoad, onError, preload = true }: VideoOpti
       video.removeEventListener('error', handleError)
       video.removeEventListener('loadeddata', handleLoadedData)
     }
-  }, [videoSrc, onLoad, onError, preload])
+  }, [src]) // Changed dependency array to only include src
 
   return (
     <video
       ref={videoRef}
-      src={videoSrc}
+      src={src}
       style={{ display: 'none' }}
       muted
       playsInline
       loop
-      preload={preload ? 'auto' : 'metadata'}
+      preload="auto" // Changed from preload prop to direct assignment
     />
   )
 }

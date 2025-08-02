@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import styles from './ApparelBrandTicker.module.css';
-import { getBrandImage } from '../../utils/brandImageMapper';
+import {  } from '../../utils/brandImageMapper';
 
 interface Brand {
   name: string;
@@ -64,7 +64,7 @@ const ApparelBrandTicker: React.FC<ApparelBrandTickerProps> = ({ brands, onBrand
       translateX -= speed;
       
       // Reset position when we've moved the width of one set of brands
-      const singleSetWidth = ticker.scrollWidth / 4; // Since we have 4 sets
+      const singleSetWidth = ticker.scrollWidth / 6; // Since we have 6 sets
       if (Math.abs(translateX) >= singleSetWidth) {
         translateX = 0;
       }

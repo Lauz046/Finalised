@@ -1,13 +1,10 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { gql, useQuery } from '@apollo/client';
-import Navbar from '../nav/Navbar';
 import { Breadcrumbs } from '../ProductPage/Breadcrumbs';
 import AccessoriesFilterSidebar from './AccessoriesFilterSidebar';
 import AccessoriesProductGrid from './AccessoriesProductGrid';
 import AccessoriesMobileFilterOverlay from './AccessoriesMobileFilterOverlay';
-import BrandSelector from '../BrandSelector';
 import Pagination from './Pagination';
-import SearchOverlay from '../SearchOverlay';
 import { getBrandUrl } from '../../utils/brandUtils';
 
 const ALL_ACCESSORY_BRANDS = gql`
@@ -25,7 +22,7 @@ const ALL_ACCESSORY_GENDERS = gql`
     allAccessoryGenders
   }
 `;
-const ACCESSORIES_QUERY = gql`
+export const ACCESSORIES_QUERY = gql`
   query Accessories($brand: String, $subcategory: String, $gender: String, $size: String, $sortOrder: String) {
     accessories(brand: $brand, subcategory: $subcategory, gender: $gender, size: $size, sortOrder: $sortOrder) {
       id
@@ -88,21 +85,21 @@ export default function AccessoriesBrandProductPage({ brand }: { brand: string }
   const accessories = useMemo(() => {
     // If we have query data (for pagination), use it
     if (accessoriesData?.accessories) {
-      return accessoriesDat(a as any).accessories;
+      return accessoriesData.accessories;
     }
     return [];
   }, [accessoriesData?.accessories]);
 
   const allSizes = useMemo(() => {
     const set = new Set<string>();
-    accessories.forEach((a: any) => (a as any).sizePrices.forEach((sp: any) => set.add((sp as any).size)));
+    accessories.forEach((a: unknown) => (a as unknown).sizePrices.forEach((sp: unknown) => set.add((sp as unknown).size)));
     return Array.from(set).sort();
   }, [accessories]);
   const [minPrice, maxPrice] = useMemo(() => {
     let min = Infinity, max = -Infinity;
-    accessories.forEach((a: any) => (a as any).sizePrices.forEach((sp: any) => {
-      if ((sp as any).price < min) min = (sp as any).price;
-      if ((sp as any).price > max) max = (sp as any).price;
+    accessories.forEach((a: unknown) => (a as unknown).sizePrices.forEach((sp: unknown) => {
+      if ((sp as unknown).price < min) min = (sp as unknown).price;
+      if ((sp as unknown).price > max) max = (sp as unknown).price;
     }));
     if (!isFinite(min) || !isFinite(max)) return [0, 50000];
     return [Math.floor(min), Math.ceil(max)];
@@ -131,39 +128,24 @@ export default function AccessoriesBrandProductPage({ brand }: { brand: string }
     return currentPage;
   }, [accessories.length, currentPage]);
 
-  const accessoriesProducts = accessories.map((a: any) => {
-    const lowest = (a as any).sizePrices.reduce((min: number, sp: any) => (sp as any).price < min ? (sp as any).price : min, Infinity);
+  const accessoriesProducts = accessories.map((a: unknown) => {
+    const lowest = (a as unknown).sizePrices.reduce((min: number, sp: unknown) => (sp as unknown).price < min ? (sp as unknown).price : min, Infinity);
     return {
-      id: (a as any).id,
-      brand: (a as any).brand,
-      productName: (a as any).productName,
-      subcategory: (a as any).subcategory,
-      images: (a as any).images,
+      id: (a as unknown).id,
+      brand: (a as unknown).brand,
+      productName: (a as unknown).productName,
+      subcategory: (a as unknown).subcategory,
+      images: (a as unknown).images,
       price: lowest,
     };
   });
 
-  // Brand ticker data for mobile
-  const brandTickerData = useMemo(() => {
-    return brands.map((brandName: string) => {
-      const accessory = accessories.find((a: any) => (a as any).brand === brandName);
-      return {
-        name: brandName,
-        image: accessory?.images?.[0] || '/image1.jpeg',
-      };
-    });
-  }, [brands, accessories]);
 
-  // Handlers
-  const handleBrandClick = (brandName: string) => {
-    if (brandName !== brand) {
-      window.location.href = `/accessories/brand/${getBrandUrl(brandName)}`;
-    }
-  };
+
+
 
   const stickyBarRef = useRef<HTMLDivElement>(null);
-  const gridContainerRef = useRef<HTMLDivElement>(null);
-  const [gridScrollable, setGridScrollable] = useState(false);
+
 
   useEffect(() => {
     const stickyBar = stickyBarRef.current;

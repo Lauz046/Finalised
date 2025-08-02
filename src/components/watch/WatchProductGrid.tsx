@@ -27,12 +27,11 @@ const formatPrice = (price: number) => {
   }).format(price)}`;
 };
 
-// Limit product name to 5 words
+// Limit product name - 4 words for both desktop and mobile (no ellipsis)
 const truncateProductName = (name: string) => {
   if (!name) return '';
   const words = name.split(' ');
-  if (words.length <= 5) return name;
-  return words.slice(0, 5).join(' ') + '...';
+  return words.slice(0, 4).join(' ');
 };
 
 const WatchProductGrid: React.FC<WatchProductGridProps> = ({ products, loading = false, mobile = false }) => {

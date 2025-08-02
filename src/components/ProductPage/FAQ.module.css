@@ -96,4 +96,36 @@
 
 .arrowClosed .arrowSvg {
   transform: rotate(-90deg);
+}
+
+/* Mobile responsive fixes for FAQ arrows */
+@media (max-width: 768px) {
+  .arrowOpen, .arrowClosed {
+    margin-left: 20px;
+  }
+  
+  .header {
+    font-size: 1.1rem;
+    margin-left: 12px;
+  }
+  
+  .item {
+    margin-left: 8px;
+  }
+  
+  .item:nth-child(3) {
+    margin-left: 8px;
+  }
+  
+  /* Fix header row spacing for mobile */
+  .headerRow + .item,
+  .headerRow + div .item:first-child {
+    margin-top: 32px;
+    margin-left: 8px;
+  }
+  
+  .headerRow {
+    height: 40px;
+    font-size: 1.1rem;
+  }
 } 

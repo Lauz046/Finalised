@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import styles from './BrandTicker.module.css';
-import { getBrandImage } from '../../utils/brandImageMapper';
+import {  } from '../../utils/brandImageMapper';
 
 interface Brand {
   name: string;

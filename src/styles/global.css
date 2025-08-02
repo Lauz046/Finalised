@@ -1,0 +1,23 @@
+/* Global styles that were causing issues in CSS modules */
+
+:root {
+  --bento-gap: 16px;
+  --bento-padding: 40px;
+  --label-font: 'Times New Roman', Times, serif;
+}
+
+/* Additional global styles for components */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgb(255, 255, 255);
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+/* GT America font family for swiper component */
+body {
+  font-family: "GT America Regular", sans-serif;
+} 

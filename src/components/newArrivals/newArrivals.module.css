@@ -4,6 +4,7 @@
   margin: 0;
   font-family: 'TIMES NEW NORMAL';
   overflow-x: hidden; /* Prevent horizontal overflow */
+  background: #f1f1f1;
 }
 
 .newArrivals__title {
@@ -29,7 +30,7 @@
 }
 
 .card {
-  background: white;
+  background: #ffffff;
   border-radius: 0px;
   border: 1px solid #e0e0e0;
   overflow: hidden;
@@ -157,7 +158,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: #051f2d;
   color: white;
   padding: 15px;
   text-align: center;
@@ -171,16 +172,24 @@
 }
 
 .quickViewBtn {
-  background: transparent;
-  border: 2px solid white;
+  background: #051f2d;
+  border: none;
   color: white;
   padding: 12px 30px;
   font-size: 14px;
   font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.quickViewBtn:hover {
+  background: #0a2f3f;
+  transform: translateY(-1px);
 }
 
 .card__content {

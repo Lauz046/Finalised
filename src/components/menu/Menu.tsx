@@ -1,9 +1,57 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import styles from './Menu.module.css';
 import { useProductContext } from '../../context/ProductContext';
 import { getBrandUrl } from '../../utils/brandUtils';
+
+// Brand Product Card Component
+const BrandProductCard = ({ product, onClick }: { product: any; onClick: () => void }) => {
+  const firstImage = Array.isArray(product.images) && product.images.length > 0 ? product.images[0] : '';
+  
+  const title = product.productName || product.title || product.name || 'Product';
+  const brand = product.brand || '';
+  
+  // Limit title to 6 words
+  const words = title.split(' ');
+  const limitedTitle = words.slice(0, 6).join(' ');
+  
+  return (
+    <div className={styles.brandProductCard} onClick={onClick}>
+      <div className={styles.brandProductImageContainer}>
+        {firstImage ? (
+          <Image
+            src={firstImage}
+            alt={limitedTitle}
+            width={240}
+            height={220}
+            className={styles.brandProductImg}
+          />
+        ) : (
+          <div className={styles.brandProductPlaceholder}>
+            <span>No Image</span>
+          </div>
+        )}
+      </div>
+      <div className={styles.brandProductContent}>
+        <div className={styles.brandProductBrand}>{brand}</div>
+        <div className={styles.brandProductName}>{limitedTitle}</div>
+      </div>
+    </div>
+  );
+};
+
+// Get random brand products for default display
+const getRandomBrandProducts = (products: any[], count: number = 6) => {
+  if (products.length === 0) return [];
+  
+  // Shuffle all products
+  const shuffledProducts = [...products].sort(() => Math.random() - 0.5);
+  
+  // Take up to count products
+  return shuffledProducts.slice(0, count);
+};
 
 const categories = [
   {
@@ -118,18 +166,18 @@ function useIsMobile(breakpoint = 700) {
 const getProductImages = (products: any[]): string[] => {
   // Get the first image of every product, if it exists
   return products
-    .map((p) => Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : undefined)
+    .map((p: any) => Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : undefined)
     .filter((img): img is string => typeof img === 'string');
 };
 
 type CategoryKey = 'sneaker' | 'apparel' | 'watch' | 'perfume' | 'accessories';
 
 interface MenuDataType {
-  sneaker: { brands: string[]; subcategories: string[]; products: any[]; genders?: string[] };
-  perfume: { brands: string[]; subcategories: string[]; products: any[]; genders?: string[]; fragranceFamilies?: string[] };
-  watch: { brands: string[]; subcategories: string[]; products: any[]; genders?: string[] };
-  apparel: { brands: string[]; subcategories: string[]; products: any[]; genders?: string[] };
-  accessories: { brands: string[]; subcategories: string[]; products: any[]; genders?: string[] };
+  sneaker: { brands: string[]; subcategories: string[]; products: unknown[]; genders?: string[] };
+  perfume: { brands: string[]; subcategories: string[]; products: unknown[]; genders?: string[]; fragranceFamilies?: string[] };
+  watch: { brands: string[]; subcategories: string[]; products: unknown[]; genders?: string[] };
+  apparel: { brands: string[]; subcategories: string[]; products: unknown[]; genders?: string[] };
+  accessories: { brands: string[]; subcategories: string[]; products: unknown[]; genders?: string[] };
 }
 
 const Menu = () => {
@@ -267,18 +315,26 @@ const Menu = () => {
     router.push(brandUrl);
   };
 
+  const handleSubcategoryClick = (subcategory: string, category: string) => {
+    // Create category URL with subcategory filter
+    const categoryUrl = `/${category}?subcategory=${encodeURIComponent(subcategory)}`;
+    
+    // Navigate instantly using Next.js router
+    router.push(categoryUrl);
+  };
+
   if (isMobile) {
     return (
       <div className={styles.menuMobileOverlay}>
         <div className={styles.menuMobileList}>
-          <a className={styles.menuMobileRow} href="/stash">
+          <Link href="/stash" className={styles.menuMobileRow}>
             <span>Stash</span>
             <span className={styles.menuMobileArrow}>&#8250;</span>
-          </a>
-          <a className={styles.menuMobileRow} href="/account">
+          </Link>
+          <Link href="/account" className={styles.menuMobileRow}>
             <span>Account</span>
             <span className={styles.menuMobileArrow}>&#8250;</span>
-          </a>
+          </Link>
           <div className={styles.menuMobileRow} style={{cursor:'default'}}>
             <span>Categories</span>
           </div>
@@ -334,207 +390,45 @@ const Menu = () => {
      
           {activeCategory === 'apparel' && (
             <div className={styles.menuApparelFinalLayout}>
-                
-              <div className={styles.menuApparelBrandList}>
-              <div className={styles.menuApparelCategoryHeading}>Brands</div>
-                                  {current.brands?.map((brand: string) => (
-                  <button
-                    key={brand}
-                    onClick={() => handleBrandClick(brand, 'apparel')}
-                    className={styles.menuBrandItem}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}
-                  >
-                    {brand}
-                  </button>
-                ))}
-                </div>
-              <div className={styles.menuApparelCategoryList}>
-                <div className={styles.menuApparelCategoryHeading}>Sub Category</div>
-                {[...(current.genders || []), ...(current.subcategories || [])].map((cat: string) => (
-                  <div key={cat} className={styles.menuBrandItem}>{cat}</div>
-                ))}
-              </div>
-              <div className={styles.menuMainContent}>
-          <div className={styles.menuSectionHeading}>Products</div>
-          <div className={styles.menuProductGridCard}>
-          <div className={styles.menuProductGrid}>
-              {activeCategory === 'apparel' && productImages.length >= 71 ? (
-                [1,15,20,25,30,40].map((idx) => (
-                  productImages[idx] && (
-                    <Image
-                      key={productImages[idx] + idx}
-                      src={productImages[idx]}
-                      alt="Product"
-                      width={120}
-                      height={120}
-                      className={styles.menuProductImg}
-                    />
-                  )
-                ))
-              ) : (
-                productImages.slice(0, 6).map((img: string, idx: number) => (
-                  <Image
-                    key={img + idx}
-                    src={img}
-                    alt="Product"
-                    width={120}
-                    height={120}
-                    className={styles.menuProductImg}
-                  />
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-            </div>
-          )}
-          {activeCategory === 'perfume' && (() => {
-  const perfumeCurrent = current as MenuDataType['perfume'];
-  return (
-    <div className={styles.menuApparelFinalLayout}>
-      <div className={styles.menuApparelBrandList}>
-        {/* Fragrance Family (including subcategories) */}
-        <div className={styles.menuApparelCategoryHeading}>Fragrance Family</div>
-        {[...(perfumeCurrent.fragranceFamilies || []), ...(perfumeCurrent.subcategories || [])].map((family: string) => (
-          <div key={family} className={styles.menuBrandItem}>{family}</div>
-                ))}
-              </div>
-      <div className={styles.menuApparelCategoryList}>
-        <div className={styles.menuApparelCategoryHeading}>Brands</div>
-        {perfumeCurrent.brands?.map((brand: string) => (
-          <button
-            key={brand}
-            onClick={() => handleBrandClick(brand, 'perfume')}
-            className={styles.menuBrandItem}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}
-          >
-            {brand}
-          </button>
-        ))}
-      </div>
-      <div className={styles.menuMainContent}>
-        <div className={styles.menuSectionHeading}>Products</div>
-        <div className={styles.menuProductGridCard}>
-          <div className={styles.menuProductGrid}>
-            {activeCategory === 'perfume' && productImages.length >= 71 ? (
-              [10, 20, 30, 40,100,80].map((idx) => (
-                productImages[idx] && (
-                  <Image
-                    key={productImages[idx] + idx}
-                    src={productImages[idx]}
-                    alt="Product"
-                    width={120}
-                    height={120}
-                    className={styles.menuProductImg}
-                  />
-                )
-              ))
-            ) : (
-              productImages.slice(0, 6).map((img: string, idx: number) => (
-                <Image
-                  key={img + idx}
-                  src={img}
-                  alt="Product"
-                  width={120}
-                  height={120}
-                  className={styles.menuProductImg}
-                />
-              ))
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-})()}
-          {activeCategory === 'accessories' && (
-            <div className={styles.menuApparelFinalLayout}>
-              <div className={styles.menuApparelBrandList}>
-                <div className={styles.menuApparelCategoryHeading}>Subcategories</div>
-                {[...(current.genders || []), ...(current.subcategories || [])].map((subcat: string) => (
-                  <div key={subcat} className={styles.menuBrandItem}>{subcat}</div>
-                ))}
-              </div>
-              <div className={styles.menuApparelCategoryList}>
+              <div className={styles.menuSidebarSection}>
                 <div className={styles.menuApparelCategoryHeading}>Brands</div>
-                {current.brands?.map((brand: string) => (
-                  <button
-                    key={brand}
-                    onClick={() => handleBrandClick(brand, 'accessories')}
-                    className={styles.menuBrandItem}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}
-                  >
-                    {brand}
-                  </button>
-                ))}
-              </div>
-              <div className={styles.menuMainContent}>
-                <div className={styles.menuSectionHeading}>Products</div>
-                <div className={styles.menuProductGridCard}>
-                  <div className={styles.menuProductGrid}>
-                    {activeCategory === 'accessories' && productImages.length >= 71 ? (
-                      [1,2,3,4,5,6].map((idx) => (
-                        productImages[idx] && (
-                          <Image
-                            key={productImages[idx] + idx}
-                            src={productImages[idx]}
-                            alt="Product"
-                            width={120}
-                            height={120}
-                            className={styles.menuProductImg}
-                          />
-                        )
-                      ))
-                    ) : (
-                      productImages.slice(0, 6).map((img: string, idx: number) => (
-                        <Image
-                          key={img + idx}
-                          src={img}
-                          alt="Product"
-                          width={120}
-                          height={120}
-                          className={styles.menuProductImg}
-                        />
-                      ))
-                    )}
-                  </div>
+                <div className={styles.menuApparelBrandList}>
+                  {current.brands?.map((brand: string) => (
+                    <button
+                      key={brand}
+                      onClick={() => handleBrandClick(brand, 'apparel')}
+                      className={styles.menuBrandItem}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}
+                    >
+                      {brand}
+                    </button>
+                  ))}
                 </div>
               </div>
-              </div>
-          )}
-          {activeCategory === 'watch' && (
-            <div className={styles.menuApparelFinalLayout}>
-              <div className={styles.menuApparelBrandList}>
-              <div className={styles.menuApparelCategoryHeading}>Brands</div>
-                {current.brands?.map((brand: string) => (
-                  <button
-                    key={brand}
-                    onClick={() => handleBrandClick(brand, 'watch')}
-                    className={styles.menuBrandItem}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}
-                  >
-                    {brand}
-                  </button>
-                ))}
-              </div>
-              <div className={styles.menuApparelCategoryList}>
-                <div className={styles.menuApparelCategoryHeading}>Gender</div>
-                {(current.genders || []).map((gender: string) => (
-                  <div key={gender} className={styles.menuBrandItem}>{gender}</div>
-                ))}
+              <div className={styles.menuSidebarSection}>
+                <div className={styles.menuApparelCategoryHeading}>Sub Category</div>
+                <div className={styles.menuApparelCategoryList}>
+                  {[...(current.genders || []), ...(current.subcategories || [])].map((cat: string) => (
+                    <button
+                      key={cat}
+                      onClick={() => handleSubcategoryClick(cat, 'apparel')}
+                      className={styles.menuBrandItem}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className={styles.menuMainContent}>
                 <div className={styles.menuSectionHeading}>Products</div>
                 <div className={styles.menuProductGridCard}>
-                  <div className={styles.menuProductGrid} style={{ position: 'relative', top: '-20px' }}>
-                    {watchTickerImages.slice(0, 6).map((img: string, idx: number) => (
-                      <Image
-                        key={img + idx}
-                        src={img}
-                        alt="Product"
-                        width={140}
-                        height={140}
-                        className={styles.menuProductImg}
+                  <div className={styles.brandHoverGrid}>
+                    {getRandomBrandProducts(current.products, 6).map((product, index) => (
+                      <BrandProductCard
+                        key={`${product.id || index}-${product.brand}`}
+                        product={product}
+                        onClick={() => handleBrandClick(product.brand, 'apparel')}
                       />
                     ))}
                   </div>
@@ -542,11 +436,159 @@ const Menu = () => {
               </div>
             </div>
           )}
+          {activeCategory === 'perfume' && (() => {
+  const perfumeCurrent = current as MenuDataType['perfume'];
+  return (
+    <div className={styles.menuApparelFinalLayout}>
+      <div className={styles.menuSidebarSection}>
+        <div className={styles.menuApparelCategoryHeading}>Fragrance Family</div>
+        <div className={styles.menuApparelBrandList}>
+          {[...(perfumeCurrent.fragranceFamilies || []), ...(perfumeCurrent.subcategories || [])].map((family: string) => (
+            <button
+              key={family}
+              onClick={() => handleSubcategoryClick(family, 'perfume')}
+              className={styles.menuBrandItem}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}
+            >
+              {family}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className={styles.menuSidebarSection}>
+        <div className={styles.menuApparelCategoryHeading}>Brands</div>
+        <div className={styles.menuApparelCategoryList}>
+          {perfumeCurrent.brands?.map((brand: string) => (
+            <button
+              key={brand}
+              onClick={() => handleBrandClick(brand, 'perfume')}
+              className={styles.menuBrandItem}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}
+            >
+              {brand}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className={styles.menuMainContent}>
+        <div className={styles.menuSectionHeading}>Products</div>
+        <div className={styles.menuProductGridCard}>
+            <div className={styles.brandHoverGrid}>
+              {getRandomBrandProducts(perfumeCurrent.products, 6).map((product, index) => (
+                <BrandProductCard
+                  key={`${product.id || index}-${product.brand}`}
+                  product={product}
+                  onClick={() => handleBrandClick(product.brand, 'perfume')}
+                />
+              ))}
+            </div>
+          </div>
+      </div>
+    </div>
+  );
+})()}
+          {activeCategory === 'accessories' && (
+            <div className={styles.menuApparelFinalLayout}>
+              <div className={styles.menuSidebarSection}>
+                <div className={styles.menuApparelCategoryHeading}>Subcategories</div>
+                <div className={styles.menuApparelBrandList}>
+                  {[...(current.genders || []), ...(current.subcategories || [])].map((subcat: string) => (
+                    <button
+                      key={subcat}
+                      onClick={() => handleSubcategoryClick(subcat, 'accessories')}
+                      className={styles.menuBrandItem}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}
+                    >
+                      {subcat}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className={styles.menuSidebarSection}>
+                <div className={styles.menuApparelCategoryHeading}>Brands</div>
+                <div className={styles.menuApparelCategoryList}>
+                  {current.brands?.map((brand: string) => (
+                    <button
+                      key={brand}
+                      onClick={() => handleBrandClick(brand, 'accessories')}
+                      className={styles.menuBrandItem}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}
+                    >
+                      {brand}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className={styles.menuMainContent}>
+                <div className={styles.menuSectionHeading}>Products</div>
+                <div className={styles.menuProductGridCard}>
+                    <div className={styles.brandHoverGrid}>
+                      {getRandomBrandProducts(current.products, 6).map((product, index) => (
+                        <BrandProductCard
+                          key={`${product.id || index}-${product.brand}`}
+                          product={product}
+                          onClick={() => handleBrandClick(product.brand, 'accessories')}
+                        />
+                      ))}
+                    </div>
+                  </div>
+              </div>
+            </div>
+          )}
+          {activeCategory === 'watch' && (
+            <div className={styles.menuApparelFinalLayout}>
+              <div className={styles.menuSidebarSection}>
+                <div className={styles.menuApparelCategoryHeading}>Brands</div>
+                <div className={styles.menuApparelBrandList}>
+                  {current.brands?.map((brand: string) => (
+                    <button
+                      key={brand}
+                      onClick={() => handleBrandClick(brand, 'watch')}
+                      className={styles.menuBrandItem}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}
+                    >
+                      {brand}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className={styles.menuSidebarSection}>
+                <div className={styles.menuApparelCategoryHeading}>Gender</div>
+                <div className={styles.menuApparelCategoryList}>
+                  {(current.genders || []).map((gender: string) => (
+                    <button
+                      key={gender}
+                      onClick={() => handleSubcategoryClick(gender, 'watch')}
+                      className={styles.menuBrandItem}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}
+                    >
+                      {gender}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className={styles.menuMainContent}>
+                <div className={styles.menuSectionHeading}>Products</div>
+                <div className={styles.menuProductGridCard}>
+                    <div className={styles.brandHoverGrid}>
+                      {getRandomBrandProducts(current.products, 6).map((product, index) => (
+                        <BrandProductCard
+                          key={`${product.id || index}-${product.brand}`}
+                          product={product}
+                          onClick={() => handleBrandClick(product.brand, 'watch')}
+                        />
+                      ))}
+                    </div>
+                  </div>
+              </div>
+            </div>
+          )}
           {activeCategory === 'sneaker' && (
             <div className={styles.menuApparelFinalLayout}>
-              <div className={styles.menuApparelBrandList}>
-              <div className={styles.menuApparelCategoryHeading}>Brands</div>
-                                  {current.brands?.map((brand: string) => (
+              <div className={styles.menuSidebarSection}>
+                <div className={styles.menuApparelCategoryHeading}>Brands</div>
+                <div className={styles.menuApparelBrandList}>
+                  {current.brands?.map((brand: string) => (
                     <button
                       key={brand}
                       onClick={() => handleBrandClick(brand, 'sneaker')}
@@ -556,22 +598,21 @@ const Menu = () => {
                       {brand}
                     </button>
                   ))}
+                </div>
               </div>
               <div className={styles.menuMainContent}>
+                <div className={styles.menuSectionHeading}>Products</div>
                 <div className={styles.menuProductGridCard}>
-                  <div className={styles.menuProductGridSneaker}>
-                    {productImages.slice(0, 9).map((img: string, idx: number) => (
-                      <Image
-                        key={img + idx}
-                        src={img}
-                        alt="Product"
-                        width={120}
-                        height={120}
-                        className={styles.menuProductImg}
-                      />
-                    ))}
+                    <div className={styles.brandHoverGrid}>
+                      {getRandomBrandProducts(current.products, 6).map((product, index) => (
+                        <BrandProductCard
+                          key={`${product.id || index}-${product.brand}`}
+                          product={product}
+                          onClick={() => handleBrandClick(product.brand, 'sneaker')}
+                        />
+                      ))}
+                    </div>
                   </div>
-                </div>
               </div>
             </div>
           )}

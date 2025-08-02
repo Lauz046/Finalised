@@ -1,15 +1,16 @@
 package main
 
 import (
+	"crypto/rand"
 	"database/sql"
+	"encoding/hex"
 	"log"
 	"net/http"
 	"os"
-	"crypto/rand"
-	"encoding/hex"
-	"golang.org/x/crypto/bcrypt"
 	"sync"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/joho/godotenv"
 	"github.com/rs/cors" // ✅ Make sure this is imported
@@ -40,7 +41,7 @@ var (
 	searchCacheTTL   = 5 * time.Minute
 
 	// Rate limiting
-	rateLimitMap = make(map[string][]time.Time)
+	rateLimitMap   = make(map[string][]time.Time)
 	rateLimitMutex sync.RWMutex
 )
 
@@ -267,7 +268,7 @@ func rateLimitMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		rateLimitMutex.Lock()
 		now := time.Now()
 		window := now.Add(-1 * time.Minute) // 1 minute window
-		
+
 		// Clean old requests
 		if requests, exists := rateLimitMap[clientIP]; exists {
 			var validRequests []time.Time
@@ -343,17 +344,23 @@ func main() {
 	if err != nil {
 		log.Fatalf("❌ Failed to connect to DB: %v", err)
 	}
-	
-	// Configure connection pool
+
+	// Configure connection pool with better settings for prepared statements
 	db.SetMaxOpenConns(25)
-	db.SetMaxIdleConns(5)
-	db.SetConnMaxLifetime(5 * time.Minute)
-	
+	db.SetMaxIdleConns(10)
+	db.SetConnMaxLifetime(10 * time.Minute)
+	db.SetConnMaxIdleTime(5 * time.Minute)
+
+	// Test the connection
+	if err := db.Ping(); err != nil {
+		log.Fatalf("❌ Failed to ping DB: %v", err)
+	}
+
 	defer db.Close()
 
 	// Create indexes for faster queries
 	createIndexes(db)
-	
+
 	// Create auth tables
 	createAuthTables(db)
 
@@ -367,7 +374,7 @@ func main() {
 	if corsOrigin == "" {
 		corsOrigin = "http://localhost:3000"
 	}
-	
+
 	corsHandler := cors.New(cors.Options{
 		AllowedOrigins:   []string{corsOrigin, "http://localhost:3000", "https://localhost:3000"},
 		AllowCredentials: true,
@@ -376,12 +383,12 @@ func main() {
 		MaxAge:           86400, // 24 hours
 	}).Handler(srv)
 
-	http.Handle("/query", corsHandler)                         // ✅ CORS applied here
-	http.Handle("/api/menu", corsHandlerFunc(rateLimitMiddleware(menuHandler)))     // CORS + Rate limit for menu
-	http.Handle("/api/search", corsHandlerFunc(rateLimitMiddleware(searchHandler))) // CORS + Rate limit for search
+	http.Handle("/query", corsHandler)                                                           // ✅ CORS applied here
+	http.Handle("/api/menu", corsHandlerFunc(rateLimitMiddleware(menuHandler)))                  // CORS + Rate limit for menu
+	http.Handle("/api/search", corsHandlerFunc(rateLimitMiddleware(searchHandler)))              // CORS + Rate limit for search
 	http.Handle("/api/auth/register", corsHandlerFunc(rateLimitMiddleware(authRegisterHandler))) // Auth register
 	http.Handle("/api/auth/login", corsHandlerFunc(rateLimitMiddleware(authLoginHandler)))       // Auth login
-	http.Handle("/api/enquiry", corsHandlerFunc(rateLimitMiddleware(enquiryHandler)))           // Enquiry
+	http.Handle("/api/enquiry", corsHandlerFunc(rateLimitMiddleware(enquiryHandler)))            // Enquiry
 	http.Handle("/", playground.Handler("GraphQL Playground", "/query"))
 
 	log.Printf("🚀 Server running at http://localhost:%s/", port)

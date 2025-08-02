@@ -1,29 +1,14 @@
-import WatchBrandProductPage from '../../../components/watch/WatchBrandProductPage';
-import { gql } from '@apollo/client';
-
-const WATCHES_QUERY = gql`
-  query Watches($brand: String, $color: String, $gender: String, $sortOrder: String, $limit: Int, $offset: Int) {
-    watches(brand: $brand, color: $color, gender: $gender, sortOrder: $sortOrder, limit: $limit, offset: $offset) {
-      id
-      brand
-      name
-      color
-      salePrice
-      marketPrice
-      images
-      gender
-    }
-  }
-`;
+import WatchBrandProductPage, { WATCHES_QUERY } from '../../../components/watch/WatchBrandProductPage';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import { initializeApollo } from '../../../lib/apolloClient';
-import { getBrandFromUrl } from '../../../utils/brandUtils';
+import { getBrandFromUrl, normalizeBrandForDatabase } from '../../../utils/brandUtils';
+import { ErrorBoundary } from '../../../components/ErrorBoundary';
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  // Pre-generate paths for popular watch brands
+  // Pre-generate paths for popular brands
   const popularBrands = [
-    'rolex', 'omega', 'cartier', 'patek-philippe', 'audemars-piguet', 'richard-mille',
-    'casio', 'seiko', 'citizen', 'timex', 'swatch', 'tag-heuer'
+    'rolex', 'omega', 'patek-philippe', 'audemars-piguet', 'richard-mille',
+    'tag-heuer', 'cartier', 'breitling', 'hublot', 'panerai'
   ];
 
   const paths = popularBrands.map((brand) => ({
@@ -37,25 +22,28 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const apolloClient = initializeApollo();
-  const brandUrl = context.params?.brand as string;
-  const brand = getBrandFromUrl(brandUrl);
-  
   try {
+    const apolloClient = initializeApollo();
+    const brandUrl = context.params?.brand as string;
+    const brand = getBrandFromUrl(brandUrl);
+    const normalizedBrand = normalizeBrandForDatabase(brand);
+    
     // Only fetch first page of products to reduce data size
     const { data } = await apolloClient.query({
       query: WATCHES_QUERY,
       variables: { 
-        brand,
+        brand: normalizedBrand,
         limit: 21, // First page only
         offset: 0
       },
+      errorPolicy: 'all', // Handle errors gracefully
     });
     
     return {
       props: {
-        initialWatchData: data.watches || [],
-        brand,
+        initialWatchData: data?.watches || [],
+        brand: normalizedBrand,
+        apolloState: apolloClient.cache.extract(),
       },
       // Cache for 5 minutes
       revalidate: 300,
@@ -65,13 +53,30 @@ export const getStaticProps: GetStaticProps = async (context) => {
     return {
       props: {
         initialWatchData: [],
-        brand,
+        brand: context.params?.brand as string,
+        apolloState: null,
       },
       revalidate: 60, // Shorter cache on error
     };
   }
 };
 
-export default function WatchBrandPage({ brand }: { brand: string }) {
-  return <WatchBrandProductPage brand={brand} />;
+export default function WatchBrandPage({ 
+  initialWatchData, 
+  brand, 
+  apolloState 
+}: { 
+  initialWatchData: unknown[]; 
+  brand: string;
+  apolloState?: unknown;
+}) {
+  return (
+    <ErrorBoundary>
+      <WatchBrandProductPage 
+        brand={brand} 
+        initialWatchData={initialWatchData}
+        apolloState={apolloState}
+      />
+    </ErrorBoundary>
+  );
 } 

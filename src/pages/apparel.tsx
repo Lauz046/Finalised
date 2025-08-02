@@ -91,6 +91,24 @@ const ApparelPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
 
+  /*
+    Apply subcategory filter if it comes via query string, eg. /apparel?subcategory=shirt
+    We only apply it on initial load (when no subcategory has been selected yet) to
+    avoid overriding user interactions.
+  */
+  useEffect(() => {
+    if (!router.isReady) return;
+    const sp = router.query.subcategory;
+    if (sp && selectedSubcategories.length === 0) {
+      const raw = Array.isArray(sp) ? sp[0] : sp;
+      if (typeof raw === 'string' && raw.trim() !== '') {
+        setSelectedSubcategories([raw]);
+      }
+    }
+    // We only want to run this once when router is ready.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady]);
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const checkMobile = () => setIsMobile(window.innerWidth < 900);
@@ -141,7 +159,7 @@ const ApparelPage = () => {
   const apparels = useMemo(() => {
     const list = (apparelData?.apparel || categoryData.apparel || []);
     if (sortBy === '') {
-      return [...list].sort((a: any, b: any) => {
+      return [...list].sort((a: unknown, b: unknown) => {
         const aId = parseInt(a.id, 10);
         const bId = parseInt(b.id, 10);
         if (isNaN(aId) || isNaN(bId)) return 0;
@@ -154,13 +172,13 @@ const ApparelPage = () => {
   // Derive unique sizes and min/max prices from apparels
   const allSizes = useMemo(() => {
     const set = new Set<string>();
-    apparels.forEach((a: any) => a.sizePrices.forEach((sp: any) => set.add(sp.size)));
+    apparels.forEach((a: unknown) => a.sizePrices.forEach((sp: unknown) => set.add(sp.size)));
     return Array.from(set).sort();
   }, [apparels]);
   
   const [minPrice, maxPrice] = useMemo(() => {
     let min = Infinity, max = -Infinity;
-    apparels.forEach((a: any) => a.sizePrices.forEach((sp: any) => {
+    apparels.forEach((a: unknown) => a.sizePrices.forEach((sp: unknown) => {
       if (sp.price < min) min = sp.price;
       if (sp.price > max) max = sp.price;
     }));
@@ -177,8 +195,8 @@ const ApparelPage = () => {
 
   // Filter for in-stock (frontend, as backend does not support it)
   const filteredApparels = useMemo(() => {
-    let filtered = apparels;
-    if (inStockOnly) filtered = filtered.filter((a: any) => a.inStock);
+    const filtered = apparels;
+    if (inStockOnly) filtered = filtered.filter((a: unknown) => a.inStock);
     return filtered;
   }, [apparels, inStockOnly]);
 
@@ -192,7 +210,7 @@ const ApparelPage = () => {
   // Brand ticker: show each brand with a representative image
   const brandTickerData = useMemo(() => {
     return brands.map((brand: string) => {
-      const apparel = apparels.find((a: any) => a.brand === brand);
+      const apparel = apparels.find((a: unknown) => a.brand === brand);
       return {
         name: brand,
         image: apparel?.images?.[0] || '/image1.jpeg',
@@ -251,8 +269,8 @@ const ApparelPage = () => {
   };
 
   // Prepare apparel products for grid (lowest price per apparel)
-  const apparelProducts = paginatedApparels.map((a: any) => {
-    const lowest = a.sizePrices.reduce((min: number, sp: any) => sp.price < min ? sp.price : min, Infinity);
+  const apparelProducts = paginatedApparels.map((a: unknown) => {
+    const lowest = a.sizePrices.reduce((min: number, sp: unknown) => sp.price < min ? sp.price : min, Infinity);
     return {
       id: a.id,
       brand: a.brand,

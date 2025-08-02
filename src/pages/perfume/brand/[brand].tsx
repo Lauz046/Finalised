@@ -1,30 +1,14 @@
-import PerfumeBrandProductPage from '../../../components/perfume/PerfumeBrandProductPage';
-import { gql } from '@apollo/client';
+import PerfumeBrandProductPage, { PERFUMES_QUERY } from '../../../components/perfume/PerfumeBrandProductPage';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import { initializeApollo } from '../../../lib/apolloClient';
-import { getBrandFromUrl } from '../../../utils/brandUtils';
-
-const PERFUMES_QUERY = gql`
-  query Perfumes($brand: String, $fragranceFamily: String, $concentration: String, $subcategory: String, $size: String, $sortOrder: String, $limit: Int, $offset: Int) {
-    perfumes(brand: $brand, fragranceFamily: $fragranceFamily, concentration: $concentration, subcategory: $subcategory, size: $size, sortOrder: $sortOrder, limit: $limit, offset: $offset) {
-      id
-      brand
-      title
-      fragranceFamily
-      concentration
-      subcategory
-      variants { size price }
-      images
-      url
-    }
-  }
-`;
+import { getBrandFromUrl, normalizeBrandForDatabase } from '../../../utils/brandUtils';
+import { ErrorBoundary } from '../../../components/ErrorBoundary';
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  // Pre-generate paths for popular perfume brands
+  // Pre-generate paths for popular brands
   const popularBrands = [
-    'chanel', 'dior', 'hermes', 'tom-ford', 'jo-malone', 'byredo',
-    'le-labo', 'creed', 'roja-parfums', 'amouage', 'xerjoff', 'kilian'
+    'chanel', 'dior', 'tom-ford', 'jo-malone', 'le-labo', 'creed',
+    'roja-parfums', 'byredo', 'diptyque', 'atelier-cologne'
   ];
 
   const paths = popularBrands.map((brand) => ({
@@ -38,25 +22,28 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const apolloClient = initializeApollo();
-  const brandUrl = context.params?.brand as string;
-  const brand = getBrandFromUrl(brandUrl);
-  
   try {
+    const apolloClient = initializeApollo();
+    const brandUrl = context.params?.brand as string;
+    const brand = getBrandFromUrl(brandUrl);
+    const normalizedBrand = normalizeBrandForDatabase(brand);
+    
     // Only fetch first page of products to reduce data size
     const { data } = await apolloClient.query({
       query: PERFUMES_QUERY,
       variables: { 
-        brand,
+        brand: normalizedBrand,
         limit: 21, // First page only
         offset: 0
       },
+      errorPolicy: 'all', // Handle errors gracefully
     });
     
     return {
       props: {
-        initialPerfumeData: data.perfumes || [],
-        brand,
+        initialPerfumeData: data?.perfumes || [],
+        brand: normalizedBrand,
+        apolloState: apolloClient.cache.extract(),
       },
       // Cache for 5 minutes
       revalidate: 300,
@@ -66,13 +53,30 @@ export const getStaticProps: GetStaticProps = async (context) => {
     return {
       props: {
         initialPerfumeData: [],
-        brand,
+        brand: context.params?.brand as string,
+        apolloState: null,
       },
       revalidate: 60, // Shorter cache on error
     };
   }
 };
 
-export default function PerfumeBrandPage({ brand }: { brand: string }) {
-  return <PerfumeBrandProductPage brand={brand} />;
+export default function PerfumeBrandPage({ 
+  initialPerfumeData, 
+  brand, 
+  apolloState 
+}: { 
+  initialPerfumeData: unknown[]; 
+  brand: string;
+  apolloState?: unknown;
+}) {
+  return (
+    <ErrorBoundary>
+      <PerfumeBrandProductPage 
+        brand={brand} 
+        initialPerfumeData={initialPerfumeData}
+        apolloState={apolloState}
+      />
+    </ErrorBoundary>
+  );
 } 

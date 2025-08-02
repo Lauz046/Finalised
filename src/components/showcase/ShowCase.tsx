@@ -25,7 +25,7 @@ function mod(n: number, m: number) {
   return ((n % m) + m) % m;
 }
 
-const _GodRaysCanvas = ({ color = '230,199,110', rays = 100, blur = 60, intensity = 0.18 }) => {
+const GodRaysCanvas = ({ color = '230,199,110', rays = 100, blur = 60, intensity = 0.18 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -284,7 +284,7 @@ const Showcase = () => {
           {windowWidth <= 700
             ? getMobileVisibleItems().map((item, i) => {
                 // Position: left (25%), center (50%), right (75%)
-                const _positions = ['left', 'center', 'right'];
+                const positions = ['left', 'center', 'right'];
                 const leftPercents = ['25%', '50%', '75%'];
                 return (
                   <div

@@ -73,22 +73,20 @@ const HomeRecommendations: React.FC = () => {
       <div className={styles.header}>You May Also Like</div>
       <div className={styles.scrollRow}>
         {recs.map(rec => (
-          <Link key={rec.id} href={rec.href} legacyBehavior>
-            <a className={styles.card} style={{ textDecoration: 'none' }}>
-              <div className={styles.imageWrapper}>
-                {rec.image && rec.image.includes('luxurysouq.com') ? (
-                  <img src={rec.image} alt={rec.name} className={styles.image} />
-                ) : (
-                  <img src="/blue_nav_icons/Blue PLUTUS LOGO.svg" alt="House of Plutus" style={{ width: 120, height: 120, objectFit: 'contain' }} />
-                )}
+          <Link key={rec.id} href={rec.href} className={styles.card} style={{ textDecoration: 'none' }}>
+            <div className={styles.imageWrapper}>
+              {rec.image && rec.image.includes('luxurysouq.com') ? (
+                <img src={rec.image} alt={rec.name} className={styles.image} />
+              ) : (
+                <img src="/blue_nav_icons/Blue PLUTUS LOGO.svg" alt="House of Plutus" style={{ width: 120, height: 120, objectFit: 'contain' }} />
+              )}
+            </div>
+            <div className={styles.info}>
+              <div className={styles.infoText}>
+                <div className={styles.brand}>{rec.brand}</div>
+                <div className={styles.name}>{rec.name}</div>
               </div>
-              <div className={styles.info}>
-                <div className={styles.infoText}>
-                  <div className={styles.brand}>{rec.brand}</div>
-                  <div className={styles.name}>{rec.name}</div>
-                </div>
-              </div>
-            </a>
+            </div>
           </Link>
         ))}
       </div>

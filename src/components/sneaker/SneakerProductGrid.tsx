@@ -17,6 +17,13 @@ interface SneakerProductGridProps {
   mobile?: boolean;
 }
 
+// Utility function to limit product names - 5 words for desktop, 4 for mobile (no ellipsis)
+const truncateProductName = (name: string, isMobile: boolean = false): string => {
+  const words = name.split(' ');
+  const maxWords = isMobile ? 4 : 5;
+  return words.slice(0, maxWords).join(' ');
+};
+
 const SneakerProductGrid: React.FC<SneakerProductGridProps> = ({ products, loading = false, mobile = false }) => {
   // Format price with proper currency
   const formatPrice = (price: number) => {
@@ -64,7 +71,7 @@ const SneakerProductGrid: React.FC<SneakerProductGridProps> = ({ products, loadi
           <div className={styles.content}>
             <div className={styles.brand}>{product.brand}</div>
             <div className={styles.name} title={product.productName}>
-              {product.productName}
+              {truncateProductName(product.productName, mobile)}
             </div>
             <div className={styles.price}>{formatPrice(product.price)}</div>
           </div>

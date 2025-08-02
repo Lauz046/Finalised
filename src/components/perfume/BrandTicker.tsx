@@ -42,7 +42,7 @@ const BrandTicker: React.FC<BrandTickerProps> = ({ brands, onBrandClick }) => {
     const ticker = tickerRef.current;
     if (!ticker) return;
     let animationFrame: number;
-    let scrollAmount = ticker.scrollLeft || 0;
+    const scrollAmount = ticker.scrollLeft || 0;
     const speed = 0.5; // px per frame
     function animate() {
       if (!ticker) return;

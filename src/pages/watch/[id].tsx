@@ -39,6 +39,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-export default function WatchProductSSRPage(props: any) {
+export default function WatchProductSSRPage(props: unknown) {
   return <ProductPage {...props} />;
 } 

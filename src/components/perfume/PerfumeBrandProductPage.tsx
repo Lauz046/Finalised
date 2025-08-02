@@ -24,7 +24,7 @@ const ALL_PERFUME_FRAGRANCE_FAMILIES = gql`
     allPerfumeFragranceFamilies
   }
 `;
-const PERFUMES_QUERY = gql`
+export const PERFUMES_QUERY = gql`
   query Perfumes($brand: String, $fragranceFamily: String, $concentration: String, $subcategory: String, $size: String, $sortOrder: String, $limit: Int, $offset: Int) {
     perfumes(brand: $brand, fragranceFamily: $fragranceFamily, concentration: $concentration, subcategory: $subcategory, size: $size, sortOrder: $sortOrder, limit: $limit, offset: $offset) {
       id
@@ -40,7 +40,7 @@ const PERFUMES_QUERY = gql`
 `;
 const PRODUCTS_PER_PAGE = 21;
 
-export default function PerfumeBrandProductPage({ brand }: { brand: string }) {
+export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apolloState }: { brand: string, initialPerfumeData?: unknown[], apolloState?: unknown }) {
   const [showFilter, setShowFilter] = useState(true);
   const [sortBy, setSortBy] = useState('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
@@ -98,12 +98,12 @@ export default function PerfumeBrandProductPage({ brand }: { brand: string }) {
 
   const allSizes = useMemo(() => {
     const set = new Set<string>();
-    perfumes.forEach((p: any) => p.variants?.forEach((v: any) => v.size && set.add(v.size)));
+    perfumes.forEach((p: unknown) => p.variants?.forEach((v: unknown) => v.size && set.add(v.size)));
     return Array.from(set).sort();
   }, [perfumes]);
   const [minPrice, maxPrice] = useMemo(() => {
     let min = Infinity, max = -Infinity;
-    perfumes.forEach((p: any) => p.variants?.forEach((v: any) => {
+    perfumes.forEach((p: unknown) => p.variants?.forEach((v: unknown) => {
       if (v.price < min) min = v.price;
       if (v.price > max) max = v.price;
     }));
@@ -134,8 +134,8 @@ export default function PerfumeBrandProductPage({ brand }: { brand: string }) {
     return currentPage;
   }, [perfumes.length, currentPage]);
 
-  const perfumeProducts = perfumes.map((p: any) => {
-    const lowest = p.variants?.reduce((min: number, v: any) => v.price < min ? v.price : min, Infinity);
+  const perfumeProducts = perfumes.map((p: unknown) => {
+    const lowest = p.variants?.reduce((min: number, v: unknown) => v.price < min ? v.price : min, Infinity);
     return {
       id: p.id,
       brand: p.brand,

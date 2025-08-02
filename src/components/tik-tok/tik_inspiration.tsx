@@ -27,8 +27,8 @@ const TikTokCarousel: React.FC = () => {
     if (isMobile) {
       return originalData;
     }
-    // Desktop: duplicate the array 3 times for infinite effect
-    return [...originalData, ...originalData, ...originalData];
+    // Desktop: duplicate the array 5 times for true infinite effect
+    return [...originalData, ...originalData, ...originalData, ...originalData, ...originalData];
   };
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -52,11 +52,10 @@ const TikTokCarousel: React.FC = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Set initial index to middle video for desktop
+  // Set initial index to third video for desktop (will be positioned in center)
   useEffect(() => {
     if (!isMobile) {
-      const middleIndex = Math.floor(originalData.length / 2);
-      setCurrentIndex(middleIndex);
+      setCurrentIndex(2); // Start with third video (index 2)
     }
   }, [isMobile]);
 
@@ -126,7 +125,7 @@ const TikTokCarousel: React.FC = () => {
         setCurrentIndex(currentIndex + 1);
       }
     } else {
-      // Desktop: infinite navigation starting from middle
+      // Desktop: infinite navigation starting from first video
       let newIndex;
       
       if (direction === 'left') {
@@ -236,7 +235,7 @@ const TikTokCarousel: React.FC = () => {
       // Mobile: simple transform, no glimpses
       return `translateX(-${currentIndex * 100}%)`;
     }
-    // Desktop: infinite scrolling effect starting from middle
+    // Desktop: infinite scrolling effect with first video starting on left
     const cardWidth = getCardWidth();
     const gap = 8; // 4px margin on each side
     const totalCardWidth = cardWidth + gap;
@@ -244,13 +243,13 @@ const TikTokCarousel: React.FC = () => {
     // Calculate the center position
     const centerPosition = window.innerWidth / 2 - cardWidth / 2;
     
-    // Start from middle video (index 4 for 9 videos) and scroll
-    // We want to show the middle video first, then scroll left until first video is in center
-    const middleIndex = Math.floor(originalData.length / 2); // 4 for 9 videos
-    const offsetFromMiddle = currentIndex - middleIndex;
-    const scrollOffset = offsetFromMiddle * totalCardWidth;
+    // For infinite effect, we need to show videos on both sides
+    // Start with first video on the left, current video in center
+    // Add some padding to show videos on both sides
+    // Adjust offset so third video (index 2) is centered initially
+    const leftOffset = centerPosition - (currentIndex * totalCardWidth) - (totalCardWidth * 2) + (2 * totalCardWidth);
     
-    return `translateX(calc(${centerPosition}px - ${scrollOffset}px))`;
+    return `translateX(${leftOffset}px)`;
   };
 
   // Get current video index for dots

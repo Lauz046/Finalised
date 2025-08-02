@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import styles from './Navbar.module.css';
 import Menu from '../menu/Menu';
 import { useProductContext } from '../../context/ProductContext';
@@ -19,7 +20,7 @@ const Navbar: React.FC<NavbarProps> = ({ onSearchClick, blueIcons }) => {
   const [bg, setBg] = useState('#fff');
   const { isPreloaded, loading } = useProductContext();
   const router = useRouter();
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const accountButtonRef = useRef<HTMLButtonElement>(null);
 
   // Use blueIcons prop if provided, otherwise fallback to route logic
@@ -68,9 +69,9 @@ const Navbar: React.FC<NavbarProps> = ({ onSearchClick, blueIcons }) => {
         style={{ background: bg }}
       >
         <div className={styles.logoContainer}>
-          <a href="/" style={{ textDecoration: 'none', cursor: 'pointer' }}>
+          <Link href="/" style={{ textDecoration: 'none', cursor: 'pointer' }}>
             <Image src={isBlueIcons ? "/blue_nav_icons/Blue PLUTUS LOGO.svg" : "/nav/plutus logo.svg"} alt="House of Plutus Logo" width={160} height={48} priority />
-          </a>
+          </Link>
         </div>
         <div className={styles.iconsContainer}>
           <button className={styles.iconBtn} aria-label="Search" onClick={onSearchClick}>

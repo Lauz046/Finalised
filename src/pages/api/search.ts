@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getAllProducts } from '../../utils/getAllProducts';
 
 // In-memory cache for all products
-let productCache: any[] = [];
+let productCache: unknown[] = [];
 let searchIndex: Map<string, number[]> = new Map();
 let lastCacheTime = 0;
 const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes in ms - shorter for faster updates
@@ -16,7 +16,7 @@ function normalize(str: string = '') {
 }
 
 // Build search index for faster lookups
-function buildSearchIndex(products: any[]) {
+function buildSearchIndex(products: unknown[]) {
   const index = new Map<string, number[]>();
   
   products.forEach((product, idx) => {
@@ -61,7 +61,7 @@ async function getCachedProducts() {
 }
 
 // Get category counts for all products
-function getCategoryCounts(products: any[]) {
+function getCategoryCounts(products: unknown[]) {
   const counts: Record<string, number> = {
     sneakers: 0,
     apparel: 0,
@@ -137,7 +137,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     
     // Fallback to full text search if index doesn't have results
-    let results: any[];
+    let results: unknown[];
     if (matchingIndices.size > 0) {
       results = Array.from(matchingIndices).map(idx => allProducts[idx]);
     } else {

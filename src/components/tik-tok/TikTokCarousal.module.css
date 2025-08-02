@@ -77,6 +77,17 @@
   right: 2rem;
 }
 
+/* Desktop: Adjust navigation button positions for infinite carousel */
+@media (min-width: 769px) {
+  .navButtonLeft {
+    left: 4rem;
+  }
+  
+  .navButtonRight {
+    right: 4rem;
+  }
+}
+
 /* Carousel Container */
 .carouselWrapper {
   width: 100%;
@@ -86,6 +97,13 @@
   padding: 0;
   mask-image: linear-gradient(to right, transparent 0%, white 8%, white 95%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, white 8%, white 95%, transparent 100%);
+}
+
+/* Desktop: Ensure enough space for infinite carousel */
+@media (min-width: 769px) {
+  .carouselWrapper {
+    padding: 0 10vw; /* Add padding to show videos on sides */
+  }
 }
 
 .carousel {
@@ -111,15 +129,32 @@
   flex-shrink: 0;
 }
 
-.card:hover {
-  opacity: 1;
-  transform: scale(0.95);
+/* Desktop: Remove hover effect, only active card is larger */
+@media (min-width: 769px) {
+  .card:hover {
+    opacity: 1;
+    transform: scale(0.9); /* Keep same size on hover */
+  }
+  
+  .card.active {
+    opacity: 1;
+    transform: scale(1) scaleY(1.12);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  }
 }
 
-.card.active {
-  opacity: 1;
-  transform: scale(1) scaleY(1.12);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+/* Mobile: Keep hover effect */
+@media (max-width: 768px) {
+  .card:hover {
+    opacity: 1;
+    transform: scale(0.95);
+  }
+  
+  .card.active {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  }
 }
 
 .video {

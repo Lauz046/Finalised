@@ -88,24 +88,21 @@ const LiveChat: React.FC = () => {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const isJustEmail = emailRegex.test(contact.trim());
       
-      let name, email;
+      let email;
       
       if (isJustEmail) {
-        name = 'Customer';
         email = contact.trim();
       } else {
         const contactParts = contact.split('<');
         if (contactParts.length === 2 && contactParts[1].includes('@')) {
-          name = contactParts[0].trim();
           email = contactParts[1].replace('>', '').trim();
         } else {
-          name = 'Customer';
           email = contact.trim();
         }
       }
       
       sendEnquiry({
-        name,
+        name: 'Customer', // Assuming a default name for the enquiry
         email,
         message: `Enquiry for ${product?.name} (${product?.brand})`,
         productId: product?.id,
@@ -148,17 +145,15 @@ const LiveChat: React.FC = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const isJustEmail = emailRegex.test(contact.trim());
     
-    let name, email;
+    let email;
     
     if (isJustEmail) {
       // If user entered just email, use a default name
-      name = 'Customer';
       email = contact.trim();
     } else {
       // Try to parse "Name <email@example.com>" format
       const contactParts = contact.split('<');
       if (contactParts.length === 2 && contactParts[1].includes('@')) {
-        name = contactParts[0].trim();
         email = contactParts[1].replace('>', '').trim();
       } else {
         setInputError('Please enter a valid email address.');

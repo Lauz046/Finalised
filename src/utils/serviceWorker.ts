@@ -98,7 +98,7 @@ export async function getServiceWorkerRegistration(): Promise<ServiceWorkerRegis
 }
 
 // Send message to service worker
-export async function sendMessageToServiceWorker(message: any): Promise<void> {
+export async function sendMessageToServiceWorker(message: unknown): Promise<void> {
   const registration = await getServiceWorkerRegistration();
   if (registration?.active) {
     registration.active.postMessage(message);

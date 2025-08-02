@@ -1,13 +1,10 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { gql, useQuery } from '@apollo/client';
-import Navbar from '../nav/Navbar';
 import { Breadcrumbs } from '../ProductPage/Breadcrumbs';
 import ApparelFilterSidebar from './ApparelFilterSidebar';
 import ApparelProductGrid from './ApparelProductGrid';
 import ApparelMobileFilterOverlay from './ApparelMobileFilterOverlay';
-import BrandSelector from '../BrandSelector';
 import Pagination from './Pagination';
-import SearchOverlay from '../SearchOverlay';
 import { getBrandUrl } from '../../utils/brandUtils';
 
 const ALL_APPAREL_BRANDS = gql`
@@ -41,7 +38,7 @@ export const APPAREL_QUERY = gql`
 `;
 const PRODUCTS_PER_PAGE = 21;
 
-export default function ApparelBrandProductPage({ brand, initialApparelData }: { brand: string, initialApparelData?: any[] }) {
+export default function ApparelBrandProductPage({ brand, initialApparelData }: { brand: string, initialApparelData?: unknown[] }) {
   // Mobile overlay tab state
   const [mobileOverlayTab, setMobileOverlayTab] = useState<'filter' | 'sort'>('filter');
   const [showFilter, setShowFilter] = useState(true);
@@ -53,7 +50,7 @@ export default function ApparelBrandProductPage({ brand, initialApparelData }: {
   const [inStockOnly, setInStockOnly] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [shouldResetPriceRange, setShouldResetPriceRange] = useState(true);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
   
@@ -102,12 +99,12 @@ export default function ApparelBrandProductPage({ brand, initialApparelData }: {
 
   const allSizes = useMemo(() => {
     const set = new Set<string>();
-    apparels.forEach((a: any) => a.sizePrices.forEach((sp: any) => set.add(sp.size)));
+    apparels.forEach((a: unknown) => a.sizePrices.forEach((sp: unknown) => set.add(sp.size)));
     return Array.from(set).sort();
   }, [apparels]);
   const [minPrice, maxPrice] = useMemo(() => {
     let min = Infinity, max = -Infinity;
-    apparels.forEach((a: any) => a.sizePrices.forEach((sp: any) => {
+    apparels.forEach((a: unknown) => a.sizePrices.forEach((sp: unknown) => {
       if (sp.price < min) min = sp.price;
       if (sp.price > max) max = sp.price;
     }));
@@ -138,8 +135,8 @@ export default function ApparelBrandProductPage({ brand, initialApparelData }: {
     return currentPage;
   }, [apparels.length, currentPage]);
 
-  const apparelProducts = apparels.map((a: any) => {
-    const lowest = a.sizePrices.reduce((min: number, sp: any) => sp.price < min ? sp.price : min, Infinity);
+  const apparelProducts = apparels.map((a: unknown) => {
+    const lowest = a.sizePrices.reduce((min: number, sp: unknown) => sp.price < min ? sp.price : min, Infinity);
     return {
       id: a.id,
       brand: a.brand,
@@ -149,23 +146,7 @@ export default function ApparelBrandProductPage({ brand, initialApparelData }: {
     };
   });
 
-  // Brand ticker data for mobile
-  const brandTickerData = useMemo(() => {
-    return brands.map((brandName: string) => {
-      const apparel = apparels.find((a: any) => a.brand === brandName);
-      return {
-        name: brandName,
-        image: apparel?.images?.[0] || '/image1.jpeg',
-      };
-    });
-  }, [brands, apparels]);
 
-  // Handlers
-  const handleBrandClick = (brandName: string) => {
-    if (brandName !== brand) {
-      window.location.href = `/apparel/brand/${getBrandUrl(brandName)}`;
-    }
-  };
 
   const stickyBarRef = useRef<HTMLDivElement>(null);
   const gridContainerRef = useRef<HTMLDivElement>(null);

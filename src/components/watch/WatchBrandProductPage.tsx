@@ -19,7 +19,7 @@ const ALL_WATCH_GENDERS = gql`
     allWatchGenders
   }
 `;
-const WATCHES_QUERY = gql`
+export const WATCHES_QUERY = gql`
   query Watches($brand: String, $color: String, $gender: String, $sortOrder: String, $limit: Int, $offset: Int) {
     watches(brand: $brand, color: $color, gender: $gender, sortOrder: $sortOrder, limit: $limit, offset: $offset) {
       id
@@ -35,7 +35,7 @@ const WATCHES_QUERY = gql`
 `;
 const PRODUCTS_PER_PAGE = 21;
 
-export default function WatchBrandProductPage({ brand }: { brand: string }) {
+export default function WatchBrandProductPage({ brand, initialWatchData, apolloState }: { brand: string, initialWatchData?: unknown[], apolloState?: unknown }) {
   const [showFilter, setShowFilter] = useState(true);
   const [sortBy, setSortBy] = useState('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
@@ -106,19 +106,19 @@ export default function WatchBrandProductPage({ brand }: { brand: string }) {
 
   const allColors = useMemo(() => {
     const set = new Set<string>();
-    watches.forEach((w: any) => {
+    watches.forEach((w: unknown) => {
       if (w.color) set.add(w.color);
     });
     return Array.from(set).sort();
   }, [watches]);
   const [minPrice, maxPrice] = useMemo(() => {
-    let min = Infinity, max = -Infinity;
-    watches.forEach((w: any) => {
-      if (w.salePrice < min) min = w.salePrice;
+    let _min = Infinity, max = -Infinity;
+    watches.forEach((w: unknown) => {
+      if (w.salePrice < _min) _min = w.salePrice;
       if (w.salePrice > max) max = w.salePrice;
     });
-    if (!isFinite(min) || !isFinite(max)) return [0, 50000];
-    return [Math.floor(min), Math.ceil(max)];
+    if (!isFinite(_min) || !isFinite(max)) return [0, 50000];
+    return [Math.floor(_min), Math.ceil(max)];
   }, [watches]);
   useEffect(() => {
     if (shouldResetPriceRange && (priceRange[0] !== minPrice || priceRange[1] !== maxPrice)) {
@@ -144,7 +144,7 @@ export default function WatchBrandProductPage({ brand }: { brand: string }) {
     return currentPage;
   }, [watches.length, currentPage]);
 
-  const watchProducts = watches.map((w: any) => ({
+  const watchProducts = watches.map((w: unknown) => ({
     id: w.id,
     brand: w.brand,
     name: w.name,

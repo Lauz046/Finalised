@@ -1,38 +1,29 @@
 import React from 'react';
-import styles from './PerfumeProductGrid.module.css';
 import Link from 'next/link';
-import ProductGridSkeleton from '../ProductGridSkeleton';
+import styles from './PerfumeProductGrid.module.css';
 
-interface PerfumeProduct {
+interface Product {
   id: string;
   brand: string;
-  title?: string;
-  name?: string;
-  fragranceFamily?: string;
+  title: string;
   images: string[];
-  variants?: { size?: string; price?: number }[];
+  variants?: Array<{ price: number }>;
   price?: number;
 }
 
 interface PerfumeProductGridProps {
-  products: PerfumeProduct[];
-  onProductClick?: (id: string) => void;
+  products: Product[];
+  onProductClick?: (product: Product) => void;
   mobile?: boolean;
   loading?: boolean;
 }
 
-function getLowestPrice(variants: { price?: number }[] | undefined): number | null {
-  if (!Array.isArray(variants) || variants.length === 0) return null;
-  let lowest: number | null = null;
-  for (const v of variants) {
-    const p = v.price;
-    const priceNum = typeof p === 'string' ? parseFloat(p) : p;
-    if (typeof priceNum === 'number' && !isNaN(priceNum) && (lowest === null || priceNum < lowest)) {
-      lowest = priceNum;
-    }
-  }
-  return lowest;
-}
+// Utility function to limit product names - 5 words for desktop, 4 for mobile (no ellipsis)
+const truncateProductName = (name: string, isMobile: boolean = false): string => {
+  const words = name.split(' ');
+  const maxWords = isMobile ? 4 : 5;
+  return words.slice(0, maxWords).join(' ');
+};
 
 const PerfumeProductGrid: React.FC<PerfumeProductGridProps> = ({ products, onProductClick, mobile = false, loading = false }) => {
   // Format price with proper currency
@@ -43,21 +34,21 @@ const PerfumeProductGrid: React.FC<PerfumeProductGridProps> = ({ products, onPro
     }).format(price)}`;
   };
 
-  // Limit product name to 5 words
-  const truncateProductName = (name: string) => {
-    if (!name) return '';
-    const words = name.split(' ');
-    if (words.length <= 5) return name;
-    return words.slice(0, 5).join(' ') + '...';
+  // Get lowest price from variants
+  const getLowestPrice = (variants: Array<{ price: number }>) => {
+    if (!variants || variants.length === 0) return null;
+    return Math.min(...variants.map(v => v.price));
   };
 
   if (loading) {
     return (
       <div className={mobile ? styles.gridMobile : styles.grid}>
-        {Array.from({ length: 12 }).map((_, index) => (
-          <div key={index} className={styles.skeletonCard}>
-            <div className={styles.skeletonImage} />
-            <div className={styles.skeletonContent}>
+        {Array.from({ length: 8 }).map((_, index) => (
+          <div key={index} className={styles.card}>
+            <div className={styles.imageContainer}>
+              <div className={styles.skeletonImage} />
+            </div>
+            <div className={styles.content}>
               <div className={styles.skeletonBrand} />
               <div className={styles.skeletonName} />
               <div className={styles.skeletonPrice} />
@@ -88,8 +79,8 @@ const PerfumeProductGrid: React.FC<PerfumeProductGridProps> = ({ products, onPro
             </div>
             <div className={styles.content}>
               <div className={styles.brand}>{product.brand}</div>
-              <div className={styles.name} title={product.title || product.name}>
-                {product.title ? truncateProductName(product.title) : (product.name ? truncateProductName(product.name) : '')}
+              <div className={styles.name} title={product.title}>
+                {truncateProductName(product.title || '', mobile)}
               </div>
               <div className={styles.price}>{price !== null ? formatPrice(price) : '-'}</div>
             </div>

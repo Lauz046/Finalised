@@ -42,6 +42,15 @@ export function getBrandFromUrl(brandUrl: string): string {
   return BRAND_MAPPINGS[normalized] || denormalizeBrandFromUrl(brandUrl);
 }
 
+// Enhanced brand matching for better compatibility
+export function normalizeBrandForDatabase(brand: string): string {
+  return brand
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, ' ') // Normalize multiple spaces to single space
+    .replace(/[^\w\s-]/g, ''); // Remove special characters except spaces and hyphens
+}
+
 export function getBrandUrl(brand: string): string {
   const normalized = normalizeBrandForUrl(brand);
   return normalized;

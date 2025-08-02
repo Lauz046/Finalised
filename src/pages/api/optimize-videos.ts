@@ -53,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           note: 'Original file copied (optimization requires FFmpeg)'
         })
       } catch (error) {
-        results.push({ filename, status: 'error', error: (error as any).message })
+        results.push({ filename, status: 'error', error: (error as unknown).message })
       }
     }
 
@@ -65,7 +65,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } catch (error) {
     res.status(500).json({ 
       message: 'Internal server error',
-      error: (error as any).message 
+      error: (error as unknown).message 
     })
   }
 } 

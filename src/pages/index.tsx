@@ -56,7 +56,7 @@ const HomePage = () => {
       
       {/* Critical components - load immediately */}
       <HeroCarousel/>
-      <PremiumScrollRow/>
+      <PremiumScrollRow uniqueId="top"/>
       
       {/* Secondary components - load after 100ms */}
       <ProgressiveLoader delay={100}>
@@ -67,7 +67,7 @@ const HomePage = () => {
       {/* Tertiary components - load after 200ms */}
       <ProgressiveLoader delay={200}>
         <NewArrivals/>
-        <PremiumIconRow/>
+        <PremiumIconRow uniqueId="bottom"/>
       </ProgressiveLoader>
       
       {/* Heavy components - load after 300ms */}

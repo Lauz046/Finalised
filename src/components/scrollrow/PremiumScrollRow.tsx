@@ -33,12 +33,16 @@ const shoes = [
 
 const star = { src: '/scroll line/Star10.png', alt: 'Star' };
 
-const PremiumScrollRow = () => {
+interface PremiumScrollRowProps {
+  uniqueId?: string; // Add unique identifier prop
+}
+
+const PremiumScrollRow: React.FC<PremiumScrollRowProps> = ({ uniqueId = 'default' }) => {
   // Build the sneaker row: shoe, name (right of shoe), star, ...
   const sneakerRow = [];
   for (let i = 0; i < shoes.length; i++) {
     sneakerRow.push(
-      <div className={styles.shoeItemSmall} key={`shoe-${i}`}>
+      <div className={styles.shoeItemSmall} key={`${uniqueId}-shoe-${i}`}>
         <Image 
           src={shoes[i].src} 
           alt={shoes[i].name} 
@@ -51,7 +55,7 @@ const PremiumScrollRow = () => {
       </div>
     );
     sneakerRow.push(
-      <div className={styles.starIcon} key={`star-${i}`}>
+      <div className={styles.starIcon} key={`${uniqueId}-star-${i}`}>
         <Image 
           src={star.src} 
           alt={star.alt} 
@@ -63,7 +67,16 @@ const PremiumScrollRow = () => {
       </div>
     );
   }
-  const infiniteSneakerRow = [...sneakerRow, ...sneakerRow];
+  
+  // Create infinite row with unique keys for duplicated elements
+  const infiniteSneakerRow = [
+    ...sneakerRow,
+    ...sneakerRow.map((item, index) => 
+      React.cloneElement(item, { 
+        key: `${uniqueId}-duplicate-${item.key}-${index}` 
+      })
+    )
+  ];
 
   return (
     <div className={styles.premiumScrollWrapper}>
@@ -71,7 +84,7 @@ const PremiumScrollRow = () => {
       <div className={styles.marqueeWrapper}>
         <div className={`${styles.marquee} ${styles.left}`}>
           {[...brands, ...brands].map((brand, idx) => (
-            <div className={styles.brandLogoSmall} key={idx}>
+            <div className={styles.brandLogoSmall} key={`${uniqueId}-brand-${idx}`}>
               <Image 
                 src={brand.src} 
                 alt={brand.alt} 

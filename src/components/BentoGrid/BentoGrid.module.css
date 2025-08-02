@@ -1,9 +1,3 @@
-:root {
-  --bento-gap: 16px;
-  --bento-padding: 40px;
-  --label-font: 'Times New Roman', Times, serif;
-}
-
 .bentoGrid {
   display: grid;
   grid-template-areas:

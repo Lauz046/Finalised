@@ -20,14 +20,34 @@ import { MobileSizeOverlay } from './MobileSizeOverlay';
 import { MobileSizeChartOverlay } from './MobileSizeChartOverlay';
 import SearchOverlay from '../SearchOverlay';
 import AddToStashButton from '../AddToStashButton';
-import { initGSAP, safeAnimate } from '../../utils/gsapUtils';
+import { initGSAP } from '../../utils/gsapUtils';
 
 interface ProductPageProps {
   productId: string;
   productType: 'sneaker' | 'perfume' | 'watch' | 'apparel' | 'accessories';
-  product?: any; // generic for SSR
+  product?: ProductData; // generic for SSR
 }
 
+interface ProductData {
+  id: string;
+  brand: string;
+  productName?: string;
+  name?: string;
+  title?: string;
+  images: string[];
+  sizePrices?: SizePrice[];
+  price?: number;
+  salePrice?: number;
+  variants?: Array<{ price: number }>;
+  sellerName?: string;
+  sellerUrl?: string;
+  productLink?: string;
+  url?: string;
+  link?: string;
+  soldOut?: boolean;
+  category?: string;
+  description?: string;
+}
 
 
 const ALL_SNEAKERS_QUERY = gql`
@@ -42,76 +62,130 @@ const ALL_SNEAKERS_QUERY = gql`
   }
 `;
 
+// Move all queries outside the component to prevent hooks order issues
+const SNEAKER_QUERY = gql`
+  query Sneaker($id: ID!) {
+    sneaker(id: $id) {
+      id
+      brand
+      productName
+      sizePrices { size price }
+      images
+      soldOut
+      sellerName
+      sellerUrl
+      productLink
+    }
+  }
+`;
+
+const PERFUME_QUERY = gql`
+  query Perfume($id: ID!) {
+    perfume(id: $id) {
+      id
+      brand
+      productName
+      images
+      price
+      sellerName
+      sellerUrl
+      url
+    }
+  }
+`;
+
+const WATCH_QUERY = gql`
+  query Watch($id: ID!) {
+    watch(id: $id) {
+      id
+      brand
+      productName
+      images
+      price
+      sellerName
+      sellerUrl
+    }
+  }
+`;
+
+const APPAREL_QUERY = gql`
+  query Apparel($id: ID!) {
+    apparel(id: $id) {
+      id
+      brand
+      productName
+      sizePrices { size price }
+      images
+      sellerName
+      sellerUrl
+    }
+  }
+`;
+
+const ACCESSORIES_QUERY = gql`
+  query Accessory($id: ID!) {
+    accessory(id: $id) {
+      id
+      brand
+      productName
+      sizePrices { size price }
+      images
+      sellerName
+      sellerUrl
+    }
+  }
+`;
+
+// Additional queries for all products
+const ALL_PERFUMES_QUERY = gql`
+  query AllPerfumes {
+    perfumes {
+      id
+      brand
+      title
+      variants { price }
+      images
+    }
+  }
+`;
+
+const ALL_WATCHES_QUERY = gql`
+  query AllWatches {
+    watches {
+      id
+      brand
+      name
+      salePrice
+      images
+    }
+  }
+`;
+
+const ALL_APPAREL_QUERY = gql`
+  query AllApparel {
+    apparel {
+      id
+      brand
+      productName
+      sizePrices { size price }
+      images
+    }
+  }
+`;
+
+const ALL_ACCESSORIES_QUERY = gql`
+  query AllAccessories {
+    accessories {
+      id
+      brand
+      productName
+      sizePrices { size price }
+      images
+    }
+  }
+`;
+
 export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType, product: productProp }) => {
-  // Queries for each category
-  const SNEAKER_QUERY = gql`
-    query Sneaker($id: ID!) {
-      sneaker(id: $id) {
-        id
-        brand
-        productName
-        sizePrices { size price }
-        images
-        soldOut
-        sellerName
-        sellerUrl
-        productLink
-      }
-    }
-  `;
-  const PERFUME_QUERY = gql`
-    query Perfume($id: ID!) {
-      perfume(id: $id) {
-        id
-        brand
-        productName
-        images
-        price
-        sellerName
-        sellerUrl
-        url
-      }
-    }
-  `;
-  const WATCH_QUERY = gql`
-    query Watch($id: ID!) {
-      watch(id: $id) {
-        id
-        brand
-        productName
-        images
-        price
-        sellerName
-        sellerUrl
-      }
-    }
-  `;
-  const APPAREL_QUERY = gql`
-    query Apparel($id: ID!) {
-      apparel(id: $id) {
-        id
-        brand
-        productName
-        sizePrices { size price }
-        images
-        sellerName
-        sellerUrl
-      }
-    }
-  `;
-  const ACCESSORIES_QUERY = gql`
-    query Accessory($id: ID!) {
-      accessory(id: $id) {
-        id
-        brand
-        productName
-        sizePrices { size price }
-        images
-        sellerName
-        sellerUrl
-      }
-    }
-  `;
 
   // Choose query and data key based on productType
   let QUERY, allQuery, dataKey, allKey;
@@ -124,65 +198,25 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
       break;
     case 'perfume':
       QUERY = PERFUME_QUERY;
-      allQuery = gql`
-        query AllPerfumes {
-          perfumes {
-            id
-            brand
-            title
-            variants { price }
-            images
-          }
-        }
-      `;
+      allQuery = ALL_PERFUMES_QUERY;
       dataKey = 'perfume';
       allKey = 'perfumes';
       break;
     case 'watch':
       QUERY = WATCH_QUERY;
-      allQuery = gql`
-        query AllWatches {
-          watches {
-            id
-            brand
-            name
-            salePrice
-            images
-          }
-        }
-      `;
+      allQuery = ALL_WATCHES_QUERY;
       dataKey = 'watch';
       allKey = 'watches';
       break;
     case 'apparel':
       QUERY = APPAREL_QUERY;
-      allQuery = gql`
-        query AllApparel {
-          apparel {
-            id
-            brand
-            productName
-            sizePrices { size price }
-            images
-          }
-        }
-      `;
+      allQuery = ALL_APPAREL_QUERY;
       dataKey = 'apparel';
       allKey = 'apparel';
       break;
     case 'accessories':
       QUERY = ACCESSORIES_QUERY;
-      allQuery = gql`
-        query AllAccessories {
-          accessories {
-            id
-            brand
-            productName
-            sizePrices { size price }
-            images
-          }
-        }
-      `;
+      allQuery = ALL_ACCESSORIES_QUERY;
       dataKey = 'accessory';
       allKey = 'accessories';
       break;
@@ -223,19 +257,15 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
     initGSAP();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-
-  const product = productProp || data?.[dataKey];
-  if (!product) return <div>Product not found</div>;
-
-  // ScrollTrigger logic - moved after product is defined
+  // ScrollTrigger logic - moved to top to avoid conditional hooks
   useEffect(() => {
     // Only apply scroll triggers on desktop
-    if (isMobile) return;
+    if (isMobile || typeof window === 'undefined') return;
     
-    if (typeof window === 'undefined') return;
     if (!leftColRef.current || !rightColRef.current || !containerRef.current || !lastImageRef.current) return;
+    
+    const product = productProp || data?.[dataKey];
+    if (!product) return;
     
     let cleanup: (() => void) | undefined;
     
@@ -254,7 +284,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
       if (!leftCol || !rightCol || !container || !lastImg) return;
 
       // Check if product has only one image
-      const hasSingleImage = product?.images?.length === 1;
+      const hasSingleImage = (product as ProductData)?.images?.length === 1;
       
       if (hasSingleImage) {
         // For single image products: pin only the left column (image) until size chart is reached
@@ -286,15 +316,13 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
           });
           
           return () => {
-            singleImagePin && singleImagePin.kill();
+            if (singleImagePin) singleImagePin.kill();
           };
         }
       } else {
         // Original logic for multiple images
         // Pin the right column until the last image hits the top, then pin the left column
-        let rightPin, leftPin;
-        // Pin rightCol while scrolling through leftCol (images)
-        rightPin = (ScrollTrigger as any).create({
+        const rightPin = (ScrollTrigger as any).create({
           trigger: container,
           start: 'top 120px',
           endTrigger: lastImg,
@@ -318,10 +346,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
           },
         });
         // Pin leftCol after last image is reached, let rightCol scroll
-        leftPin = (ScrollTrigger as any).create({
+        const leftPin = (ScrollTrigger as any).create({
             trigger: lastImg,
             start: 'top 180px',
-            end: () => `+=${rightCol.offsetHeight - window.innerHeight - 200}`,
+            end: () => `+=${(rightCol as HTMLElement).offsetHeight - window.innerHeight - 200}`,
             pin: leftCol,
             pinSpacing: false,
             anticipatePin: 1,
@@ -340,8 +368,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
             },
           });
         return () => {
-          rightPin && rightPin.kill();
-          leftPin && leftPin.kill();
+          if (rightPin) rightPin.kill();
+          if (leftPin) leftPin.kill();
         };
       }
     };
@@ -353,35 +381,63 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
     return () => {
       cleanup?.();
     };
-  }, [data, isMobile, product]);
-  // --- End ScrollTrigger logic ---
+  }, [data, isMobile, productProp, dataKey]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error?.message || 'Unknown error'}</div>;
+
+  const product = productProp || data?.[dataKey];
+  if (!product) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '50vh',
+        flexDirection: 'column',
+        gap: '1rem'
+      }}>
+        <h2>Product Not Found</h2>
+        <p>The product you&apos;re looking for could not be loaded.</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
 
   // Get recommendations from all products
   const allProducts = allData?.[allKey] || [];
   const recommendations = allProducts
-    .filter((p: any) => p.id !== product.id)
+    .filter((p: unknown) => (p as ProductData)?.id !== product.id)
     .slice(0, 6)
-    .map((p: any) => {
-      const name = p.productName || p.name || p.title;
-      const price = p.price || p.salePrice || (p.sizePrices && p.sizePrices[0]?.price) || (p.variants && p.variants[0]?.price);
+    .map((p: unknown) => {
+      const pAny = p as ProductData;
+      const name = pAny.productName || pAny.name || pAny.title || 'Unknown Product';
+      const price = pAny.price || pAny.salePrice || (pAny.sizePrices && pAny.sizePrices[0]?.price) || (pAny.variants && pAny.variants[0]?.price) || 0;
       return {
-        id: p.id,
-        image: p.images[0],
+        id: pAny.id,
+        image: pAny.images[0] || '',
         name,
-        brand: p.brand,
+        brand: pAny.brand,
         price,
       };
     });
 
   // For now, use placeholder sellers and recommendations
-
   const mockDescription = product.description || 'With crisp detailing and nostalgic blue accents, this 2024 release captures the essence of vintage basketball with a modern edge.';
 
-  const _currentSize = selectedSize || (product.sizePrices ? product.sizePrices[0] : null);
-
-
-
-  const display = getDisplayFields(product, productType);
+  const display = getDisplayFields(product);
 
   // Mobile overlay handlers
   const handleMobileSizeClick = () => {
@@ -432,7 +488,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
               name: display.name,
               brand: product.brand,
               price: display.price,
-              image: product.images[0],
+              image: product.images[0] || '',
               category: product.category || productType,
               productType: productType
             }}
@@ -441,7 +497,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
             id: product.id,
             name: display.name,
             brand: product.brand,
-            image: product.images[0],
+            image: product.images[0] || '',
           })}>
             Enquire Now
           </button>
@@ -464,7 +520,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
                   id: product.id,
                   name: display.name,
                   brand: product.brand,
-                  image: product.images[0],
+                  image: product.images[0] || '',
                 })
               }
             />
@@ -510,8 +566,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
   );
 };
 
-function getDisplayFields(product: any, type: string) {
-  const name = product.productName || product.name || product.title;
-  const price = product.price || product.salePrice || (product.sizePrices && product.sizePrices[0]?.price) || (product.variants && product.variants[0]?.price);
+function getDisplayFields(product: ProductData) {
+  const name = product.productName || product.name || product.title || 'Unknown Product';
+  const price = product.price || product.salePrice || (product.sizePrices && product.sizePrices[0]?.price) || (product.variants && product.variants[0]?.price) || 0;
   return { name, price };
 } 

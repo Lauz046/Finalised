@@ -21,11 +21,12 @@ const formatPrice = (price: number): string => {
   return `Rs. ${price.toLocaleString()}`;
 };
 
-// Utility function to truncate product name to 6 words
-const truncateProductName = (name: string): string => {
+// Utility function to truncate product name - 5 words for desktop, 4 for mobile (no ellipsis)
+const truncateProductName = (name: string, isMobile: boolean = false): string => {
   if (!name) return '';
   const words = name.split(' ');
-  return words.slice(0, 6).join(' ') + (words.length > 6 ? '...' : '');
+  const maxWords = isMobile ? 4 : 5;
+  return words.slice(0, maxWords).join(' ');
 };
 
 const AccessoriesProductGrid: React.FC<AccessoriesProductGridProps> = ({ products, loading = false, mobile = false }) => {
@@ -64,7 +65,9 @@ const AccessoriesProductGrid: React.FC<AccessoriesProductGridProps> = ({ product
           </div>
           <div className={styles.content}>
             <div className={styles.brand}>{product.brand}</div>
-            <div className={styles.name}>{truncateProductName(product.productName)}</div>
+            <div className={styles.name} title={product.productName}>
+              {truncateProductName(product.productName, mobile)}
+            </div>
             <div className={styles.price}>{formatPrice(product.price)}</div>
           </div>
         </Link>

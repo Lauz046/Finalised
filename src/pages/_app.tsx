@@ -13,10 +13,11 @@ import { EnquiryPanelProvider } from '../components/EnquiryPanelContext';
 import EnquiryPanel from '../components/EnquiryPanel';
 import { ProductProvider } from '../context/ProductContext';
 import { AuthProvider } from '../context/AuthContext';
-import PerformanceMonitor from '../components/PerformanceMonitor';
 import HornLoader from '../components/loading/HornLoader';
 import { useRouter } from 'next/router';
 import { registerServiceWorker, handleServiceWorkerUpdate } from '../utils/serviceWorker';
+import '../styles/global.css';
+import '../globals.css';
 
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
@@ -40,11 +41,11 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   // Simulate initial loading
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 3500); // Show loading for 3.5 seconds to accommodate 2s horn + brand reveal
+      const timer = setTimeout(() => {
+    setIsLoading(false);
+  }, 3500); // Show loading for 3.5 seconds to accommodate 2s horn + brand reveal
 
-    return () => clearTimeout(timer);
+  return () => clearTimeout(timer);
   }, []);
 
   const handleLoadingComplete = () => {
@@ -72,7 +73,6 @@ function MyApp({ Component, pageProps }: AppProps) {
                     {!isAuthPage && <Navbar onSearchClick={() => setIsSearchOpen(true)} />}
                     {!isAuthPage && <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />}
                     <Component {...pageProps} />
-                    <PerformanceMonitor />
                     {!isStashPage && !isAuthPage && <Footer />}
                   </main>
                 </>

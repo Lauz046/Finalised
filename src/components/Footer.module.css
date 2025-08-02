@@ -42,7 +42,7 @@
   display: flex;
   align-items: center;
   margin-bottom: 8px;
-  margin-left: -20px;
+  margin-left: 0;
 }
 
 .tagline {

@@ -139,19 +139,21 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 56px 56px;
-  justify-content: center;
+  padding: 32px 40px;
+  justify-content: flex-start;
+  min-height: 500px;
+  margin-top: -40px;
 }
+
 .menuProductGridCard {
   background: #fff;
   border: 1px solid #e0e6ed;
   border-radius: 0px;
-  padding: 0px 222px 0px 62px;
-
+  padding: 0px 20px 0px 20px;
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
-  
+  min-height: 400px;
 }
 
 .menuProductImg {
@@ -170,14 +172,19 @@
   margin-right: 64px;
 }
 .menuSectionHeading {
-  font-size: 1.12rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #0a2230;
-  border-bottom: 1.5px solid #e0e6ed;
-  padding-bottom: 8px;
-  margin-bottom: 18px;
+  border-bottom: 2px solid #e0e6ed;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 10;
+  padding-top: 8px;
 }
 .menuBrandRow {
   display: flex;
@@ -188,15 +195,16 @@
   padding-bottom: 8px;
 }
 .menuBrandItem {
-  font-size: 1.08rem;
+  font-size: 1.1rem;
   font-weight: 500;
   color: #0a2230;
-  padding: 8px 0 8px 12px;
+  padding: 10px 0 10px 16px;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
   border-bottom: 1px solid #f0f2f5;
   width: 100%;
+  line-height: 1.4;
 }
 .menuBrandItem:last-child {
   border-bottom: none;
@@ -262,45 +270,60 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 32px;
+  gap: 40px;
   width: 100%;
-  margin-top: 24px;
+  margin-top: 8px;
+  min-height: 500px;
+  max-height: 600px;
+  padding: 0 20px;
 }
+
 .menuApparelBrandList {
   background: #f5f7fa;
- 
-  padding: 32px 48px 32px 24px;
-  min-width: 180px;
-  max-width: 220px;
+  padding: 16px 20px 24px 20px;
+  min-width: 240px;
+  max-width: 280px;
   margin-left: 40px;
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 8px;
   font-size: 1.1rem;
   font-weight: 500;
-  max-height: 700px;
+  max-height: 600px;
   overflow-y: auto;
+  margin-top: 0;
 }
+
 .menuApparelCategoryList {
   background: #fff;
   border: 1.5px solid #e0e6ed;
-
-  padding: 32px 48px 32px 24px;
-  min-width: 220px;
-  max-width: 220px;
+  padding: 16px 20px 24px 20px;
+  min-width: 240px;
+  max-width: 280px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 8px;
   font-size: 1.1rem;
   font-weight: 500;
-  max-height: 700px;
+  max-height: 600px;
   overflow-y: auto;
+  margin-top: 0;
 }
+.menuSidebarSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .menuApparelCategoryHeading {
   color: #b0b7be;
-  font-size: 1rem;
-  font-weight: 400;
-  margin-bottom: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding: 8px 0;
+  border-bottom: 2px solid #e0e6ed;
+  background: #fff;
+  z-index: 10;
 }
 
 .menuProductGridSneaker {
@@ -464,4 +487,130 @@
     background: none;
     box-shadow: none;
   }
-} 
+}
+
+
+
+.brandHoverGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px 16px;
+  padding: 20px 0;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  align-items: start;
+}
+
+.brandProductCard {
+  width: 100%;
+  height: 320px;
+  min-height: 320px;
+  max-height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  background: #fff;
+  border: 1px solid #e0e6ed;
+  box-shadow: 0 2px 12px rgba(30,40,90,0.08);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+  border-radius: 0;
+  text-decoration: none !important;
+  color: inherit !important;
+  outline: none !important;
+}
+
+.brandProductCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(30,40,90,0.12);
+}
+
+.brandProductImageContainer {
+  width: 100%;
+  height: 220px;
+  min-height: 220px;
+  max-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  margin-bottom: 20px;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.brandProductImg {
+  width: 200px;
+  height: 180px;
+  object-fit: contain;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  display: block;
+  margin: 0 auto;
+}
+
+.brandProductPlaceholder {
+  width: 200px;
+  height: 180px;
+  background: #f5f7fa;
+  border: 1px dashed #d0d7de;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8c959f;
+  font-size: 0.9rem;
+}
+
+.brandProductContent {
+  width: 100%;
+  min-height: 80px;
+  max-height: 80px;
+  height: 80px;
+  background: #0d1a2f;
+  border-radius: 0;
+  padding: 16px 18px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.brandProductBrand {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 3px;
+  line-height: 1.2;
+}
+
+.brandProductName {
+  font-size: 0.8rem;
+  color: #fff;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.brandProductPrice {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.2;
+}
+
+ 

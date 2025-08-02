@@ -20,21 +20,38 @@ const SNEAKER_QUERY = gql`
 `;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const apolloClient = initializeApollo();
-  const { id } = context.params!;
-  const { data } = await apolloClient.query({
-    query: SNEAKER_QUERY,
-    variables: { id },
-  });
+  try {
+    const apolloClient = initializeApollo();
+    const { id } = context.params!;
+    
+    const { data } = await apolloClient.query({
+      query: SNEAKER_QUERY,
+      variables: { id },
+      errorPolicy: 'all',
+    });
 
-  return {
-    props: {
-      sneaker: data.sneaker,
-      productId: id,
-      productType: 'sneaker',
-      initialApolloState: apolloClient.cache.extract(),
-    },
-  };
+    return {
+      props: {
+        product: data.sneaker, // Changed from 'sneaker' to 'product'
+        productId: id,
+        productType: 'sneaker',
+        initialApolloState: apolloClient.cache.extract(),
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching sneaker data:', error);
+    
+    // Return fallback props to prevent complete page failure
+    return {
+      props: {
+        product: null, // Changed from 'sneaker' to 'product'
+        productId: context.params?.id || '',
+        productType: 'sneaker',
+        initialApolloState: {},
+        error: 'Failed to load product data',
+      },
+    };
+  }
 };
 
 export default function SneakerProductSSRPage(props: any) {

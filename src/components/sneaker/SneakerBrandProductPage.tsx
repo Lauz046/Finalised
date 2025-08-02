@@ -39,7 +39,7 @@ export const SNEAKERS_QUERY = gql`
 
 const PRODUCTS_PER_PAGE = 21;
 
-export default function SneakerBrandProductPage({ brand, initialSneakerData }: { brand: string, initialSneakerData?: any[] }) {
+export default function SneakerBrandProductPage({ brand, initialSneakerData, apolloState }: { brand: string, initialSneakerData?: unknown[], apolloState?: unknown }) {
   const { categoryData, isPreloaded } = useProductContext();
   // Mobile overlay tab state
   const [mobileOverlayTab, setMobileOverlayTab] = useState<'filter' | 'sort'>('filter');
@@ -66,7 +66,7 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData }: {
   // Use pre-loaded data if available for brands
   const brands = useMemo(() => {
     if (isPreloaded && categoryData.sneakers?.length > 0) {
-      return Array.from(new Set(categoryData.sneakers.map((p: any) => p.brand)));
+      return Array.from(new Set(categoryData.sneakers.map((p: unknown) => p.brand)));
     }
     return [];
   }, [isPreloaded, categoryData.sneakers]);
@@ -74,7 +74,7 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData }: {
   // Use pre-loaded data for initial products if available (limit to first page)
   const preloadedBrandProducts = useMemo(() => {
     if (isPreloaded && categoryData.sneakers?.length > 0) {
-      const filtered = categoryData.sneakers.filter((p: any) => 
+      const filtered = categoryData.sneakers.filter((p: unknown) => 
         p.brand?.toLowerCase() === brand?.toLowerCase()
       );
       // Limit to first page to reduce data size
@@ -157,9 +157,9 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData }: {
     }
     // Derive from available products
     const sizeSet = new Set<string>();
-    sneakers.forEach((s: any) => {
+    sneakers.forEach((s: unknown) => {
       if (s.sizePrices) {
-        s.sizePrices.forEach((sp: any) => {
+        s.sizePrices.forEach((sp: unknown) => {
           if (sp.size) sizeSet.add(sp.size);
         });
       }
@@ -168,17 +168,17 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData }: {
   }, [allSizesData?.allSneakerSizes, sneakers]);
 
   const [minPrice, maxPrice] = useMemo(() => {
-    let min = Infinity, max = -Infinity;
-    sneakers.forEach((s: any) => {
+    let _min = Infinity, max = -Infinity;
+    sneakers.forEach((s: unknown) => {
       if (s.sizePrices) {
-        s.sizePrices.forEach((sp: any) => {
-          if (sp.price < min) min = sp.price;
+        s.sizePrices.forEach((sp: unknown) => {
+          if (sp.price < _min) _min = sp.price;
           if (sp.price > max) max = sp.price;
         });
       }
     });
-    if (!isFinite(min) || !isFinite(max)) return [0, 50000];
-    return [Math.floor(min), Math.ceil(max)];
+    if (!isFinite(_min) || !isFinite(max)) return [0, 50000];
+    return [Math.floor(_min), Math.ceil(max)];
   }, [sneakers]);
 
   useEffect(() => {
@@ -191,8 +191,8 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData }: {
   // Pagination (now backend-driven)
   const paginatedSneakers = sneakers;
 
-  const sneakerProducts = paginatedSneakers.map((s: any) => {
-    const lowest = s.sizePrices ? s.sizePrices.reduce((min: number, sp: any) => sp.price < min ? sp.price : min, Infinity) : 0;
+  const sneakerProducts = paginatedSneakers.map((s: unknown) => {
+    const lowest = s.sizePrices ? s.sizePrices.reduce((min: number, sp: unknown) => sp.price < min ? sp.price : min, Infinity) : 0;
     return {
       id: s.id,
       brand: s.brand,
@@ -206,7 +206,7 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData }: {
   const brandTickerData = useMemo(() => {
     const availableBrands = brandsData?.allSneakerBrands || brands;
     return availableBrands.map((brandName: string) => {
-      const sneaker = sneakers.find((s: any) => s.brand === brandName);
+      const sneaker = sneakers.find((s: unknown) => s.brand === brandName);
       return {
         name: brandName,
         image: sneaker?.images?.[0] || '/image1.jpeg',

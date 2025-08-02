@@ -1,150 +1,80 @@
-import React, { useState } from 'react';
-import Image from 'next/image';
+import React, { useState, useEffect, useRef } from 'react';
+import { useImageOptimizer } from '../utils/imageOptimizer';
 
 interface OptimizedImageProps {
   src: string;
   alt: string;
-  width: number;
-  height: number;
   className?: string;
-  priority?: boolean;
-  quality?: number;
-  placeholder?: 'blur' | 'empty';
-  blurDataURL?: string;
-  sizes?: string;
-  fill?: boolean;
   style?: React.CSSProperties;
-  onClick?: () => void;
+  priority?: boolean;
+  loading?: 'lazy' | 'eager';
+  onLoad?: () => void;
+  onError?: () => void;
+  placeholder?: string;
+  fallback?: string;
 }
 
 const OptimizedImage: React.FC<OptimizedImageProps> = ({
   src,
   alt,
-  width,
-  height,
-  className = '',
+  className,
+  style,
   priority = false,
-  quality = 85,
-  placeholder = 'blur',
-  blurDataURL = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q==',
-  sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
-  fill = false,
-  style = {},
-  onClick
+  loading = 'lazy',
+  onLoad,
+  onError,
+  placeholder,
+  fallback
 }) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [currentSrc, setCurrentSrc] = useState(placeholder || src);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const { isImagePreloaded } = useImageOptimizer();
+
+  useEffect(() => {
+    // If image is already preloaded, show it immediately
+    if (isImagePreloaded(src)) {
+      setCurrentSrc(src);
+      setIsLoaded(true);
+    } else {
+      setCurrentSrc(placeholder || src);
+    }
+  }, [src, placeholder, isImagePreloaded]);
 
   const handleLoad = () => {
-    setIsLoading(false);
+    setIsLoaded(true);
+    setHasError(false);
+    if (currentSrc !== src) {
+      setCurrentSrc(src);
+    }
+    onLoad?.();
   };
 
   const handleError = () => {
-    setIsLoading(false);
     setHasError(true);
-  };
-
-  // If there's an error, show a placeholder
-  if (hasError) {
-    return (
-      <div
-        className={`${className} bg-gray-200 flex items-center justify-center`}
-        style={{
-          width: fill ? '100%' : width,
-          height: fill ? '100%' : height,
-          ...style
-        }}
-        onClick={onClick}
-      >
-        <div className="text-gray-400 text-sm">Image not available</div>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={`relative ${className} ${isLoading ? 'animate-pulse bg-gray-200' : ''}`}
-      style={style}
-      onClick={onClick}
-    >
-      <Image
-        src={src}
-        alt={alt}
-        width={fill ? undefined : width}
-        height={fill ? undefined : height}
-        className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
-        priority={priority}
-        quality={quality}
-        placeholder={placeholder}
-        blurDataURL={blurDataURL}
-        sizes={sizes}
-        fill={fill}
-        onLoad={handleLoad}
-        onError={handleError}
-        style={{
-          objectFit: 'cover',
-          ...(fill && { position: 'absolute', top: 0, left: 0 })
-        }}
-      />
-    </div>
-  );
-};
-
-// Specialized components for different use cases
-export const ProductImage: React.FC<Omit<OptimizedImageProps, 'width' | 'height'> & {
-  size?: 'small' | 'medium' | 'large';
-}> = ({ size = 'medium', ...props }) => {
-  const sizes = {
-    small: { width: 80, height: 80 },
-    medium: { width: 200, height: 200 },
-    large: { width: 400, height: 400 }
+    if (fallback && currentSrc !== fallback) {
+      setCurrentSrc(fallback);
+    }
+    onError?.();
   };
 
   return (
-    <OptimizedImage
-      {...props}
-      {...sizes[size]}
-      quality={90}
-      priority={size === 'large'}
-    />
-  );
-};
-
-export const HeroImage: React.FC<Omit<OptimizedImageProps, 'width' | 'height' | 'fill'> & {
-  aspectRatio?: '16/9' | '4/3' | '1/1';
-}> = ({ aspectRatio = '16/9', ...props }) => {
-  const aspectRatios = {
-    '16/9': { width: 1920, height: 1080 },
-    '4/3': { width: 1600, height: 1200 },
-    '1/1': { width: 1200, height: 1200 }
-  };
-
-  return (
-    <OptimizedImage
-      {...props}
-      {...aspectRatios[aspectRatio]}
-      quality={95}
-      priority={true}
-      placeholder="blur"
-    />
-  );
-};
-
-export const ThumbnailImage: React.FC<Omit<OptimizedImageProps, 'width' | 'height'> & {
-  variant?: 'square' | 'portrait' | 'landscape';
-}> = ({ variant = 'square', ...props }) => {
-  const variants = {
-    square: { width: 150, height: 150 },
-    portrait: { width: 120, height: 180 },
-    landscape: { width: 180, height: 120 }
-  };
-
-  return (
-    <OptimizedImage
-      {...props}
-      {...variants[variant]}
-      quality={80}
-      placeholder="blur"
+    <img
+      ref={imgRef}
+      src={currentSrc}
+      alt={alt}
+      className={className}
+      style={{
+        ...style,
+        opacity: isLoaded ? 1 : 0.3,
+        transition: 'opacity 0.3s ease',
+        filter: isLoaded ? 'none' : 'blur(2px)',
+      }}
+      loading={priority ? 'eager' : loading}
+      decoding="async"
+      onLoad={handleLoad}
+      onError={handleError}
     />
   );
 };

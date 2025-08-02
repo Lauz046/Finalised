@@ -12,6 +12,7 @@ import (
 	"plutus-backend/graph/generated"
 	"plutus-backend/graph/model"
 	"sort"
+	"strings"
 
 	"github.com/lib/pq"
 )
@@ -57,8 +58,9 @@ func (r *queryResolver) Sneakers(ctx context.Context, brand *string, size *strin
 		WHERE 1=1
 	`
 	if brand != nil && *brand != "" {
-		// Use direct brand comparison for better performance
-		query += fmt.Sprintf(" AND LOWER(brand) = LOWER('%s')", *brand)
+		// Use case-insensitive brand comparison with normalization
+		normalizedBrand := strings.ToLower(strings.TrimSpace(*brand))
+		query += fmt.Sprintf(" AND LOWER(TRIM(brand)) = '%s'", normalizedBrand)
 	}
 	if size != nil && *size != "" {
 		query += fmt.Sprintf(" AND size_prices::text ILIKE '%%%s%%'", *size)
@@ -127,14 +129,18 @@ func (r *queryResolver) Sneakers(ctx context.Context, brand *string, size *strin
 func (r *queryResolver) Sneaker(ctx context.Context, id string) (*model.Sneaker, error) {
 	query := `SELECT id, brand, product_name, size_prices, images, sold_out, product_link, seller_name, seller_url FROM sneakers WHERE id = $1`
 	row := r.DB.QueryRow(query, id)
+
 	var idVal, brandVal, productName, productLink string
 	var sizePricesRaw []byte
 	var images []string
 	var soldOut bool
 	var sellerName, sellerUrl *string
-	if err := row.Scan(&idVal, &brandVal, &productName, &sizePricesRaw, pq.Array(&images), &soldOut, &productLink, &sellerName, &sellerUrl); err != nil {
+
+	err := row.Scan(&idVal, &brandVal, &productName, &sizePricesRaw, pq.Array(&images), &soldOut, &productLink, &sellerName, &sellerUrl)
+	if err != nil {
 		return nil, err
 	}
+
 	var sizePrices []model.SizePrice
 	if err := json.Unmarshal(sizePricesRaw, &sizePrices); err != nil {
 		return nil, err
@@ -153,7 +159,7 @@ func (r *queryResolver) Sneaker(ctx context.Context, id string) (*model.Sneaker,
 		SoldOut:     soldOut,
 		SellerName:  sellerName,
 		SellerURL:   sellerUrl,
-		ProductLink: productLink, // <-- Added this line
+		ProductLink: productLink,
 	}, nil
 }
 
@@ -165,8 +171,9 @@ func (r *queryResolver) Watches(ctx context.Context, brand *string, color *strin
 		WHERE 1=1
 	`
 	if brand != nil && *brand != "" {
-		// Use direct brand comparison for better performance
-		query += fmt.Sprintf(" AND LOWER(brand) = LOWER('%s')", *brand)
+		// Use case-insensitive brand comparison with normalization
+		normalizedBrand := strings.ToLower(strings.TrimSpace(*brand))
+		query += fmt.Sprintf(" AND LOWER(TRIM(brand)) = '%s'", normalizedBrand)
 	}
 	if color != nil && *color != "" {
 		query += fmt.Sprintf(" AND color ILIKE '%%%s%%'", *color)
@@ -244,8 +251,9 @@ func (r *queryResolver) Perfumes(ctx context.Context, brand *string, fragranceFa
 		WHERE 1=1
 	`
 	if brand != nil && *brand != "" {
-		// Use direct brand comparison for better performance
-		query += fmt.Sprintf(" AND LOWER(brand) = LOWER('%s')", *brand)
+		// Use case-insensitive brand comparison with normalization
+		normalizedBrand := strings.ToLower(strings.TrimSpace(*brand))
+		query += fmt.Sprintf(" AND LOWER(TRIM(brand)) = '%s'", normalizedBrand)
 	}
 	if fragranceFamily != nil && *fragranceFamily != "" {
 		query += fmt.Sprintf(" AND fragrance_family ILIKE '%%%s%%'", *fragranceFamily)
@@ -319,8 +327,9 @@ func (r *queryResolver) Accessories(ctx context.Context, brand *string, subcateg
 		WHERE 1=1
 	`
 	if brand != nil && *brand != "" {
-		// Use direct brand comparison for better performance
-		query += fmt.Sprintf(" AND LOWER(brand) = LOWER('%s')", *brand)
+		// Use case-insensitive brand comparison with normalization
+		normalizedBrand := strings.ToLower(strings.TrimSpace(*brand))
+		query += fmt.Sprintf(" AND LOWER(TRIM(brand)) = '%s'", normalizedBrand)
 	}
 	if subcategory != nil && *subcategory != "" {
 		query += fmt.Sprintf(" AND subcategory ILIKE '%%%s%%'", *subcategory)
@@ -432,8 +441,9 @@ func (r *queryResolver) Apparel(ctx context.Context, brand *string, subcategory 
 		WHERE 1=1
 	`
 	if brand != nil && *brand != "" {
-		// Use direct brand comparison for better performance
-		query += fmt.Sprintf(" AND LOWER(brand) = LOWER('%s')", *brand)
+		// Use case-insensitive brand comparison with normalization
+		normalizedBrand := strings.ToLower(strings.TrimSpace(*brand))
+		query += fmt.Sprintf(" AND LOWER(TRIM(brand)) = '%s'", normalizedBrand)
 	}
 	if subcategory != nil && *subcategory != "" {
 		query += fmt.Sprintf(" AND subcategory ILIKE '%%%s%%'", *subcategory)

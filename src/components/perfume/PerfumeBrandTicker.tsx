@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import styles from './PerfumeBrandTicker.module.css';
-import { getBrandImage } from '../../utils/brandImageMapper';
+import {  } from '../../utils/brandImageMapper';
 
 interface Brand {
   name: string;
@@ -49,14 +49,14 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
     
     let animationFrame: number;
     let translateX = 0;
-    const speed = 1; // px per frame - same as sneaker
+    const speed = 1; // px per frame
     
     function animate() {
       if (!ticker) return;
       translateX -= speed;
       
       // Reset position when we've moved the width of one set of brands
-      const singleSetWidth = ticker.scrollWidth / 4; // Since we have 4 sets
+      const singleSetWidth = ticker.scrollWidth / 6; // Since we have 6 sets
       if (Math.abs(translateX) >= singleSetWidth) {
         translateX = 0;
       }

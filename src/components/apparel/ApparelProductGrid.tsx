@@ -27,11 +27,11 @@ const ApparelProductGrid: React.FC<ApparelProductGridProps> = ({ products, onPro
     }).format(price)}`;
   };
 
-  // Limit product name to 6 words
-  const truncateProductName = (name: string) => {
+  // Limit product name - 5 words for desktop, 4 for mobile (no ellipsis)
+  const truncateProductName = (name: string, isMobile: boolean = false) => {
     const words = name.split(' ');
-    if (words.length <= 6) return name;
-    return words.slice(0, 6).join(' ') + '...';
+    const maxWords = isMobile ? 4 : 5;
+    return words.slice(0, maxWords).join(' ');
   };
 
   if (loading) {
@@ -70,7 +70,7 @@ const ApparelProductGrid: React.FC<ApparelProductGridProps> = ({ products, onPro
           <div className={styles.content}>
             <div className={styles.brand}>{product.brand}</div>
             <div className={styles.name} title={product.productName}>
-              {truncateProductName(product.productName)}
+              {truncateProductName(product.productName, mobile)}
             </div>
             <div className={styles.price}>{formatPrice(product.price)}</div>
           </div>

@@ -99,14 +99,27 @@ const PerfumePage = () => {
       if (filter === 'niche') {
         // Filter for niche perfumes using subcategory
         setSelectedSubcategories(['Niche']);
-        setSelectedBrands([]); // Clear brand filters
-      } else if (filter === 'designer') {
-        // Filter for designer perfumes using subcategory
-        setSelectedSubcategories(['Designer']);
-        setSelectedBrands([]); // Clear brand filters
       }
     }
-  }, [router.isReady, router.query.filter]);
+  }, [router.isReady]);
+
+  /*
+    Apply subcategory filter if it comes via query string, eg. /perfume?subcategory=EDP
+    We only apply it on initial load (when no subcategory has been selected yet) to
+    avoid overriding user interactions.
+  */
+  useEffect(() => {
+    if (!router.isReady) return;
+    const sp = router.query.subcategory;
+    if (sp && selectedSubcategories.length === 0) {
+      const raw = Array.isArray(sp) ? sp[0] : sp;
+      if (typeof raw === 'string' && raw.trim() !== '') {
+        setSelectedSubcategories([raw]);
+      }
+    }
+    // We only want to run this once when router is ready.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady]);
 
   // Determine if we should use preloaded data or fetch from API
   const shouldUsePreloadedData = isPreloaded && 
@@ -143,7 +156,7 @@ const PerfumePage = () => {
   // Derive unique concentrations, sizes and min/max prices from perfumes
   const allConcentrations = useMemo(() => {
     const set = new Set<string>();
-    perfumes.forEach((p: any) => {
+    perfumes.forEach((p: unknown) => {
       if (p.concentration && typeof p.concentration === 'string' && p.concentration.trim() !== '') {
         set.add(p.concentration.trim());
       }
@@ -153,9 +166,9 @@ const PerfumePage = () => {
 
   const allSizes = useMemo(() => {
     const set = new Set<string>();
-    perfumes.forEach((p: any) => {
+    perfumes.forEach((p: unknown) => {
       if (p.variants) {
-        p.variants.forEach((v: any) => {
+        p.variants.forEach((v: unknown) => {
           if (v.size) set.add(v.size);
         });
       }
@@ -165,9 +178,9 @@ const PerfumePage = () => {
   
   const [minPrice, maxPrice] = useMemo(() => {
     let min = Infinity, max = -Infinity;
-    perfumes.forEach((p: any) => {
+    perfumes.forEach((p: unknown) => {
       if (p.variants) {
-        p.variants.forEach((v: any) => {
+        p.variants.forEach((v: unknown) => {
           if (v.price < min) min = v.price;
           if (v.price > max) max = v.price;
         });
@@ -186,8 +199,8 @@ const PerfumePage = () => {
 
   // Filter for in-stock (frontend, as backend does not support it)
   const filteredPerfumes = useMemo(() => {
-    let filtered = perfumes;
-    if (inStockOnly) filtered = filtered.filter((p: any) => p.inStock);
+    const filtered = perfumes;
+    if (inStockOnly) filtered = filtered.filter((p: unknown) => p.inStock);
     return filtered;
   }, [perfumes, inStockOnly]);
 
@@ -207,8 +220,8 @@ const PerfumePage = () => {
     // If we got fewer results than expected, this is the last page
     return currentPage;
   }, [filteredPerfumes.length, currentPage]);
-  const perfumeProducts = filteredPerfumes.map((p: any) => {
-    const lowest = p.variants ? p.variants.reduce((min: number, v: any) => v.price < min ? v.price : min, Infinity) : null;
+  const perfumeProducts = filteredPerfumes.map((p: unknown) => {
+    const lowest = p.variants ? p.variants.reduce((min: number, v: unknown) => v.price < min ? v.price : min, Infinity) : null;
     return {
       id: p.id,
       brand: p.brand,
@@ -221,7 +234,7 @@ const PerfumePage = () => {
   // Brand ticker: show each brand with a representative image
   const brandTickerData = useMemo(() => {
     return brands.map((brand: string) => {
-      const perfume = perfumes.find((p: any) => p.brand === brand);
+      const perfume = perfumes.find((p: unknown) => p.brand === brand);
       return {
         name: brand,
         image: perfume?.images?.[0] || '/image1.jpeg',

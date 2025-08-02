@@ -126,11 +126,15 @@ interface Product {
 
 export default function SearchPage() {
   const router = useRouter();
-  const queryParam = typeof router.query.query === 'string' ? router.query.query : '';
+  const queryParam = typeof router.query.q === 'string' ? router.query.q : '';
   const [search, setSearch] = useState(queryParam);
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilter, setShowFilter] = useState(true);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchResults, setSearchResults] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMoreProducts, setHasMoreProducts] = useState(true);
+  const [totalProducts, setTotalProducts] = useState(0);
   
   // Filter state
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
@@ -147,6 +151,11 @@ export default function SearchPage() {
 
   // Use ProductContext for preloaded data
   const { categoryData, isPreloaded, loadCategoryData, isCategoryLoaded } = useProductContext();
+
+  // Debug: Log router query and search state
+  useEffect(() => {
+    console.log('🔍 SearchPage: Search term:', search);
+  }, [search]);
 
   // Performance monitoring
   useEffect(() => {
@@ -170,6 +179,99 @@ export default function SearchPage() {
     setSearch(queryParam);
     setCurrentPage(1);
   }, [queryParam]);
+
+  // Fetch search results from API with lazy loading
+  useEffect(() => {
+    const fetchSearchResults = async () => {
+      if (!search || search.trim() === '') {
+        setSearchResults([]);
+        setTotalProducts(0);
+        setHasMoreProducts(false);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        // First, get the total count of products for this search
+        const countResponse = await fetch(`/api/search/counts?q=${encodeURIComponent(search)}`);
+        const countData = await countResponse.json();
+        const totalCount = Object.values(countData).reduce((sum: number, count: any) => sum + (count || 0), 0);
+        setTotalProducts(totalCount);
+        console.log('🔍 SearchPage: Total products for search:', search, '=', totalCount);
+
+        // Fetch first page of products (100 items)
+        const response = await fetch(`/api/search?q=${encodeURIComponent(search)}&limit=100&offset=0`);
+        const data = await response.json();
+        const products = data.products || [];
+        setSearchResults(products);
+        setHasMoreProducts(products.length === 100 && totalCount > 100);
+        console.log('🔍 SearchPage: Loaded first page with', products.length, 'products');
+      } catch (error) {
+        console.error('🔍 SearchPage: Error fetching search results:', error);
+        setSearchResults([]);
+        setTotalProducts(0);
+        setHasMoreProducts(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSearchResults();
+  }, [search]);
+
+  // Load more products when page changes
+  useEffect(() => {
+    const loadMoreProducts = async () => {
+      if (!search || search.trim() === '' || currentPage === 1) {
+        return;
+      }
+
+      const offset = (currentPage - 1) * PAGE_SIZE;
+      
+      // Check if we already have enough products loaded
+      if (offset < searchResults.length) {
+        console.log('🔍 SearchPage: Already have enough products loaded, skipping API call');
+        return;
+      }
+      
+      // Check if we've reached the total number of products
+      if (offset >= totalProducts) {
+        setHasMoreProducts(false);
+        console.log('🔍 SearchPage: Reached total products limit, no more to load');
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const response = await fetch(`/api/search?q=${encodeURIComponent(search)}&limit=100&offset=${offset}`);
+        const data = await response.json();
+        const newProducts = data.products || [];
+        
+        // Check if we got any new products
+        if (newProducts.length === 0) {
+          setHasMoreProducts(false);
+          console.log('🔍 SearchPage: No more products available');
+          return;
+        }
+        
+        // Append new products to existing results
+        setSearchResults(prev => [...prev, ...newProducts]);
+        
+        // Check if we have more products to load
+        const totalLoaded = searchResults.length + newProducts.length;
+        setHasMoreProducts(newProducts.length === 100 && totalLoaded < totalProducts);
+        
+        console.log('🔍 SearchPage: Loaded page', currentPage, 'with', newProducts.length, 'products. Total loaded:', totalLoaded, 'of', totalProducts);
+      } catch (error) {
+        console.error('🔍 SearchPage: Error loading more products:', error);
+        setHasMoreProducts(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadMoreProducts();
+  }, [currentPage, search, totalProducts, searchResults.length]);
 
   // Load category data if not already loaded
   useEffect(() => {
@@ -234,6 +336,17 @@ export default function SearchPage() {
     return all;
   }, [categoryData]);
 
+  // Apply search filter to all products
+  const searchFilteredProducts = useMemo(() => {
+    // If we have a search term, use the API results
+    if (search && search.trim() !== '') {
+      return searchResults;
+    }
+    
+    // Otherwise use all products from category data
+    return allProducts;
+  }, [search, searchResults, allProducts]);
+
   // Extract unique filter values
   const brands = brandsData?.allSneakerBrands || [];
   
@@ -287,7 +400,9 @@ export default function SearchPage() {
 
   // Filter products based on selected filters
   const filteredResults = useMemo(() => {
-    return allProducts.filter(product => {
+    console.log('🔍 SearchPage: filteredResults - searchFilteredProducts.length:', searchFilteredProducts.length);
+    
+    const filtered = searchFilteredProducts.filter(product => {
       if (selectedBrands.length && !selectedBrands.includes(product.brand)) return false;
       if (selectedSubcategories.length && product.subcategory && !selectedSubcategories.includes(product.subcategory)) return false;
       if (selectedGenders.length && product.gender && !selectedGenders.includes(product.gender)) return false;
@@ -295,14 +410,36 @@ export default function SearchPage() {
       if (selectedColors.length && product.type === 'Watch' && product.color && !selectedColors.includes(product.color)) return false;
       return true;
     });
-  }, [allProducts, selectedBrands, selectedSubcategories, selectedGenders, selectedFragranceFamilies, selectedColors]);
+    
+    console.log('🔍 SearchPage: Final filtered results:', filtered.length);
+    return filtered;
+  }, [searchFilteredProducts, selectedBrands, selectedSubcategories, selectedGenders, selectedFragranceFamilies, selectedColors]);
 
-  // Pagination logic
-  const totalPages = Math.ceil(filteredResults.length / PAGE_SIZE);
-  const paginatedResults = filteredResults.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  // Pagination logic for lazy loading
+  const PAGE_SIZE = 100;
+  const totalPages = Math.ceil(totalProducts / PAGE_SIZE);
+  
+  // Get products for current page (show all loaded products up to current page)
+  const paginatedResults = useMemo(() => {
+    const endIndex = currentPage * PAGE_SIZE;
+    return searchResults.slice(0, endIndex);
+  }, [searchResults, currentPage]);
+
+  // Only show pagination if we have more than one page and there are more products to load
+  const shouldShowPagination = totalPages > 1 && (hasMoreProducts || currentPage < totalPages);
+
+  // Use filtered results for display
+  const displayResults = useMemo(() => {
+    if (search && search.trim() !== '') {
+      // For search results, use the paginated results
+      return paginatedResults;
+    } else {
+      // For browsing, use the filtered results
+      return filteredResults;
+    }
+  }, [search, paginatedResults, filteredResults]);
 
   // Optimized loading state - only show loading when actually fetching search data
-  const isLoading = false; // Always use cached data for instant results
 
   // Handlers for filter changes
   const handleBrandChange = (brand: string) => {
@@ -327,15 +464,25 @@ export default function SearchPage() {
     setCurrentPage(1);
   };
 
+  // Handle page changes with validation
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
   // Debug: Log what's happening
   useEffect(() => {
-    console.log('Search term:', search);
-    console.log('Sneakers data:', sneakersData?.sneakers?.length);
-    console.log('Perfumes data:', perfumesData?.perfumes?.length);
-    console.log('Watches data:', watchesData?.watches?.length);
-    console.log('Accessories data:', accessoriesData?.accessories?.length);
-    console.log('Apparel data:', apparelData?.apparel?.length);
-  }, [search, sneakersData, perfumesData, watchesData, accessoriesData, apparelData]);
+    console.log('🔍 SearchPage: Search term:', search);
+    console.log('🔍 SearchPage: All products count:', allProducts.length);
+    console.log('🔍 SearchPage: Search filtered products count:', searchFilteredProducts.length);
+    console.log('🔍 SearchPage: Final filtered results count:', filteredResults.length);
+    console.log('🔍 SearchPage: Sneakers data:', sneakersData?.sneakers?.length);
+    console.log('🔍 SearchPage: Perfumes data:', perfumesData?.perfumes?.length);
+    console.log('🔍 SearchPage: Watches data:', watchesData?.watches?.length);
+    console.log('🔍 SearchPage: Accessories data:', accessoriesData?.accessories?.length);
+    console.log('🔍 SearchPage: Apparel data:', apparelData?.apparel?.length);
+  }, [search, allProducts.length, searchFilteredProducts.length, filteredResults.length, sneakersData, perfumesData, watchesData, accessoriesData, apparelData]);
 
   // Breadcrumb items
   const breadcrumbItems = [
@@ -562,11 +709,11 @@ export default function SearchPage() {
           {/* Mobile Product Grid */}
           <div style={{ width: '100%', padding: '0 8px', marginTop: 0 }}>
             <UniversalProductGrid 
-              products={paginatedResults}
+              products={displayResults}
               loading={isLoading}
               isMobile={true}
             />
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+            {shouldShowPagination && <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />}
           </div>
         </div>
       ) : (
@@ -754,11 +901,11 @@ export default function SearchPage() {
               marginLeft: showFilter ? 0 : -14
             }}>
               <UniversalProductGrid 
-                products={paginatedResults}
+                products={displayResults}
                 loading={isLoading}
                 isMobile={false}
               />
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+              {shouldShowPagination && <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />}
             </div>
           </div>
         </>

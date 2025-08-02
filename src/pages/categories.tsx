@@ -204,7 +204,6 @@ const CategoriesPage = () => {
                       ))}
                     </div>
                   )}
-                </a>
               </Link>
             ))}
           </div>

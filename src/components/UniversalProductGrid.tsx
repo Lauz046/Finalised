@@ -66,11 +66,20 @@ const UniversalProductGrid: React.FC<UniversalProductGridProps> = ({
       if (firstVariantPrice && firstVariantPrice > 0) return firstVariantPrice;
     }
     
-    return 0;
+    // If no price found, try to get from any available price field
+    const allPrices = [
+      product.price,
+      product.salePrice,
+      ...(product.sizePrices?.map(sp => sp.price) || []),
+      ...(product.variants?.map(v => v.price) || [])
+    ].filter((p): p is number => p !== undefined && p > 0);
+    
+    return allPrices.length > 0 ? Math.min(...allPrices) : 0;
   };
 
   const getProductLink = (product: Product): string => {
-    return product.productLink || product.url || product.link || `/${category}/${product.id}`;
+    // Always use our internal product pages, not external URLs
+    return `/${category}/${product.id}`;
   };
 
   if (loading) {

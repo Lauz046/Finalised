@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Forward request to Go backend
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8090';
+    const backendUrl = process.env.BACKEND_URL || 'https://finalised-a77d.onrender.com';
     const response = await fetch(`${backendUrl}/api/auth/login`, {
       method: 'POST',
       headers: {

@@ -12,7 +12,7 @@ export async function sendEnquiry(payload: EnquiryPayload): Promise<{ success: b
   try {
     console.log('Sending enquiry with payload:', payload);
     
-    const res = await fetch('http://localhost:8090/api/enquiry', {
+    const res = await fetch('https://finalised-a77d.onrender.com/api/enquiry', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

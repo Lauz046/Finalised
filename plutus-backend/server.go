@@ -309,8 +309,11 @@ func corsHandlerFunc(h http.HandlerFunc) http.Handler {
 var globalDB *sql.DB
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("❌ Error loading .env file")
+	// Only load .env file in development
+	if os.Getenv("NODE_ENV") != "production" {
+		if err := godotenv.Load(); err != nil {
+			log.Println("⚠️ Warning: Could not load .env file, using environment variables")
+		}
 	}
 
 	port := os.Getenv("PORT")

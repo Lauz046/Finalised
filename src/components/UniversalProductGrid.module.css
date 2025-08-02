@@ -1,125 +1,200 @@
+.gridMobile {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 8px;
+  padding: 10px 0;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
-  padding: 2rem 0;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px 20px;
+  padding: 32px 0;
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
-.productCard {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-  background: white;
-  border-radius: 12px;
+.card {
+  width: 100%;
+  height: 340px;
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  background: #fff;
+  border: 1px solid #e0e6ed;
+  box-shadow: 0 2px 12px rgba(30,40,90,0.08);
+  padding: 0;
+  position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+  border-radius: 0;
+  text-decoration: none !important;
+  color: inherit !important;
+  outline: none !important;
 }
 
-.productCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(30,40,90,0.12);
 }
 
 .imageContainer {
-  position: relative;
   width: 100%;
-  height: 280px;
-  overflow: hidden;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  margin-bottom: 24px;
+  z-index: 2;
+  flex-shrink: 0;
 }
 
-.productImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.productCard:hover .productImage {
-  transform: scale(1.05);
+.image {
+  width: 200px;
+  height: 180px;
+  object-fit: contain;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  display: block;
+  margin: 0 auto;
 }
 
 .content {
-  padding: 1.5rem;
+  width: 100%;
+  min-height: 80px;
+  max-height: 80px;
+  background: #0d1a2f;
+  border-radius: 0;
+  padding: 16px 18px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
 }
 
 .brand {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.5rem;
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 0.65rem;
+  color: #fff;
+  font-weight: 500;
+  opacity: 0.85;
+  margin-bottom: 4px;
+  line-height: 1.4;
+  align-self: flex-start;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  max-width: 100%;
+  word-wrap: break-word;
 }
 
 .name {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 0.75rem;
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 0.75rem;
+  color: #fff;
+  font-weight: 400;
+  margin-bottom: 8px;
+  white-space: normal;
+  overflow: visible;
+  line-height: 1.2;
+  align-self: flex-start;
+  max-width: 100%;
+  word-wrap: break-word;
 }
 
 .price {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: #000;
+  font-size: 0.9rem;
+  color: #fff;
+  font-weight: 500;
+  font-family: 'Montserrat';
+  margin-bottom: 0;
+  align-self: flex-start;
 }
 
 /* Skeleton loading styles */
-.skeleton {
-  background: white;
-  border-radius: 12px;
+.skeletonCard {
+  width: 96%;
+  height: 340px;
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  background: #fff;
+  border: 1px solid #e0e6ed;
+  box-shadow: 0 2px 12px rgba(30,40,90,0.08);
+  padding: 0;
+  position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
+  box-sizing: border-box;
+  border-radius: 0;
 }
 
 .skeletonImage {
   width: 100%;
-  height: 280px;
+  height: 200px;
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  margin-bottom: 24px;
 }
 
 .skeletonContent {
+  width: 92%;
+  min-height: 70px;
+  background: #0d1a2f;
+  border-radius: 0;
+  padding: 16px 18px 12px 18px;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  align-items: flex-start;
+  justify-content: flex-start;
+  position: relative;
+  z-index: 1;
 }
 
 .skeletonBrand {
-  width: 60px;
-  height: 14px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  width: 60%;
+  height: 12px;
+  background: linear-gradient(90deg, #2a3a4a 25%, #3a4a5a 50%, #2a3a4a 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
-  border-radius: 4px;
+  margin-bottom: 4px;
+  border-radius: 2px;
 }
 
 .skeletonName {
-  width: 100%;
-  height: 16px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  width: 80%;
+  height: 12px;
+  background: linear-gradient(90deg, #2a3a4a 25%, #3a4a5a 50%, #2a3a4a 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
-  border-radius: 4px;
+  margin-bottom: 8px;
+  border-radius: 2px;
 }
 
 .skeletonPrice {
-  width: 80px;
-  height: 18px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  width: 40%;
+  height: 14px;
+  background: linear-gradient(90deg, #2a3a4a 25%, #3a4a5a 50%, #2a3a4a 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
 @keyframes loading {
@@ -131,19 +206,99 @@
   }
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
+@media (max-width: 1100px) {
   .grid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1rem;
-    padding: 1rem 0;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 12px;
   }
-  
-  .content {
-    padding: 1rem;
+  .card, .skeletonCard {
+    height: 220px;
   }
-  
-  .imageContainer {
-    height: 240px;
+  .imageContainer, .skeletonImage {
+    height: 100px;
+  }
+  .image {
+    width: 80px;
+    height: 80px;
+  }
+  .content, .skeletonContent {
+    min-height: 48px;
+    padding: 10px 8px 8px 8px;
+  }
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 12px;
+    padding: 18px 0;
+  }
+  .card, .skeletonCard {
+    height: 380px;
+    min-height: 380px;
+  }
+  .imageContainer, .skeletonImage {
+    height: 220px;
+    margin-bottom: 50px;
+  }
+  .image {
+    width: 200px;
+    height: 160px;
+  }
+  .content, .skeletonContent {
+    min-height: 70px;
+    padding: 16px 14px 12px 14px;
+  }
+}
+
+@media (max-width: 700px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 8px;
+    padding: 10px 0;
+  }
+  .card, .skeletonCard {
+    height: 180px;
+  }
+  .imageContainer, .skeletonImage {
+    height: 60px;
+  }
+  .image {
+    width: 50px;
+    height: 50px;
+  }
+  .content, .skeletonContent {
+    min-height: 36px;
+    padding: 8px 6px 6px 6px;
+  }
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 8px;
+    padding: 10px 0;
+  }
+  .card, .skeletonCard {
+    height: 260px;
+    min-height: 260px;
+  }
+  .imageContainer, .skeletonImage {
+    height: 120px;
+    margin-bottom: 24px;
+  }
+  .image {
+    width: 120px;
+    height: 100px;
+  }
+  .content, .skeletonContent {
+    min-height: 48px;
+    padding: 10px 8px 8px 8px;
+  }
+  .name {
+    font-size: 0.7rem;
+  }
+  .brand {
+    font-size: 0.5rem;
   }
 } 

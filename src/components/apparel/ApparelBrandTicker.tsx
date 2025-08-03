@@ -30,21 +30,21 @@ const ApparelBrandTicker: React.FC<ApparelBrandTickerProps> = ({ brands, onBrand
   // Create the fixed apparel subcategories in the correct order
   const apparelSubcategories = useMemo(() => {
     return [
-      { name: 'Lanvin Women', image: '/apparelticker/LANVIN WOMEN.png', filterType: 'Lanvin Women' },
-      { name: 'Aime Leon Dore', image: '/apparelticker/aime leon doreMEN.png', filterType: 'Aime Leon Dore' },
-      { name: 'BAPE', image: '/apparelticker/BAPE MEN.png', filterType: 'BAPE' },
-      { name: '3ELEVEN', image: '/apparelticker/3ELEVEN MEN.png', filterType: '3ELEVEN' },
-      { name: 'All Saints', image: '/apparelticker/ALLSAINTS WOMEN.png', filterType: 'All Saints' },
-      { name: 'Bottega Veneta', image: '/apparelticker/BOTTEGA VENETA WOMEN.png', filterType: 'Bottega Veneta' },
-      { name: 'Burberry', image: '/apparelticker/BURBERRY WOMEN.png', filterType: 'Burberry' },
-      { name: 'Carhartt', image: '/apparelticker/CARHARRT MEN.png', filterType: 'Carhartt' },
+      { name: '3ELEVEN', image: '/apparelticker/3ELEVEN MEN.png', filterType: '3ELEVEN', bgColor: '#f5f5dc' }, // Beige
+      { name: 'All Saints', image: '/apparelticker/ALLSAINTS WOMEN.png', filterType: 'All Saints', bgColor: '#1e3a8a' }, // Blue
+      { name: 'Carhartt', image: '/apparelticker/CARHARRT MEN.png', filterType: 'Carhartt', bgColor: '#f5f5dc' }, // Beige
+      { name: 'Bottega Veneta', image: '/apparelticker/BOTTEGA VENETA WOMEN.png', filterType: 'Bottega Veneta', bgColor: '#1e3a8a' }, // Blue
+      { name: 'Aime Leon Dore', image: '/apparelticker/aime leon doreMEN.png', filterType: 'Aime Leon Dore', bgColor: '#f5f5dc' }, // Beige
+      { name: 'Burberry', image: '/apparelticker/BURBERRY WOMEN.png', filterType: 'Burberry', bgColor: '#1e3a8a' }, // Blue
+      { name: 'BAPE', image: '/apparelticker/BAPE MEN.png', filterType: 'BAPE', bgColor: '#f5f5dc' }, // Beige
+      { name: 'Lanvin Women', image: '/apparelticker/LANVIN WOMEN.png', filterType: 'Lanvin Women', bgColor: '#1e3a8a' }, // Blue
     ];
   }, []);
 
   // Create endless scrolling by duplicating the subcategories multiple times
   const displaySubcategories = useMemo(() => {
-    // Duplicate the subcategories 4 times for seamless endless scrolling
-    return [...apparelSubcategories, ...apparelSubcategories, ...apparelSubcategories, ...apparelSubcategories];
+    // Duplicate the subcategories 6 times for seamless endless scrolling
+    return [...apparelSubcategories, ...apparelSubcategories, ...apparelSubcategories, ...apparelSubcategories, ...apparelSubcategories, ...apparelSubcategories];
   }, [apparelSubcategories]);
 
   // Auto-scroll effect (infinite loop)
@@ -57,7 +57,7 @@ const ApparelBrandTicker: React.FC<ApparelBrandTickerProps> = ({ brands, onBrand
     
     let animationFrame: number;
     let translateX = 0;
-    const speed = 1; // px per frame - same as accessories
+    const speed = isMobile ? 0.5 : 1; // Reduced speed for mobile
     
     function animate() {
       if (!ticker) return;
@@ -89,9 +89,9 @@ const ApparelBrandTicker: React.FC<ApparelBrandTickerProps> = ({ brands, onBrand
       <div 
         className={styles.tickerWrapper}
         style={{
-          marginTop: isMobile ? '60px' : '10px', // Same as accessories
-          height: isMobile ? '280px' : 'auto', // Same as accessories
-          overflow: 'hidden',
+          marginTop: isMobile ? '60px' : '50px', // Increased desktop margin to move down more from breadcrumbs
+          height: isMobile ? '280px' : 'auto', // Increased height for mobile to prevent cutting
+          overflow: 'hidden'
         }}
       >
         <div className={styles.ticker} ref={tickerRef}>
@@ -115,17 +115,17 @@ const ApparelBrandTicker: React.FC<ApparelBrandTickerProps> = ({ brands, onBrand
                   }
                 }}
                 style={{
-                  background: '#fff',
-                  border: isSelected ? '3px solid rgb(9, 51, 74)' : '1px solid transparent',
+                  background: subcategory.bgColor || '#fff',
+                  border: isSelected ? '1px solidrgb(9, 51, 74)' : 'none',
                   borderRadius: '12px',
-                  minWidth: isMobile ? 180 : 350, // Same as accessories
-                  minHeight: isMobile ? 220 : 600, // Same as accessories
+                  minWidth: isMobile ? 180 : 350,
+                  minHeight: isMobile ? 220 : 550, // Increased height for mobile to prevent cutting
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'flex-end',
                   padding: '0 0 0px 0',
-                  margin: isMobile ? '15px 4px 0 4px' : 0, // Same as accessories
+                  margin: isMobile ? '15px 0px 0 0px' : 0, // No gap between cards in mobile
                   cursor: 'pointer',
                   position: 'relative',
                   fontFamily: 'Montserrat, Inter, Segoe UI, Arial, sans-serif',
@@ -140,68 +140,22 @@ const ApparelBrandTicker: React.FC<ApparelBrandTickerProps> = ({ brands, onBrand
                 <img
                   src={brandImage}
                   alt={subcategory.name}
-                  loading="lazy"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = '/nav/plutus logo.svg';
                   }}
+                  loading="lazy"
                   style={{
-                    width: isMobile ? 180 : 350, // Same as accessories
-                    height: isMobile ? 220 : 600, // Same as accessories
-                    objectFit: isMobile ? 'contain' : 'cover', // Better quality for mobile
-                    borderRadius: '0px 0px 0 0',
+                    width: isMobile ? 180 : 350,
+                    height: isMobile ? 220 : 550, // Increased height for mobile to prevent cutting
+                    objectFit: 'cover', // Fill the container completely
+                    borderRadius: '0px',
                     marginBottom: 0,
                     boxShadow: 'none',
-                    background: '#f8f9fa',
+                    background: 'transparent',
                     imageRendering: 'auto', // Better quality for mobile
                   }}
                 />
-                <div style={{
-                  position: 'absolute',
-                  left: isMobile ? 10 : 20,
-                  bottom: isMobile ? 16 : 32,
-                  width: '100%',
-                  zIndex: 2,
-                }}>
-                  <span
-                    style={{
-                      fontFamily: 'Montserrat, Inter, Segoe UI, Arial, sans-serif',
-                      fontSize: isMobile ? '1rem' : '1.5rem',
-                      color: '#fff',
-                      fontWeight: 500,
-                      letterSpacing: '0.01em',
-                      textShadow: '0 2px 8px rgba(0,0,0,0.18)',
-                      background: 'transparent',
-                      padding: 0,
-                      textTransform: 'uppercase',
-                      display: 'inline-block',
-                    }}
-                    ref={el => {
-                      if (el) el.dataset.underline = el.offsetWidth.toString();
-                    }}
-                  >
-                    {subcategory.name}
-                  </span>
-                  <div
-                    style={{
-                      height: 1,
-                      background: '#fff',
-                      margin: '0px 0 0 0',
-                      borderRadius: 0,
-                      opacity: 0.95,
-                      width: 'fit-content',
-                      minWidth: 24,
-                      maxWidth: '100%',
-                      transition: 'width 0.2s',
-                    }}
-                    ref={el => {
-                      const span = el?.previousElementSibling as HTMLSpanElement | null;
-                      if (el && span) {
-                        el.style.width = span.offsetWidth + 'px';
-                      }
-                    }}
-                  />
-                </div>
               </div>
             );
           })}

@@ -27,14 +27,14 @@ const BrandTicker: React.FC<BrandTickerProps> = ({ brands, onBrandClick }) => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Create fixed 5 sneaker categories
+  // Create fixed 5 sneaker categories in specific order
   const sneakerCategories = useMemo(() => {
     return [
-      { name: 'Nike', image: '/sneakerticker/NIKE.png', filterType: 'Nike' },
-      { name: 'Air Jordan', image: '/sneakerticker/AIR JORDAN CARD.png', filterType: 'Air Jordan' },
-      { name: 'New Balance', image: '/sneakerticker/NEW BALANCE.png', filterType: 'New Balance' },
-      { name: 'Luxury', image: '/sneakerticker/LUXURY CARD.png', filterType: 'Luxury' }, // Will show Amiri + Louis Vuitton
-      { name: 'Samba', image: '/sneakerticker/SAMBA CARDS.png', filterType: 'Samba' }, // Will show Adidas
+      { name: 'Air Jordan', image: '/sneakerticker/AIR JORDAN CARD.png', filterType: 'Air Jordan', bgColor: '#f5f5dc' }, // Beige
+      { name: 'Luxury', image: '/sneakerticker/LUXURY CARD.png', filterType: 'Luxury', bgColor: '#1e3a8a' }, // Blue
+      { name: 'New Balance', image: '/sneakerticker/NEW BALANCE.png', filterType: 'New Balance', bgColor: '#f5f5dc' }, // Beige
+      { name: 'Samba', image: '/sneakerticker/SAMBA CARDS.png', filterType: 'Samba', bgColor: '#1e3a8a' }, // Blue
+      { name: 'Nike', image: '/sneakerticker/NIKE.png', filterType: 'Nike', bgColor: '#f5f5dc' }, // Beige
     ];
   }, []);
 
@@ -53,7 +53,8 @@ const BrandTicker: React.FC<BrandTickerProps> = ({ brands, onBrandClick }) => {
     
     let animationFrame: number;
     let translateX = 0;
-    const speed = 1; // px per frame
+    // Reduced speed for mobile (0.5px per frame instead of 1px)
+    const speed = isMobile ? 0.5 : 1;
     
     function animate() {
       if (!ticker) return;
@@ -71,12 +72,12 @@ const BrandTicker: React.FC<BrandTickerProps> = ({ brands, onBrandClick }) => {
     
     animate();
     return () => cancelAnimationFrame(animationFrame);
-  }, [displayBrands, paused]);
+  }, [displayBrands, paused, isMobile]);
 
   return (
     <div style={{ fontFamily: 'Montserrat, Inter, Segoe UI, Arial, sans-serif' }}>
       <div className={styles.tickerWrapper} style={{
-        marginTop: isMobile ? '60px' : '10px', // Moved up a bit like other categories
+        marginTop: isMobile ? '60px' : '50px', // Increased desktop margin to move down more from breadcrumbs
         height: isMobile ? '280px' : 'auto', // Increased height for mobile to prevent cutting
         overflow: 'hidden'
       }}>
@@ -102,7 +103,7 @@ const BrandTicker: React.FC<BrandTickerProps> = ({ brands, onBrandClick }) => {
                   }
                 }}
                 style={{
-                  background: '#fff',
+                  background: brand.bgColor || '#fff',
                   border: isSelected ? '1px solidrgb(9, 51, 74)' : 'none',
                   borderRadius: '12px',
                   minWidth: isMobile ? 180 : 350,
@@ -112,7 +113,7 @@ const BrandTicker: React.FC<BrandTickerProps> = ({ brands, onBrandClick }) => {
                   alignItems: 'center',
                   justifyContent: 'flex-end',
                   padding: '0 0 0px 0',
-                  margin: isMobile ? '15px 4px 0 4px' : 0, // Increased top margin for mobile to prevent cutting
+                  margin: isMobile ? '15px 0px 0 0px' : 0, // No gap between cards in mobile
                   cursor: 'pointer',
                   position: 'relative',
                   fontFamily: 'Montserrat, Inter, Segoe UI, Arial, sans-serif',
@@ -135,11 +136,11 @@ const BrandTicker: React.FC<BrandTickerProps> = ({ brands, onBrandClick }) => {
                   style={{
                     width: isMobile ? 180 : 350,
                     height: isMobile ? 220 : 550, // Increased height for mobile to prevent cutting
-                    objectFit: isMobile ? 'contain' : 'cover', // Better quality for mobile
-                    borderRadius: '0px 0px 0 0',
+                    objectFit: 'cover', // Fill the container completely
+                    borderRadius: '0px',
                     marginBottom: 0,
                     boxShadow: 'none',
-                    background: '#f8f9fa',
+                    background: 'transparent',
                     imageRendering: 'auto', // Better quality for mobile
                   }}
                 />

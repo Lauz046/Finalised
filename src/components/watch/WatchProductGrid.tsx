@@ -7,8 +7,8 @@ interface WatchProduct {
   id: string;
   brand: string;
   name: string;
-  salePrice: number;
-  marketPrice: string;
+  salePrice?: number | string | null;
+  marketPrice?: string | number | null;
   images: string[];
 }
 
@@ -17,6 +17,33 @@ interface WatchProductGridProps {
   loading?: boolean;
   mobile?: boolean;
 }
+
+// Calculate price from AED to INR with 10% markup
+const calculatePrice = (aedPrice: number | null | undefined | string) => {
+  let numericPrice: number;
+  
+  if (typeof aedPrice === 'string') {
+    // Handle string format like "AED5,800.00"
+    const match = aedPrice.match(/AED([\d,]+\.?\d*)/);
+    if (match) {
+      // Remove commas and convert to number
+      numericPrice = parseFloat(match[1].replace(/,/g, ''));
+    } else {
+      // Try direct parsing if no AED prefix
+      numericPrice = parseFloat(aedPrice.replace(/,/g, ''));
+    }
+  } else {
+    numericPrice = aedPrice as number;
+  }
+  
+  if (!numericPrice || numericPrice <= 0 || isNaN(numericPrice)) return 0;
+  
+  // Convert AED to INR and add 10% markup
+  const aedToInrRate = 24; // Current approximate rate
+  const basePrice = numericPrice * aedToInrRate;
+  const markup = basePrice * 0.1; // 10% markup
+  return basePrice + markup;
+};
 
 // Format price with proper currency
 const formatPrice = (price: number) => {
@@ -55,12 +82,21 @@ const WatchProductGrid: React.FC<WatchProductGridProps> = ({ products, loading =
   return (
     <div className={mobile ? styles.gridMobile : styles.grid}>
       {products.map(product => {
-        console.log('Watch product:', product);
+        console.log('=== WATCH PRODUCT DEBUG ===');
+        console.log('Full product:', JSON.stringify(product, null, 2));
+        console.log('Sale price:', product.salePrice, 'Type:', typeof product.salePrice, 'Is null:', product.salePrice === null, 'Is undefined:', product.salePrice === undefined);
+        console.log('Market price:', product.marketPrice, 'Type:', typeof product.marketPrice);
+        
+        // Use salePrice if available, otherwise fall back to marketPrice
+        const priceToUse = product.salePrice || product.marketPrice;
+        const calculatedPrice = calculatePrice(priceToUse);
+        console.log('Price to use:', priceToUse, 'Calculated price:', calculatedPrice);
+        console.log('=== END DEBUG ===');
         return (
           <Link href={`/watch/${product.id}`} key={product.id} className={styles.card}>
             <div className={styles.imageContainer}>
               <Image
-                src={product.images[0] || '/blue_nav_icons/Blue PLUTUS LOGO.svg'}
+                src={product.images[0] || '/nav/Plutus logo blue.svg'}
                 alt={product.name}
                 width={300}
                 height={300}
@@ -68,7 +104,7 @@ const WatchProductGrid: React.FC<WatchProductGridProps> = ({ products, loading =
                 loading="lazy"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.src = '/blue_nav_icons/Blue PLUTUS LOGO.svg';
+                  target.src = '/nav/Plutus logo blue.svg';
                 }}
               />
             </div>
@@ -77,7 +113,10 @@ const WatchProductGrid: React.FC<WatchProductGridProps> = ({ products, loading =
               <div className={styles.name} title={product.name}>
                 {truncateProductName(product.name)}
               </div>
-              <div className={styles.price}>{formatPrice(product.salePrice)}</div>
+              <div className={styles.priceRow}>
+                <span className={styles.startingFrom}>Starting from</span>
+                <span className={styles.price}>{formatPrice(calculatedPrice)}</span>
+              </div>
             </div>
           </Link>
         );

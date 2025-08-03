@@ -5,9 +5,15 @@ interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  loading?: boolean;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
+const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange, loading = false }) => {
+  // Don't show pagination when loading
+  if (loading) {
+    return null;
+  }
+  
   if (totalPages <= 1) return null;
 
   // Dynamic page range logic (show up to 5 pages, with ellipsis if needed)

@@ -44,9 +44,12 @@ const WatchPage = () => {
   const { categoryData, isPreloaded, loadCategoryData, isCategoryLoaded } = useProductContext();
   const router = useRouter();
   
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+  
   // Mobile overlay tab state
   const [mobileOverlayTab, setMobileOverlayTab] = useState<'filter' | 'sort'>('filter');
-  // State for filters
+  // State for filters - only show on desktop by default
   const [showFilter, setShowFilter] = useState(true);
   const [sortBy, setSortBy] = useState('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
@@ -56,12 +59,19 @@ const WatchPage = () => {
   const [inStockOnly, setInStockOnly] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [shouldResetPriceRange, setShouldResetPriceRange] = useState(true);
-  // Mobile detection
-  const [isMobile, setIsMobile] = useState(false);
   
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const checkMobile = () => setIsMobile(window.innerWidth < 900);
+      const checkMobile = () => {
+        const newIsMobile = window.innerWidth < 900;
+        setIsMobile(newIsMobile);
+        // Update filter visibility based on device type
+        if (newIsMobile) {
+          setShowFilter(false); // Don't show filter on mobile by default
+        } else {
+          setShowFilter(true); // Show filter on desktop by default
+        }
+      };
       checkMobile();
       window.addEventListener('resize', checkMobile);
       return () => window.removeEventListener('resize', checkMobile);
@@ -126,6 +136,13 @@ const WatchPage = () => {
     }
     return list;
   }, [watchesData, categoryData, sortBy]);
+  
+  // Reset loading state when data loads
+  useEffect(() => {
+    if (watches.length > 0 && shouldResetPriceRange) {
+      setShouldResetPriceRange(false);
+    }
+  }, [watches, shouldResetPriceRange]);
 
   // Derive unique colors and min/max prices from watches
   const allColors = useMemo(() => {
@@ -253,7 +270,11 @@ const WatchPage = () => {
   
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setShouldResetPriceRange(true);
+    // Scroll to top when page changes
+    if (page > 1) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   // Prepare watch products for grid
@@ -292,7 +313,16 @@ const WatchPage = () => {
   }, []);
 
   // Determine loading state
-  const isLoading = !isPreloaded && apiLoading;
+  const isLoading = (!isPreloaded && apiLoading) || shouldResetPriceRange;
+  
+  console.log('Watch pagination debug:', {
+    totalWatches: filteredWatches.length,
+    totalPages,
+    currentPage,
+    productsPerPage: PRODUCTS_PER_PAGE,
+    paginatedWatchesLength: paginatedWatches.length,
+    isLoading
+  });
 
   return (
     <>
@@ -308,7 +338,7 @@ const WatchPage = () => {
             padding: '4px 16px 0 16px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'center',
             gap: 8,
             overflowX: 'visible',
             minHeight: 48,
@@ -316,7 +346,7 @@ const WatchPage = () => {
             maxWidth: '100%',
           }}>
             {/* Brand buttons row with arrows - mobile optimized */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 48, position: 'relative', maxWidth: '85vw' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 48, position: 'relative', maxWidth: '100%' }}>
               <button
                 aria-label="Scroll left"
                 style={{
@@ -333,12 +363,13 @@ const WatchPage = () => {
                   const el = document.getElementById('brand-scroll-row-mobile');
                   if (el) el.scrollBy({ left: -120, behavior: 'smooth' });
                 }}
+                style={{ marginRight: '10px' }}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 20, height: 20 }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                 </svg>
               </button>
-              <div id="brand-scroll-row-mobile" style={{ display: 'flex', gap: 8, overflowX: 'auto', flex: 'none', scrollbarWidth: 'none', msOverflowStyle: 'none', minHeight: 40, maxWidth: '75vw' }}>
+              <div id="brand-scroll-row-mobile" style={{ display: 'flex', gap: 8, overflowX: 'auto', flex: 'none', scrollbarWidth: 'none', msOverflowStyle: 'none', minHeight: 40, maxWidth: 'calc(100% - 75px)' }}>
                 {brands.map((b: string) => (
                   <button
                     key={b}
@@ -392,6 +423,7 @@ const WatchPage = () => {
                   const el = document.getElementById('brand-scroll-row-mobile');
                   if (el) el.scrollBy({ left: 120, behavior: 'smooth' });
                 }}
+                style={{ marginLeft: '10px' }}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 20, height: 20 }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
@@ -484,7 +516,7 @@ const WatchPage = () => {
           
           <div style={{ width: '100%', padding: 0, marginTop: 0 }}>
             <WatchProductGrid 
-              products={watchProducts}
+              products={paginatedWatches}
               mobile
               loading={isLoading}
             />
@@ -521,7 +553,7 @@ const WatchPage = () => {
             marginBottom: 18,
           }}>
             {/* Brand buttons row with arrows, exactly as brand-wise page */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 56, position: 'relative', maxWidth: '80vw' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 56, position: 'relative', maxWidth: '80vw', justifyContent: 'center' }}>
               <button
                 aria-label="Scroll left"
                 style={{
@@ -680,11 +712,12 @@ const WatchPage = () => {
               transition: 'margin-left 0.3s ease',
               marginLeft: showFilter ? 0 : -14
             }}>
-              <WatchProductGrid products={watchProducts} />
+              <WatchProductGrid products={paginatedWatches} />
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
+                loading={isLoading}
               />
             </div>
           </div>

@@ -39,7 +39,7 @@ const AccessoriesProductGrid: React.FC<AccessoriesProductGridProps> = ({ product
             <div className={styles.skeletonContent}>
               <div className={styles.skeletonBrand}></div>
               <div className={styles.skeletonName}></div>
-              <div className={styles.skeletonPrice}></div>
+              <div className={styles.skeletonPriceRow}></div>
             </div>
           </div>
         ))}
@@ -53,13 +53,13 @@ const AccessoriesProductGrid: React.FC<AccessoriesProductGridProps> = ({ product
         <Link href={`/accessories/${product.id}`} key={product.id} className={styles.card}>
           <div className={styles.imageContainer}>
             <img
-              src={product.images[0] || '/nav/plutus logo.svg'}
+              src={product.images[0] || '/nav/Plutus logo blue.svg'}
               alt={product.productName}
               className={styles.image}
               loading="lazy"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
-                target.src = '/nav/plutus logo.svg';
+                target.src = '/nav/Plutus logo blue.svg';
               }}
             />
           </div>
@@ -68,7 +68,10 @@ const AccessoriesProductGrid: React.FC<AccessoriesProductGridProps> = ({ product
             <div className={styles.name} title={product.productName}>
               {truncateProductName(product.productName, mobile)}
             </div>
-            <div className={styles.price}>{formatPrice(product.price)}</div>
+            <div className={styles.priceRow}>
+              <span className={styles.startingFrom}>Starting from</span>
+              <span className={styles.price}>{formatPrice(product.price)}</span>
+            </div>
           </div>
         </Link>
       ))}

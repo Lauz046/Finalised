@@ -5,9 +5,15 @@ interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  loading?: boolean;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
+const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange, loading = false }) => {
+  // Don't show pagination when loading
+  if (loading) {
+    return null;
+  }
+  
   // Always show pagination if there are multiple pages, even if totalPages is 1 but we have more data
   if (totalPages <= 1) {
     // Check if we should show pagination based on current page

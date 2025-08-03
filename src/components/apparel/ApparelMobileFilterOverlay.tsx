@@ -47,13 +47,12 @@ const ApparelMobileFilterOverlay: React.FC<ApparelMobileFilterOverlayProps> = ({
   setTab: _setTab
 }) => {
   const [expandedSections, setExpandedSections] = useState({
-    gender: true,
     size: true,
     brands: true,
     subcategories: true,
   });
 
-  const toggleSection = (section: 'gender' | 'size' | 'brands' | 'subcategories') => {
+  const toggleSection = (section: 'size' | 'brands' | 'subcategories') => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
@@ -75,32 +74,7 @@ const ApparelMobileFilterOverlay: React.FC<ApparelMobileFilterOverlayProps> = ({
         <div className={styles.body}>
           {tab === 'filter' ? (
             <>
-              {/* Gender Section */}
-              <div className={styles.section}>
-                <div className={styles.sectionTitleRow} onClick={() => toggleSection('gender')} style={{ cursor: 'pointer' }}>
-                  <span className={styles.sectionTitle}>Shop by Gender</span>
-                  <span className={styles.sectionArrow} style={{ transform: expandedSections.gender ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 22, height: 22 }}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                    </svg>
-                  </span>
-                </div>
-                {expandedSections.gender && (
-                  <div className={styles.sectionContent}>
-                    {genders.map(gender => (
-                      <label key={gender} className={styles.checkboxLabel}>
-                        <input 
-                          type="checkbox" 
-                          checked={selectedGenders.includes(gender)}
-                          onChange={() => onGenderChange(gender)}
-                        /> 
-                        {gender}
-                      </label>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div className={styles.divider}></div>
+
               
               {/* Subcategory Section */}
               <div className={styles.section}>

@@ -12,6 +12,16 @@ class ComponentCache {
   private cache = new Map<string, CacheItem<any>>();
   private readonly DEFAULT_TTL = 5 * 60 * 1000; // 5 minutes
 
+  // Getter to access cache size
+  get size(): number {
+    return this.cache.size;
+  }
+
+  // Getter to access cache keys
+  get keys(): string[] {
+    return Array.from(this.cache.keys());
+  }
+
   set<T>(key: string, data: T, ttl: number = this.DEFAULT_TTL): void {
     this.cache.set(key, {
       data,
@@ -125,4 +135,52 @@ export const getPersistedState = <T>(key: string): T | null => {
     console.warn('Failed to get persisted state:', error);
     return null;
   }
-}; 
+};
+
+// Cache utilities with fallback functionality
+export const cacheUtils = {
+  getWithFallback: async <T>(
+    cache: ComponentCache,
+    key: string,
+    fallback: () => Promise<T>,
+    ttl: number = 5 * 60 * 1000
+  ): Promise<T> => {
+    // Check if data exists in cache
+    const cachedData = cache.get<T>(key);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // If not in cache, fetch using fallback function
+    try {
+      const data = await fallback();
+      cache.set(key, data, ttl);
+      return data;
+    } catch (error) {
+      console.error(`Failed to fetch data for key: ${key}`, error);
+      throw error;
+    }
+  },
+
+  getStats: () => {
+    return {
+      searchCache: {
+        size: searchCache.size,
+        keys: searchCache.keys
+      },
+      menuCache: {
+        size: menuCache.size,
+        keys: menuCache.keys
+      },
+      categoryCache: {
+        size: categoryCache.size,
+        keys: categoryCache.keys
+      }
+    };
+  }
+};
+
+// Export cache instances for different data types
+export const searchCache = new ComponentCache();
+export const menuCache = new ComponentCache();
+export const categoryCache = new ComponentCache(); 

@@ -52,7 +52,7 @@ const ApparelPage = () => {
   
   // Mobile overlay tab state
   const [mobileOverlayTab, setMobileOverlayTab] = useState<'filter' | 'sort'>('filter');
-  // State for filters
+  // State for filters - only show on desktop by default
   const [showFilter, setShowFilter] = useState(true);
   const [sortBy, setSortBy] = useState('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
@@ -111,7 +111,16 @@ const ApparelPage = () => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const checkMobile = () => setIsMobile(window.innerWidth < 900);
+      const checkMobile = () => {
+        const newIsMobile = window.innerWidth < 900;
+        setIsMobile(newIsMobile);
+        // Update filter visibility based on device type
+        if (newIsMobile) {
+          setShowFilter(false); // Don't show filter on mobile by default
+        } else {
+          setShowFilter(true); // Show filter on desktop by default
+        }
+      };
       checkMobile();
       window.addEventListener('resize', checkMobile);
       return () => window.removeEventListener('resize', checkMobile);
@@ -168,6 +177,13 @@ const ApparelPage = () => {
     }
     return list;
   }, [apparelData, categoryData, sortBy]);
+  
+  // Reset loading state when data loads
+  useEffect(() => {
+    if (apparels.length > 0 && shouldResetPriceRange) {
+      setShouldResetPriceRange(false);
+    }
+  }, [apparels, shouldResetPriceRange]);
 
   // Derive unique sizes and min/max prices from apparels
   const allSizes = useMemo(() => {
@@ -206,6 +222,9 @@ const ApparelPage = () => {
     (currentPage - 1) * PRODUCTS_PER_PAGE,
     currentPage * PRODUCTS_PER_PAGE
   );
+  
+  // Determine loading state - show loading for pagination changes too
+  const isLoading = (!isPreloaded && apiLoading) || shouldResetPriceRange;
 
   // Brand ticker: show each brand with a representative image
   const brandTickerData = useMemo(() => {
@@ -265,7 +284,11 @@ const ApparelPage = () => {
   
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setShouldResetPriceRange(true);
+    // Scroll to top when page changes
+    if (page > 1) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   // Prepare apparel products for grid (lowest price per apparel)
@@ -282,9 +305,6 @@ const ApparelPage = () => {
 
   const stickyBarRef = useRef<HTMLDivElement>(null);
 
-  // Determine loading state
-  const isLoading = !isPreloaded && apiLoading;
-
   return (
     <>
       {/* Mobile UI */}
@@ -299,7 +319,7 @@ const ApparelPage = () => {
             padding: '4px 16px 0 16px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'center',
             gap: 8,
             overflowX: 'visible',
             minHeight: 48,
@@ -307,7 +327,7 @@ const ApparelPage = () => {
             maxWidth: '100%',
           }}>
             {/* Brand buttons row with arrows - mobile optimized */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 48, position: 'relative', maxWidth: '85vw' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 48, position: 'relative', maxWidth: '100%' }}>
               <button
                 aria-label="Scroll left"
                 style={{
@@ -318,7 +338,7 @@ const ApparelPage = () => {
                   alignItems: 'center',
                   cursor: 'pointer',
                   height: 40,
-                  marginRight: 2,
+                  marginRight: 10,
                 }}
                 onClick={() => {
                   const el = document.getElementById('brand-scroll-row-mobile');
@@ -329,7 +349,7 @@ const ApparelPage = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                 </svg>
               </button>
-              <div id="brand-scroll-row-mobile" style={{ display: 'flex', gap: 8, overflowX: 'auto', flex: 'none', scrollbarWidth: 'none', msOverflowStyle: 'none', minHeight: 40, maxWidth: '75vw' }}>
+              <div id="brand-scroll-row-mobile" style={{ display: 'flex', gap: 8, overflowX: 'auto', flex: 'none', scrollbarWidth: 'none', msOverflowStyle: 'none', minHeight: 40, maxWidth: 'calc(100% - 75px)' }}>
                 {brands.map((b: string) => (
                   <button
                     key={b}
@@ -377,7 +397,7 @@ const ApparelPage = () => {
                   alignItems: 'center',
                   cursor: 'pointer',
                   height: 40,
-                  marginLeft: 2,
+                  marginLeft: 10,
                 }}
                 onClick={() => {
                   const el = document.getElementById('brand-scroll-row-mobile');
@@ -482,7 +502,7 @@ const ApparelPage = () => {
               mobile
               loading={isLoading}
             />
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+                          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} loading={isLoading} />
           </div>
         </div>
       ) : (

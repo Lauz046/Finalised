@@ -18,6 +18,7 @@ interface SneakerFilterSidebarProps {
   onSizeChange: (size: string) => void;
   inStockOnly: boolean;
   onInStockChange: (val: boolean) => void;
+  onApplyFilters?: () => void;
 }
 
 const SneakerFilterSidebar: React.FC<SneakerFilterSidebarProps> = ({
@@ -37,9 +38,12 @@ const SneakerFilterSidebar: React.FC<SneakerFilterSidebarProps> = ({
   onSizeChange,
   inStockOnly,
   onInStockChange,
+  onApplyFilters,
 }) => {
   const [sizeExpanded, setSizeExpanded] = useState(true);
   const [brandExpanded, setBrandExpanded] = useState(true);
+  
+  // For desktop, apply changes immediately (no temporary values needed)
 
   return (
     <aside className={show ? styles.sidebar : styles.sidebarHidden}>

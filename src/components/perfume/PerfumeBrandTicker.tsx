@@ -29,45 +29,15 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
 
   // Create the 3 fixed perfume categories in the correct order
   const perfumeCategories = [
-    { name: 'Niche', image: '/perfumeticker/Niche perfume.png', filterType: 'niche' },
-    { name: 'Explore All', image: '/perfumeticker/All Perfume.png', filterType: 'all' },
-    { name: 'Designer', image: '/perfumeticker/designer perfume.png', filterType: 'designer' }
+    { name: 'Niche', image: '/perfumeticker/Niche perfume.png', filterType: 'niche', bgColor: '#f5f5dc' }, // Beige
+    { name: 'Explore All', image: '/perfumeticker/All Perfume.png', filterType: 'all', bgColor: '#1e3a8a' }, // Blue
+    { name: 'Designer', image: '/perfumeticker/designer perfume.png', filterType: 'designer', bgColor: '#f5f5dc' } // Beige
   ];
 
-  // Create endless scrolling by duplicating the 3 categories multiple times
+  // Use only the 3 categories for static display
   const displayCategories = useMemo(() => {
-    // Duplicate the categories 4 times for seamless endless scrolling
-    return [...perfumeCategories, ...perfumeCategories, ...perfumeCategories, ...perfumeCategories];
+    return perfumeCategories;
   }, []);
-
-  // Transform-based animation for smooth endless movement (same as sneaker)
-  useEffect(() => {
-    if (paused || displayCategories.length === 0) return;
-    
-    const ticker = tickerRef.current;
-    if (!ticker) return;
-    
-    let animationFrame: number;
-    let translateX = 0;
-    const speed = 1; // px per frame
-    
-    function animate() {
-      if (!ticker) return;
-      translateX -= speed;
-      
-      // Reset position when we've moved the width of one set of brands
-      const singleSetWidth = ticker.scrollWidth / 6; // Since we have 6 sets
-      if (Math.abs(translateX) >= singleSetWidth) {
-        translateX = 0;
-      }
-      
-      ticker.style.transform = `translateX(${translateX}px)`;
-      animationFrame = requestAnimationFrame(animate);
-    }
-    
-    animate();
-    return () => cancelAnimationFrame(animationFrame);
-  }, [displayCategories, paused]);
 
   // Reset selection when paused state changes
   useEffect(() => {
@@ -79,14 +49,16 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
   return (
     <div style={{ fontFamily: 'Montserrat, Inter, Segoe UI, Arial, sans-serif' }}>
       <div className={styles.tickerWrapper} style={{
-        marginTop: isMobile ? '60px' : '10px', // Moved up like sneaker
-        height: isMobile ? '240px' : 'auto',
-        overflow: 'hidden'
+        marginTop: isMobile ? '40px' : '80px', // Reduced mobile margin to move cards up
+        height: isMobile ? '280px' : 'auto',
+        overflow: 'hidden',
+        width: '100%'
       }}>
         <div className={styles.ticker} ref={tickerRef} style={{ 
           display: 'flex', 
-          gap: isMobile ? '8px' : '20px',
-          width: 'fit-content'
+          gap: 0,
+          width: '100%',
+          justifyContent: 'space-between'
         }}>
           {displayCategories.map((category, idx) => {
             const isSelected = selected === category.name;
@@ -108,17 +80,17 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
                   }
                 }}
                 style={{
-                  background: '#fff',
-                  border: isSelected ? '3px solid rgb(9, 51, 74)' : '1px solid transparent',
+                  background: category.bgColor || '#fff',
+                  border: isSelected ? '1px solidrgb(9, 51, 74)' : 'none',
                   borderRadius: '12px',
-                  minWidth: isMobile ? 205 : 350,
-                  minHeight: isMobile ? 230 : 600,
+                  width: '33.33%',
+                  minHeight: isMobile ? 280 : 600,
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'flex-end',
                   padding: '0 0 0px 0',
-                  margin: isMobile ? '10px 8px 0 8px' : 0,
+                  margin: 0,
                   cursor: 'pointer',
                   position: 'relative',
                   fontFamily: 'Montserrat, Inter, Segoe UI, Arial, sans-serif',
@@ -133,20 +105,20 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
                 <img
                   src={brandImage}
                   alt={category.name}
-                  loading="lazy"
-                  style={{
-                    width: isMobile ? 205 : 350,
-                    height: isMobile ? 230 : 600,
-                    objectFit: isMobile ? 'contain' : 'cover', // Better quality for mobile
-                    borderRadius: '0px 0px 0 0',
-                    marginBottom: 0,
-                    boxShadow: 'none',
-                    background: '#f8f9fa',
-                    imageRendering: 'auto', // Better quality for mobile
-                  }}
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = '/nav/plutus logo.svg';
+                  }}
+                  loading="lazy"
+                  style={{
+                    width: '100%',
+                    height: isMobile ? 280 : 600,
+                    objectFit: 'cover',
+                    borderRadius: '0px',
+                    marginBottom: 0,
+                    boxShadow: 'none',
+                    background: 'transparent',
+                    imageRendering: 'auto',
                   }}
                 />
                 <div style={{
@@ -159,7 +131,7 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
                   <span
                     style={{
                       fontFamily: 'Montserrat, Inter, Segoe UI, Arial, sans-serif',
-                      fontSize: isMobile ? '1rem' : '1.5rem',
+                      fontSize: isMobile ? '0.85rem' : '1.5rem',
                       color: '#fff',
                       fontWeight: 500,
                       letterSpacing: '0.01em',

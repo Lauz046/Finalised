@@ -17,7 +17,7 @@ interface SneakerProductGridProps {
   mobile?: boolean;
 }
 
-// Utility function to limit product names - 5 words for desktop, 4 for mobile (no ellipsis)
+// Utility function to limit product names - 4 words for mobile, 5 for desktop (no ellipsis)
 const truncateProductName = (name: string, isMobile: boolean = false): string => {
   const words = name.split(' ');
   const maxWords = isMobile ? 4 : 5;
@@ -42,7 +42,7 @@ const SneakerProductGrid: React.FC<SneakerProductGridProps> = ({ products, loadi
             <div className={styles.skeletonContent}>
               <div className={styles.skeletonBrand} />
               <div className={styles.skeletonName} />
-              <div className={styles.skeletonPrice} />
+              {!mobile && <div className={styles.skeletonPrice} />}
             </div>
           </div>
         ))}
@@ -56,7 +56,7 @@ const SneakerProductGrid: React.FC<SneakerProductGridProps> = ({ products, loadi
         <Link href={`/sneaker/${product.id}`} key={product.id} className={styles.card}>
           <div className={styles.imageContainer}>
             <Image
-              src={product.images[0] || '/nav/plutus logo.svg'}
+              src={product.images[0] || '/nav/Plutus logo blue.svg'}
               alt={product.productName}
               width={300}
               height={300}
@@ -64,7 +64,7 @@ const SneakerProductGrid: React.FC<SneakerProductGridProps> = ({ products, loadi
               loading="lazy"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
-                target.src = '/nav/plutus logo.svg';
+                target.src = '/nav/Plutus logo blue.svg';
               }}
             />
           </div>
@@ -73,7 +73,10 @@ const SneakerProductGrid: React.FC<SneakerProductGridProps> = ({ products, loadi
             <div className={styles.name} title={product.productName}>
               {truncateProductName(product.productName, mobile)}
             </div>
-            <div className={styles.price}>{formatPrice(product.price)}</div>
+            <div className={styles.priceRow}>
+              <span className={styles.startingFrom}>Starting from</span>
+              <span className={styles.price}>{formatPrice(product.price)}</span>
+            </div>
           </div>
         </Link>
       ))}

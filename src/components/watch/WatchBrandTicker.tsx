@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import styles from './WatchBrandTicker.module.css';
 import { getBrandImage } from '../../utils/brandImageMapper';
 
@@ -54,21 +54,35 @@ const WatchBrandTicker: React.FC<WatchBrandTickerProps> = ({ brands, onBrandClic
     return () => cancelAnimationFrame(animationFrame);
   }, [brands, paused]);
 
-  // Create endless scrolling by duplicating brands 6 times (same as sneaker)
-  const displayBrands = [...brands, ...brands, ...brands, ...brands, ...brands, ...brands];
+  // Create fixed watch categories in specific order
+  const watchCategories = useMemo(() => {
+    return [
+      { name: 'Vacheron Constantin', image: '/watchticker/VACHERON CONSTANTIN.png', filterType: 'Vacheron Constantin', bgColor: '#f5f5dc' }, // Beige
+      { name: 'Bell & Ross', image: '/watchticker/BELL & ROSS.png', filterType: 'Bell & Ross', bgColor: '#1e3a8a' }, // Blue
+      { name: 'Rolex', image: '/watchticker/ROLEX.png', filterType: 'Rolex', bgColor: '#f5f5dc' }, // Beige
+      { name: 'Carl F Bucherer', image: '/watchticker/CARL F BUCHERER.png', filterType: 'Carl F Bucherer', bgColor: '#1e3a8a' }, // Blue
+      { name: 'Glashutte Original', image: '/watchticker/GLASHUTTE.png', filterType: 'Glashutte Original', bgColor: '#f5f5dc' }, // Beige
+    ];
+  }, []);
+
+  // Create endless scrolling by duplicating the 5 categories multiple times
+  const displayBrands = useMemo(() => {
+    // Duplicate the categories 6 times for seamless endless scrolling
+    return [...watchCategories, ...watchCategories, ...watchCategories, ...watchCategories, ...watchCategories, ...watchCategories];
+  }, [watchCategories]);
 
   return (
     <div style={{ fontFamily: 'Montserrat, Inter, Segoe UI, Arial, sans-serif' }}>
       <div className={styles.tickerWrapper} style={{
-        marginTop: isMobile ? '60px' : '10px', // Same as sneaker
+        marginTop: isMobile ? '60px' : '50px', // Increased desktop margin to move down more from breadcrumbs
         height: isMobile ? '280px' : 'auto', // Same as sneaker
         overflow: 'hidden'
       }}>
         <div className={styles.ticker} ref={tickerRef}>
-          {displayBrands.map((brand, idx) => {
+          {displayBrands.map((brand: any, idx: number) => {
             const isSelected = selected === brand.name;
             const isFaded = selected !== null && !isSelected;
-            const brandImage = getBrandImage(brand.name, 'watch');
+            const brandImage = brand.image || getBrandImage(brand.name, 'watch');
             return (
               <div
                 key={brand.name + idx}
@@ -84,7 +98,7 @@ const WatchBrandTicker: React.FC<WatchBrandTickerProps> = ({ brands, onBrandClic
                   onBrandClick(brand.name);
                 }}
                 style={{
-                  background: '#fff',
+                  background: brand.bgColor || '#fff',
                   border: isSelected ? '1px solidrgb(9, 51, 74)' : 'none',
                   borderRadius: '12px',
                   minWidth: isMobile ? 180 : 350, // Same as sneaker
@@ -94,7 +108,7 @@ const WatchBrandTicker: React.FC<WatchBrandTickerProps> = ({ brands, onBrandClic
                   alignItems: 'center',
                   justifyContent: 'flex-end',
                   padding: '0 0 0px 0',
-                  margin: isMobile ? '15px 4px 0 4px' : 0, // Same as sneaker
+                  margin: isMobile ? '15px 0px 0 0px' : 0, // No gap between cards
                   cursor: 'pointer',
                   position: 'relative',
                   fontFamily: 'Montserrat, Inter, Segoe UI, Arial, sans-serif',
@@ -113,11 +127,11 @@ const WatchBrandTicker: React.FC<WatchBrandTickerProps> = ({ brands, onBrandClic
                   style={{
                     width: isMobile ? 180 : 350, // Same as sneaker
                     height: isMobile ? 220 : 550, // Same as sneaker
-                    objectFit: isMobile ? 'contain' : 'cover', // Better quality for mobile
-                    borderRadius: '0px 0px 0 0',
+                    objectFit: 'cover', // Fill the container completely
+                    borderRadius: '0px',
                     marginBottom: 0,
                     boxShadow: 'none',
-                    background: '#f8f9fa',
+                    background: 'transparent',
                     imageRendering: 'auto', // Better quality for mobile
                   }}
                   onError={(e) => {

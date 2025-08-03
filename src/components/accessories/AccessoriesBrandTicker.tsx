@@ -26,23 +26,22 @@ const AccessoriesBrandTicker: React.FC<AccessoriesBrandTickerProps> = ({ onBrand
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Create the 7 fixed accessories subcategories in the correct order
+  // Create the 6 fixed accessories subcategories in the correct order
   const accessoriesSubcategories = useMemo(() => {
     return [
       { name: 'Sunglasses', image: '/accessoriesticker/Sunglasses.png', filterType: 'Sunglasses' },
-      { name: 'Scarves', image: '/accessoriesticker/SCARF.png', filterType: 'Scarves' },
-      { name: 'Hats', image: '/accessoriesticker/CAPS.png', filterType: 'Hats' },
+      { name: 'Scarfs', image: '/accessoriesticker/SCARF.png', filterType: 'Scarves' },
+      { name: 'Caps', image: '/accessoriesticker/CAPS.png', filterType: 'Hats' },
       { name: 'Socks', image: '/accessoriesticker/SOCKS.png', filterType: 'Socks' },
       { name: 'Belts', image: '/accessoriesticker/BELT.png', filterType: 'Belts' },
-      { name: 'Bags', image: '/accessoriesticker/STANLEY.png', filterType: 'Backpack' },
-      { name: 'Tech Accessories', image: '/accessoriesticker/PHONE CASE.png', filterType: 'Tech Accessories' },
+      { name: 'Tumblers', image: '/accessoriesticker/STANLEY.png', filterType: 'Tumbler' },
     ];
   }, []);
 
-  // Create endless scrolling by duplicating the 7 subcategories multiple times
+  // Create endless scrolling by duplicating the 6 subcategories multiple times
   const displaySubcategories = useMemo(() => {
-    // Duplicate the subcategories 4 times for seamless endless scrolling
-    return [...accessoriesSubcategories, ...accessoriesSubcategories, ...accessoriesSubcategories, ...accessoriesSubcategories];
+    // Duplicate the subcategories 6 times for seamless endless scrolling
+    return [...accessoriesSubcategories, ...accessoriesSubcategories, ...accessoriesSubcategories, ...accessoriesSubcategories, ...accessoriesSubcategories, ...accessoriesSubcategories];
   }, [accessoriesSubcategories]);
 
   // Auto-scroll effect (infinite loop)
@@ -55,7 +54,8 @@ const AccessoriesBrandTicker: React.FC<AccessoriesBrandTickerProps> = ({ onBrand
     
     let animationFrame: number;
     let translateX = 0;
-    const speed = 1; // px per frame - same as sneaker
+    // Reduced speed for mobile (0.5px per frame instead of 1px)
+    const speed = isMobile ? 0.5 : 1;
     
     function animate() {
       if (!ticker) return;
@@ -87,7 +87,7 @@ const AccessoriesBrandTicker: React.FC<AccessoriesBrandTickerProps> = ({ onBrand
       <div 
         className={styles.tickerWrapper}
         style={{
-          marginTop: isMobile ? '60px' : '10px', // Moved up like sneaker
+          marginTop: isMobile ? '60px' : '50px', // Increased desktop margin to move down more from breadcrumbs
           height: isMobile ? '280px' : 'auto', // Same as sneaker
           overflow: 'hidden',
         }}
@@ -123,7 +123,7 @@ const AccessoriesBrandTicker: React.FC<AccessoriesBrandTickerProps> = ({ onBrand
                   alignItems: 'center',
                   justifyContent: 'flex-end',
                   padding: '0 0 0px 0',
-                  margin: isMobile ? '15px 4px 0 4px' : 0, // Same as sneaker
+                  margin: isMobile ? '15px 0px 0 0px' : 0, // No gap between cards in mobile
                   cursor: 'pointer',
                   position: 'relative',
                   fontFamily: 'Montserrat, Inter, Segoe UI, Arial, sans-serif',
@@ -141,16 +141,16 @@ const AccessoriesBrandTicker: React.FC<AccessoriesBrandTickerProps> = ({ onBrand
                   loading="lazy"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    target.src = '/nav/plutus logo.svg';
+                    target.src = '/nav/Plutus logo blue.svg';
                   }}
                   style={{
                     width: isMobile ? 180 : 350, // Same as sneaker
                     height: isMobile ? 220 : 600, // Same as sneaker
-                    objectFit: isMobile ? 'contain' : 'cover', // Better quality for mobile
-                    borderRadius: '0px 0px 0 0',
+                    objectFit: 'cover', // Fill the container completely
+                    borderRadius: '0px',
                     marginBottom: 0,
                     boxShadow: 'none',
-                    background: '#f8f9fa',
+                    background: 'transparent',
                     imageRendering: 'auto', // Better quality for mobile
                   }}
                 />

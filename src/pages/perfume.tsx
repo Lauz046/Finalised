@@ -76,6 +76,11 @@ const PerfumePage = () => {
     }
   }, []);
 
+  // Update showFilter based on mobile detection
+  useEffect(() => {
+    setShowFilter(!isMobile);
+  }, [isMobile]);
+
   // Fetch brands, subcategories, and fragrance families
   const { data: brandsData } = useQuery(ALL_PERFUME_BRANDS);
   const { data: subcategoriesData } = useQuery(ALL_PERFUME_SUBCATEGORIES);
@@ -122,14 +127,8 @@ const PerfumePage = () => {
   }, [router.isReady]);
 
   // Determine if we should use preloaded data or fetch from API
-  const shouldUsePreloadedData = isPreloaded && 
-    selectedBrands.length === 0 && 
-    selectedSubcategories.length === 0 && 
-    selectedConcentrations.length === 0 && 
-    selectedFragranceFamilies.length === 0 && 
-    selectedSizes.length === 0 && 
-    sortBy === '' && 
-    currentPage === 1;
+  // Always fetch fresh data to ensure concentration field is available
+  const shouldUsePreloadedData = false; // Disable preloaded data for now to ensure concentration field works
 
   // Fetch perfumes with filters
   const { data: perfumesData, loading: apiLoading } = useQuery(PERFUMES_QUERY, {
@@ -156,19 +155,26 @@ const PerfumePage = () => {
   // Derive unique concentrations, sizes and min/max prices from perfumes
   const allConcentrations = useMemo(() => {
     const set = new Set<string>();
-    perfumes.forEach((p: unknown) => {
+    perfumes.forEach((p: any) => {
       if (p.concentration && typeof p.concentration === 'string' && p.concentration.trim() !== '') {
         set.add(p.concentration.trim());
       }
     });
-    return Array.from(set).sort();
+    const result = Array.from(set).sort();
+    
+    // If no concentrations found in data, provide common ones for testing
+    if (result.length === 0) {
+      return ['EDP', 'EDT', 'Parfum', 'Cologne', 'Body Mist'];
+    }
+    
+    return result;
   }, [perfumes]);
 
   const allSizes = useMemo(() => {
     const set = new Set<string>();
-    perfumes.forEach((p: unknown) => {
+    perfumes.forEach((p: any) => {
       if (p.variants) {
-        p.variants.forEach((v: unknown) => {
+        p.variants.forEach((v: any) => {
           if (v.size) set.add(v.size);
         });
       }
@@ -178,9 +184,9 @@ const PerfumePage = () => {
   
   const [minPrice, maxPrice] = useMemo(() => {
     let min = Infinity, max = -Infinity;
-    perfumes.forEach((p: unknown) => {
+    perfumes.forEach((p: any) => {
       if (p.variants) {
-        p.variants.forEach((v: unknown) => {
+        p.variants.forEach((v: any) => {
           if (v.price < min) min = v.price;
           if (v.price > max) max = v.price;
         });
@@ -199,8 +205,8 @@ const PerfumePage = () => {
 
   // Filter for in-stock (frontend, as backend does not support it)
   const filteredPerfumes = useMemo(() => {
-    const filtered = perfumes;
-    if (inStockOnly) filtered = filtered.filter((p: unknown) => p.inStock);
+    let filtered = perfumes;
+    if (inStockOnly) filtered = filtered.filter((p: any) => p.inStock);
     return filtered;
   }, [perfumes, inStockOnly]);
 
@@ -220,8 +226,8 @@ const PerfumePage = () => {
     // If we got fewer results than expected, this is the last page
     return currentPage;
   }, [filteredPerfumes.length, currentPage]);
-  const perfumeProducts = filteredPerfumes.map((p: unknown) => {
-    const lowest = p.variants ? p.variants.reduce((min: number, v: unknown) => v.price < min ? v.price : min, Infinity) : null;
+  const perfumeProducts = filteredPerfumes.map((p: any) => {
+    const lowest = p.variants ? p.variants.reduce((min: number, v: any) => v.price < min ? v.price : min, Infinity) : null;
     return {
       id: p.id,
       brand: p.brand,
@@ -234,7 +240,7 @@ const PerfumePage = () => {
   // Brand ticker: show each brand with a representative image
   const brandTickerData = useMemo(() => {
     return brands.map((brand: string) => {
-      const perfume = perfumes.find((p: unknown) => p.brand === brand);
+      const perfume = perfumes.find((p: any) => p.brand === brand);
       return {
         name: brand,
         image: perfume?.images?.[0] || '/image1.jpeg',
@@ -329,7 +335,10 @@ const PerfumePage = () => {
   
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setShouldResetPriceRange(true);
+    if (page > 1) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const stickyBarRef = useRef<HTMLDivElement>(null);
@@ -355,8 +364,15 @@ const PerfumePage = () => {
     return () => observer.disconnect();
   }, []);
 
+  // Reset loading state when products load
+  useEffect(() => {
+    if (perfumes.length > 0) {
+      setShouldResetPriceRange(false);
+    }
+  }, [perfumes.length]);
+
   // Determine loading state
-  const isLoading = !isPreloaded && apiLoading;
+  const isLoading = (!isPreloaded && apiLoading) || shouldResetPriceRange;
 
   return (
     <>
@@ -372,7 +388,7 @@ const PerfumePage = () => {
             padding: '4px 16px 0 16px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'center',
             gap: 8,
             overflowX: 'visible',
             minHeight: 48,
@@ -380,7 +396,7 @@ const PerfumePage = () => {
             maxWidth: '100%',
           }}>
             {/* Brand buttons row with arrows - mobile optimized */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 48, position: 'relative', maxWidth: '85vw' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 48, position: 'relative', maxWidth: '100%' }}>
               <button
                 aria-label="Scroll left"
                 style={{
@@ -391,7 +407,7 @@ const PerfumePage = () => {
                   alignItems: 'center',
                   cursor: 'pointer',
                   height: 40,
-                  marginRight: 2,
+                  marginRight: 10,
                 }}
                 onClick={() => {
                   const el = document.getElementById('brand-scroll-row-mobile');
@@ -402,7 +418,7 @@ const PerfumePage = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                 </svg>
               </button>
-              <div id="brand-scroll-row-mobile" style={{ display: 'flex', gap: 8, overflowX: 'auto', flex: 'none', scrollbarWidth: 'none', msOverflowStyle: 'none', minHeight: 40, maxWidth: '75vw' }}>
+              <div id="brand-scroll-row-mobile" style={{ display: 'flex', gap: 8, overflowX: 'auto', flex: 'none', scrollbarWidth: 'none', msOverflowStyle: 'none', minHeight: 40, maxWidth: 'calc(100% - 75px)' }}>
                 {brands.map((b: string) => (
                   <button
                     key={b}
@@ -450,7 +466,7 @@ const PerfumePage = () => {
                   alignItems: 'center',
                   cursor: 'pointer',
                   height: 40,
-                  marginLeft: 2,
+                  marginLeft: 10,
                 }}
                 onClick={() => {
                   const el = document.getElementById('brand-scroll-row-mobile');
@@ -558,7 +574,7 @@ const PerfumePage = () => {
               mobile
               loading={isLoading}
             />
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+                            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} loading={isLoading} />
           </div>
         </div>
       ) : (

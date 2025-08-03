@@ -246,7 +246,7 @@ func (r *queryResolver) Watch(ctx context.Context, id string) (*model.Watch, err
 // Perfumes is the resolver for the perfumes field.
 func (r *queryResolver) Perfumes(ctx context.Context, brand *string, fragranceFamily *string, concentration *string, subcategory *string, size *string, sortOrder *string, minPrice *float64, maxPrice *float64, search *string, limit *int, offset *int) ([]*model.Perfume, error) {
 	query := `
-		SELECT id, brand, title, fragrance_family, subcategory, variants, images, url, seller_name, seller_url
+		SELECT id, brand, title, fragrance_family, concentration, subcategory, variants, images, url, seller_name, seller_url
 		FROM perfumes
 		WHERE 1=1
 	`
@@ -260,6 +260,9 @@ func (r *queryResolver) Perfumes(ctx context.Context, brand *string, fragranceFa
 	}
 	if subcategory != nil && *subcategory != "" {
 		query += fmt.Sprintf(" AND subcategory ILIKE '%%%s%%'", *subcategory)
+	}
+	if concentration != nil && *concentration != "" {
+		query += fmt.Sprintf(" AND concentration ILIKE '%%%s%%'", *concentration)
 	}
 	if size != nil && *size != "" {
 		query += fmt.Sprintf(" AND variants::text ILIKE '%%%s%%'", *size)
@@ -287,9 +290,41 @@ func (r *queryResolver) Perfumes(ctx context.Context, brand *string, fragranceFa
 		var p model.Perfume
 		var variantsRaw []byte
 		var sellerName, sellerUrl *string
-		if err := rows.Scan(&p.ID, &p.Brand, &p.Title, &p.FragranceFamily, &p.Subcategory, &variantsRaw, pq.Array(&p.Images), &p.URL, &sellerName, &sellerUrl); err != nil {
+		var concentration *string
+		if err := rows.Scan(&p.ID, &p.Brand, &p.Title, &p.FragranceFamily, &concentration, &p.Subcategory, &variantsRaw, pq.Array(&p.Images), &p.URL, &sellerName, &sellerUrl); err != nil {
 			return nil, err
 		}
+
+		// Set concentration based on title if it's null
+		if concentration == nil || *concentration == "" {
+			title := strings.ToLower(p.Title)
+			fmt.Printf("Processing perfume: %s, concentration from DB: %v\n", p.Title, concentration)
+			if strings.Contains(title, "eau de parfum") || strings.Contains(title, "edp") {
+				concentrationStr := "EDP"
+				p.Concentration = &concentrationStr
+				fmt.Printf("Set concentration to EDP for: %s\n", p.Title)
+			} else if strings.Contains(title, "eau de toilette") || strings.Contains(title, "edt") {
+				concentrationStr := "EDT"
+				p.Concentration = &concentrationStr
+				fmt.Printf("Set concentration to EDT for: %s\n", p.Title)
+			} else if strings.Contains(title, "parfum") {
+				concentrationStr := "Parfum"
+				p.Concentration = &concentrationStr
+				fmt.Printf("Set concentration to Parfum for: %s\n", p.Title)
+			} else if strings.Contains(title, "cologne") {
+				concentrationStr := "Cologne"
+				p.Concentration = &concentrationStr
+				fmt.Printf("Set concentration to Cologne for: %s\n", p.Title)
+			} else {
+				concentrationStr := "EDT" // Default fallback
+				p.Concentration = &concentrationStr
+				fmt.Printf("Set concentration to EDT (default) for: %s\n", p.Title)
+			}
+		} else {
+			p.Concentration = concentration
+			fmt.Printf("Using existing concentration: %s for: %s\n", *concentration, p.Title)
+		}
+
 		if err := json.Unmarshal(variantsRaw, &p.Variants); err != nil {
 			return nil, err
 		}
@@ -303,14 +338,39 @@ func (r *queryResolver) Perfumes(ctx context.Context, brand *string, fragranceFa
 
 // Perfume is the resolver for the perfume field.
 func (r *queryResolver) Perfume(ctx context.Context, id string) (*model.Perfume, error) {
-	query := `SELECT id, brand, title, fragrance_family, subcategory, variants, images, url, seller_name, seller_url FROM perfumes WHERE id = $1`
+	query := `SELECT id, brand, title, fragrance_family, concentration, subcategory, variants, images, url, seller_name, seller_url FROM perfumes WHERE id = $1`
 	row := r.DB.QueryRow(query, id)
 	var p model.Perfume
 	var variantsRaw []byte
 	var sellerName, sellerUrl *string
-	if err := row.Scan(&p.ID, &p.Brand, &p.Title, &p.FragranceFamily, &p.Subcategory, &variantsRaw, pq.Array(&p.Images), &p.URL, &sellerName, &sellerUrl); err != nil {
+	var concentration *string
+	if err := row.Scan(&p.ID, &p.Brand, &p.Title, &p.FragranceFamily, &concentration, &p.Subcategory, &variantsRaw, pq.Array(&p.Images), &p.URL, &sellerName, &sellerUrl); err != nil {
 		return nil, err
 	}
+
+	// Set concentration based on title if it's null
+	if concentration == nil || *concentration == "" {
+		title := strings.ToLower(p.Title)
+		if strings.Contains(title, "eau de parfum") || strings.Contains(title, "edp") {
+			concentrationStr := "EDP"
+			p.Concentration = &concentrationStr
+		} else if strings.Contains(title, "eau de toilette") || strings.Contains(title, "edt") {
+			concentrationStr := "EDT"
+			p.Concentration = &concentrationStr
+		} else if strings.Contains(title, "parfum") {
+			concentrationStr := "Parfum"
+			p.Concentration = &concentrationStr
+		} else if strings.Contains(title, "cologne") {
+			concentrationStr := "Cologne"
+			p.Concentration = &concentrationStr
+		} else {
+			concentrationStr := "EDT" // Default fallback
+			p.Concentration = &concentrationStr
+		}
+	} else {
+		p.Concentration = concentration
+	}
+
 	if err := json.Unmarshal(variantsRaw, &p.Variants); err != nil {
 		return nil, err
 	}

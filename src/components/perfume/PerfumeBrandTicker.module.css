@@ -13,32 +13,38 @@
   display: flex;
   align-items: center;
   gap: 0;
-  will-change: transform;
-  white-space: nowrap;
-  min-width: 200vw;
-  overflow-x: scroll;
+  width: 100%;
+  overflow: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
-
-  padding: -10px;
+  padding: 0;
   margin: 0;
 }
 .ticker::-webkit-scrollbar {
   display: none;
+}
+
+@media (max-width: 900px) {
+  .ticker {
+    gap: 0;
+  }
+  
+  .tickerWrapper {
+    padding: 10px 0;
+  }
 }
 .brandCard {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 120px;
   margin: 0;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
   border-radius: 0px;
   background: #fff;
   box-shadow: 0 2px 8px rgba(30,167,253,0.04);
-  padding: 12px 18px 10px 18px;
+  padding: 0;
 }
 
 .brandImage {

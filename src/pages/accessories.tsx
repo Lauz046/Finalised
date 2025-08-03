@@ -53,7 +53,7 @@ const AccessoriesPage = () => {
   // Mobile overlay tab state
   const [mobileOverlayTab, setMobileOverlayTab] = useState<'filter' | 'sort'>('filter');
   // State for filters
-  const [showFilter, setShowFilter] = useState(true);
+  const [showFilter, setShowFilter] = useState(false);
   const [sortBy, setSortBy] = useState('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
@@ -74,6 +74,11 @@ const AccessoriesPage = () => {
       return () => window.removeEventListener('resize', checkMobile);
     }
   }, []);
+
+  // Update showFilter based on mobile detection
+  useEffect(() => {
+    setShowFilter(!isMobile);
+  }, [isMobile]);
 
   // Fetch brands, subcategories, and genders
   const { data: brandsData } = useQuery(ALL_ACCESSORY_BRANDS);
@@ -112,13 +117,8 @@ const AccessoriesPage = () => {
   }, [router.isReady]);
 
   // Determine if we should use preloaded data or fetch from API
-  const shouldUsePreloadedData = isPreloaded && 
-    selectedBrands.length === 0 && 
-    selectedSizes.length === 0 && 
-    selectedSubcategories.length === 0 && 
-    selectedGenders.length === 0 && 
-    sortBy === '' && 
-    currentPage === 1;
+  // Always fetch fresh data to ensure all fields work properly
+  const shouldUsePreloadedData = false; // Disable preloaded data for now to ensure all filters work
 
   // Fetch accessories with filters
   const { data: accessoriesData, loading: apiLoading } = useQuery(ACCESSORIES_QUERY, {
@@ -166,6 +166,13 @@ const AccessoriesPage = () => {
       setShouldResetPriceRange(false);
     }
   }, [minPrice, maxPrice, shouldResetPriceRange, priceRange]);
+
+  // Reset loading state when products load
+  useEffect(() => {
+    if (accessories.length > 0) {
+      setShouldResetPriceRange(false);
+    }
+  }, [accessories]);
 
   // Filter for in-stock (frontend, as backend does not support it)
   const filteredAccessories = useMemo(() => {
@@ -253,21 +260,11 @@ const AccessoriesPage = () => {
       return;
     }
     
-    // Map the fixed subcategory names to actual database subcategories for filtering
-    const subcategoryMapping: { [key: string]: string } = {
-      'Sunglasses': 'Sunglasses',
-      'Scarves': 'Scarves',
-      'Hats': 'Hats',
-      'Socks': 'Socks',
-      'Belts': 'Belts',
-      'Bags': 'Backpack', // Map to Backpack for filtering
-      'Tech Accessories': 'Tech Accessories',
-    };
+    // The brand ticker now passes the actual database subcategory directly
+    // So we can use it directly without mapping
+    console.log('Clicked subcategory:', subcategory);
     
-    const actualSubcategory = subcategoryMapping[subcategory] || subcategory;
-    console.log('Clicked subcategory:', subcategory, 'Mapped to:', actualSubcategory);
-    
-    setSelectedSubcategories([actualSubcategory]);
+    setSelectedSubcategories([subcategory]);
     setCurrentPage(1);
     setShouldResetPriceRange(true);
   };
@@ -306,6 +303,7 @@ const AccessoriesPage = () => {
   
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    setShouldResetPriceRange(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -329,7 +327,7 @@ const AccessoriesPage = () => {
   }, []);
 
   // Determine loading state
-  const isLoading = !isPreloaded && apiLoading;
+  const isLoading = !isPreloaded && apiLoading || shouldResetPriceRange;
 
   return (
     <>
@@ -353,7 +351,7 @@ const AccessoriesPage = () => {
             maxWidth: '100%',
           }}>
             {/* Brand buttons row with arrows - mobile optimized */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 48, position: 'relative', maxWidth: '85vw' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 48, position: 'relative', maxWidth: '100%', justifyContent: 'center' }}>
               <button
                 aria-label="Scroll left"
                 style={{
@@ -364,7 +362,7 @@ const AccessoriesPage = () => {
                   alignItems: 'center',
                   cursor: 'pointer',
                   height: 40,
-                  marginRight: 2,
+                  marginRight: 10,
                 }}
                 onClick={() => {
                   const el = document.getElementById('brand-scroll-row-mobile');
@@ -375,7 +373,7 @@ const AccessoriesPage = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                 </svg>
               </button>
-              <div id="brand-scroll-row-mobile" style={{ display: 'flex', gap: 8, overflowX: 'auto', flex: 'none', scrollbarWidth: 'none', msOverflowStyle: 'none', minHeight: 40, maxWidth: '75vw' }}>
+              <div id="brand-scroll-row-mobile" style={{ display: 'flex', gap: 8, overflowX: 'auto', flex: 'none', scrollbarWidth: 'none', msOverflowStyle: 'none', minHeight: 40, maxWidth: 'calc(100% - 75px)' }}>
                 {brands.map((b: string) => (
                   <button
                     key={b}
@@ -423,7 +421,7 @@ const AccessoriesPage = () => {
                   alignItems: 'center',
                   cursor: 'pointer',
                   height: 40,
-                  marginLeft: 2,
+                  marginLeft: 10,
                 }}
                 onClick={() => {
                   const el = document.getElementById('brand-scroll-row-mobile');
@@ -522,7 +520,7 @@ const AccessoriesPage = () => {
           />
           <div style={{ width: '100%', padding: 0, marginTop: 0 }}>
             <AccessoriesProductGrid products={accessoryProducts} mobile loading={isLoading} />
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+                          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} loading={isLoading} />
           </div>
         </div>
       ) : (
@@ -718,7 +716,7 @@ const AccessoriesPage = () => {
               marginLeft: showFilter ? 0 : -14
             }}>
               <AccessoriesProductGrid products={accessoryProducts} loading={isLoading} />
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} loading={isLoading} />
             </div>
           </div>
         </>

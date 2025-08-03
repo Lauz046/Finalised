@@ -39,9 +39,12 @@ const PRODUCTS_PER_PAGE = 21;
 const SneakerPage = () => {
   const { categoryData, isPreloaded, loadCategoryData, isCategoryLoaded } = useProductContext();
   
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+  
   // Mobile overlay tab state
   const [mobileOverlayTab, setMobileOverlayTab] = useState<'filter' | 'sort'>('filter');
-  // State for filters
+  // State for filters - only show on desktop by default
   const [showFilter, setShowFilter] = useState(true);
   const [sortBy, setSortBy] = useState('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
@@ -50,12 +53,19 @@ const SneakerPage = () => {
   const [inStockOnly, setInStockOnly] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [shouldResetPriceRange, setShouldResetPriceRange] = useState(true);
-  // Mobile detection
-  const [isMobile, setIsMobile] = useState(false);
   
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const checkMobile = () => setIsMobile(window.innerWidth < 900);
+      const checkMobile = () => {
+        const newIsMobile = window.innerWidth < 900;
+        setIsMobile(newIsMobile);
+        // Update filter visibility based on device type
+        if (newIsMobile) {
+          setShowFilter(false); // Don't show filter on mobile by default
+        } else {
+          setShowFilter(true); // Show filter on desktop by default
+        }
+      };
       checkMobile();
       window.addEventListener('resize', checkMobile);
       return () => window.removeEventListener('resize', checkMobile);
@@ -268,10 +278,26 @@ const SneakerPage = () => {
     setShouldResetPriceRange(true);
   };
 
+  const handleSortChange = (sort: string) => {
+    setSortBy(sort);
+    setCurrentPage(1);
+    setShouldResetPriceRange(true);
+  };
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    // Scroll to top when page changes
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Trigger loading state for pagination
+    setShouldResetPriceRange(true);
   };
+
+  // Scroll to top when filters change
+  useEffect(() => {
+    if (currentPage > 1) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [currentPage]);
 
   const stickyBarRef = useRef<HTMLDivElement>(null);
   const gridContainerRef = useRef<HTMLDivElement>(null);
@@ -296,8 +322,8 @@ const SneakerPage = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Determine loading state
-  const isLoading = !isPreloaded && apiLoading;
+  // Determine loading state - show loading for pagination changes too
+  const isLoading = (!isPreloaded && apiLoading) || shouldResetPriceRange;
 
   return (
     <>
@@ -313,7 +339,7 @@ const SneakerPage = () => {
             padding: '4px 16px 0 16px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'center',
             gap: 8,
             overflowX: 'visible',
             minHeight: 48,
@@ -321,7 +347,7 @@ const SneakerPage = () => {
             maxWidth: '100%',
           }}>
             {/* Brand buttons row with arrows - mobile optimized */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 48, position: 'relative', maxWidth: '85vw' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 48, position: 'relative', maxWidth: '100%' }}>
               <button
                 aria-label="Scroll left"
                 style={{
@@ -332,7 +358,7 @@ const SneakerPage = () => {
                   alignItems: 'center',
                   cursor: 'pointer',
                   height: 40,
-                  marginRight: 2,
+                  marginRight: 10,
                 }}
                 onClick={() => {
                   const el = document.getElementById('brand-scroll-row-mobile');
@@ -343,7 +369,7 @@ const SneakerPage = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                 </svg>
               </button>
-              <div id="brand-scroll-row-mobile" style={{ display: 'flex', gap: 8, overflowX: 'auto', flex: 'none', scrollbarWidth: 'none', msOverflowStyle: 'none', minHeight: 40, maxWidth: '75vw' }}>
+              <div id="brand-scroll-row-mobile" style={{ display: 'flex', gap: 8, overflowX: 'auto', flex: 'none', scrollbarWidth: 'none', msOverflowStyle: 'none', minHeight: 40, maxWidth: 'calc(100% - 75px)' }}>
                 {brands.map((b: string) => (
                   <button
                     key={b}
@@ -391,7 +417,7 @@ const SneakerPage = () => {
                   alignItems: 'center',
                   cursor: 'pointer',
                   height: 40,
-                  marginLeft: 2,
+                  marginLeft: 10,
                 }}
                 onClick={() => {
                   const el = document.getElementById('brand-scroll-row-mobile');
@@ -471,7 +497,7 @@ const SneakerPage = () => {
             show={showFilter}
             onClose={() => setShowFilter(false)}
             sortBy={sortBy}
-            onSortByChange={setSortBy}
+            onSortByChange={handleSortChange}
             brands={brands}
             selectedBrands={selectedBrands}
             onBrandChange={handleBrandChange}
@@ -482,6 +508,11 @@ const SneakerPage = () => {
             onInStockChange={setInStockOnly}
             tab={mobileOverlayTab}
             setTab={setMobileOverlayTab}
+            onApplyFilters={() => {
+              // Trigger loading state when filters are applied
+              setCurrentPage(1);
+              setShouldResetPriceRange(true);
+            }}
           />
           
           <div style={{ width: '100%', padding: 0, marginTop: 0 }}>
@@ -490,7 +521,7 @@ const SneakerPage = () => {
               mobile
               loading={isLoading}
             />
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} loading={isLoading} />
           </div>
         </div>
       ) : (
@@ -657,7 +688,7 @@ const SneakerPage = () => {
                 show={showFilter}
                 onHide={() => setShowFilter(false)}
                 sortBy={sortBy}
-                onSortByChange={setSortBy}
+                onSortByChange={handleSortChange}
                 priceRange={priceRange}
                 minPrice={minPrice}
                 maxPrice={maxPrice}
@@ -670,6 +701,11 @@ const SneakerPage = () => {
                 onSizeChange={handleSizeChange}
                 inStockOnly={inStockOnly}
                 onInStockChange={setInStockOnly}
+                onApplyFilters={() => {
+                  // Trigger loading state when filters are applied
+                  setCurrentPage(1);
+                  setShouldResetPriceRange(true);
+                }}
               />
             </div>
             <div style={{ 
@@ -679,11 +715,12 @@ const SneakerPage = () => {
               transition: 'margin-left 0.3s ease',
               marginLeft: showFilter ? 0 : -14
             }}>
-              <SneakerProductGrid products={sneakerProducts} />
+              <SneakerProductGrid products={sneakerProducts} loading={isLoading} />
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
+                loading={isLoading}
               />
             </div>
           </div>

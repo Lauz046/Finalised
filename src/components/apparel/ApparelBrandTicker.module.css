@@ -15,13 +15,24 @@
   gap: 0;
   will-change: transform;
   white-space: nowrap;
-  min-width: 200vw;
-  overflow-x: scroll;
+  min-width: 300vw;
+  overflow: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
 
   padding: -10px;
   margin: 0;
+}
+
+@media (max-width: 900px) {
+  .ticker {
+    gap: 0;
+    min-width: 400vw;
+  }
+  
+  .tickerWrapper {
+    padding: 10px 0;
+  }
 }
 .ticker::-webkit-scrollbar {
   display: none;

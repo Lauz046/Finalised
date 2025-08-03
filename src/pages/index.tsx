@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
-import HeroCarousel from '../components/HeroCarousel/HeroCarousal';
+import HeroCarouselImage from '../components/HeroCarousel/HeroCarouselImage';
 import InfiniteCardSection from '@/components/infinitescroll/infiniteScroll';
-import TikTokInspiration from '@/components/tik-tok/tik_inspiration';
 import NewArrivals from '@/components/newArrivals/NewArrivals';
 import ProductSlider360 from '@/components/swiper360/ProductSlider360';
 import HeroShowcase from '@/components/showcase/ShowCase';
@@ -48,14 +47,16 @@ const HomePage = () => {
         <title>Premium Brand Experience</title>
         <meta name="description" content="A premium brand experience inspired by Cartier" />
         {/* Preload critical resources */}
-        <link rel="preload" href="/herosection/optimized/hero-video-1.webm" as="video" type="video/webm" />
-        <link rel="preload" href="/background.webm" as="video" type="video/webm" />
         <link rel="preload" href="/image1.jpeg" as="image" />
+        <link rel="preload" href="/image2.jpeg" as="image" />
+        <link rel="preload" href="/image3.jpeg" as="image" />
+        <link rel="preload" href="/image4.jpeg" as="image" />
+        <link rel="preload" href="/image5.jpeg" as="image" />
         <link rel="preload" href="/image7.jpeg" as="image" />
       </Head>
       
       {/* Critical components - load immediately */}
-      <HeroCarousel/>
+      <HeroCarouselImage/>
       <PremiumScrollRow uniqueId="top"/>
       
       {/* Secondary components - load after 100ms */}
@@ -79,7 +80,6 @@ const HomePage = () => {
       {/* Final components - load after 400ms */}
       <ProgressiveLoader delay={400}>
         <HeroShowcase/> 
-        <TikTokInspiration/>
       </ProgressiveLoader>
     </>
   );

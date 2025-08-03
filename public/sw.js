@@ -1,173 +1,96 @@
 
-const CACHE_NAME = 'plutus-cache-v1';
-const STATIC_CACHE = 'plutus-static-v1';
-const API_CACHE = 'plutus-api-v1';
+// Service Worker for caching components and assets
+const CACHE_NAME = 'plutus-cache-v2';
+const STATIC_CACHE = 'plutus-static-v2';
+const DYNAMIC_CACHE = 'plutus-dynamic-v2';
 
 // Files to cache immediately
 const STATIC_FILES = [
   '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
-  '/manifest.json',
-  '/favicon.ico',
-  '/logo192.png',
-  '/logo512.png'
-];
-
-// API endpoints to cache
-const API_ENDPOINTS = [
-  '/api/search',
-  '/api/menu',
-  '/api/products'
+  '/image1.jpeg',
+  '/image2.jpeg',
+  '/image3.jpeg',
+  '/image4.jpeg',
+  '/image5.jpeg',
+  '/image7.jpeg',
+  '/nav/Plutus logo blue.svg',
+  '/hornloader/1 HORN.svg',
+  '/hornloader/2 HORN.svg',
+  '/hornloader/3 HORN.svg',
+  '/hornloader/4 HORN.svg',
+  '/hornloader/5 HORN.svg',
+  '/hornloader/Complete horn6.svg'
 ];
 
 // Install event - cache static files
 self.addEventListener('install', (event) => {
+  console.log('🔄 Service Worker installing...');
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => {
-        console.log('Caching static files');
+        console.log('📦 Caching static files');
         return cache.addAll(STATIC_FILES);
       })
       .then(() => {
-        console.log('Static files cached successfully');
+        console.log('✅ Static files cached successfully');
         return self.skipWaiting();
+      })
+      .catch((error) => {
+        console.error('❌ Failed to cache static files:', error);
       })
   );
 });
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
+  console.log('🚀 Service Worker activating...');
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
-            if (cacheName !== STATIC_CACHE && cacheName !== API_CACHE) {
-              console.log('Deleting old cache:', cacheName);
+            if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
+              console.log('🗑️ Deleting old cache:', cacheName);
               return caches.delete(cacheName);
             }
           })
         );
       })
       .then(() => {
-        console.log('Service worker activated');
+        console.log('✅ Service Worker activated');
         return self.clients.claim();
       })
   );
 });
 
-// Fetch event - serve from cache or network
+// Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Handle API requests
-  if (API_ENDPOINTS.some(endpoint => url.pathname.startsWith(endpoint))) {
-    event.respondWith(handleApiRequest(request));
+  // Skip non-GET requests
+  if (request.method !== 'GET') {
     return;
   }
 
-  // Handle static files
-  if (request.method === 'GET' && request.destination !== 'document') {
-    event.respondWith(handleStaticRequest(request));
-    return;
-  }
-
-  // Handle navigation requests
-  if (request.mode === 'navigate') {
-    event.respondWith(handleNavigationRequest(request));
-    return;
+  // Handle different types of requests
+  if (url.pathname.startsWith('/_next/') || url.pathname.startsWith('/api/')) {
+    // Next.js internal requests - network first
+    event.respondWith(networkFirst(request));
+  } else if (isImageRequest(request)) {
+    // Images - cache first
+    event.respondWith(cacheFirst(request));
+  } else if (isComponentRequest(request)) {
+    // Component requests - stale while revalidate
+    event.respondWith(staleWhileRevalidate(request));
+  } else {
+    // Other requests - network first
+    event.respondWith(networkFirst(request));
   }
 });
 
-// Handle API requests with cache-first strategy
-async function handleApiRequest(request) {
-  const cache = await caches.open(API_CACHE);
-  
-  try {
-    // Try network first
-    const networkResponse = await fetch(request);
-    
-    if (networkResponse.ok) {
-      // Cache the response
-      const responseClone = networkResponse.clone();
-      cache.put(request, responseClone);
-      return networkResponse;
-    }
-  } catch (error) {
-    console.log('Network failed for API request:', request.url);
-  }
-
-  // Fallback to cache
-  const cachedResponse = await cache.match(request);
-  if (cachedResponse) {
-    return cachedResponse;
-  }
-
-  // Return offline response
-  return new Response(
-    JSON.stringify({ error: 'No internet connection' }),
-    {
-      status: 503,
-      statusText: 'Service Unavailable',
-      headers: { 'Content-Type': 'application/json' }
-    }
-  );
-}
-
-// Handle static files with cache-first strategy
-async function handleStaticRequest(request) {
-  const cache = await caches.open(STATIC_CACHE);
-  
-  // Check cache first
-  const cachedResponse = await cache.match(request);
-  if (cachedResponse) {
-    return cachedResponse;
-  }
-
-  try {
-    // Try network
-    const networkResponse = await fetch(request);
-    
-    if (networkResponse.ok) {
-      // Cache the response
-      const responseClone = networkResponse.clone();
-      cache.put(request, responseClone);
-      return networkResponse;
-    }
-  } catch (error) {
-    console.log('Network failed for static request:', request.url);
-  }
-
-  // Return offline response for images
-  if (request.destination === 'image') {
-    return new Response(
-      'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OWE5YiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vdCBhdmFpbGFibGU8L3RleHQ+PC9zdmc+',
-      {
-        status: 200,
-        headers: { 'Content-Type': 'image/svg+xml' }
-      }
-    );
-  }
-
-  return new Response('Not found', { status: 404 });
-}
-
-// Handle navigation requests with network-first strategy
-async function handleNavigationRequest(request) {
-  try {
-    // Try network first
-    const networkResponse = await fetch(request);
-    
-    if (networkResponse.ok) {
-      return networkResponse;
-    }
-  } catch (error) {
-    console.log('Network failed for navigation request:', request.url);
-  }
-
-  // Fallback to cache
+// Cache first strategy for images
+async function cacheFirst(request) {
   const cache = await caches.open(STATIC_CACHE);
   const cachedResponse = await cache.match(request);
   
@@ -175,88 +98,98 @@ async function handleNavigationRequest(request) {
     return cachedResponse;
   }
 
-  // Return offline page
-  return cache.match('/offline.html') || new Response(
-    '<html><body><h1>You are offline</h1><p>Please check your internet connection.</p></body></html>',
-    {
-      status: 200,
-      headers: { 'Content-Type': 'text/html' }
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse.ok) {
+      cache.put(request, networkResponse.clone());
     }
-  );
+    return networkResponse;
+  } catch (error) {
+    console.error('❌ Network request failed:', error);
+    return new Response('Image not available', { status: 404 });
+  }
 }
 
-// Background sync for offline actions
+// Network first strategy
+async function networkFirst(request) {
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse.ok) {
+      const cache = await caches.open(DYNAMIC_CACHE);
+      cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  } catch (error) {
+    console.log('🌐 Network failed, trying cache...');
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    throw error;
+  }
+}
+
+// Stale while revalidate strategy for components
+async function staleWhileRevalidate(request) {
+  const cache = await caches.open(DYNAMIC_CACHE);
+  const cachedResponse = await cache.match(request);
+  
+  // Return cached response immediately if available
+  const fetchPromise = fetch(request).then((networkResponse) => {
+    if (networkResponse.ok) {
+      cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  });
+
+  return cachedResponse || fetchPromise;
+}
+
+// Helper functions
+function isImageRequest(request) {
+  return request.destination === 'image' || 
+         request.url.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i);
+}
+
+function isComponentRequest(request) {
+  return request.url.includes('/_next/static/chunks/') ||
+         request.url.includes('/components/');
+}
+
+// Background sync for offline functionality
 self.addEventListener('sync', (event) => {
   if (event.tag === 'background-sync') {
+    console.log('🔄 Background sync triggered');
     event.waitUntil(doBackgroundSync());
   }
 });
 
 async function doBackgroundSync() {
   try {
-    // Sync any pending requests
-    const cache = await caches.open(API_CACHE);
-    const requests = await cache.keys();
-    
-    for (const request of requests) {
-      try {
-        const response = await fetch(request);
-        if (response.ok) {
-          await cache.put(request, response);
-        }
-      } catch (error) {
-        console.log('Background sync failed for:', request.url);
-      }
-    }
+    // Perform background tasks like updating cache
+    const cache = await caches.open(DYNAMIC_CACHE);
+    await cache.addAll(STATIC_FILES);
+    console.log('✅ Background sync completed');
   } catch (error) {
-    console.log('Background sync failed:', error);
+    console.error('❌ Background sync failed:', error);
   }
 }
 
-// Push notifications
-self.addEventListener('push', (event) => {
-  const options = {
-    body: event.data ? event.data.text() : 'New notification',
-    icon: '/logo192.png',
-    badge: '/logo192.png',
-    vibrate: [100, 50, 100],
-    data: {
-      dateOfArrival: Date.now(),
-      primaryKey: 1
-    },
-    actions: [
-      {
-        action: 'explore',
-        title: 'View',
-        icon: '/logo192.png'
-      },
-      {
-        action: 'close',
-        title: 'Close',
-        icon: '/logo192.png'
-      }
-    ]
-  };
-
-  event.waitUntil(
-    self.registration.showNotification('Plutus', options)
-  );
-});
-
-// Notification click
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-
-  if (event.action === 'explore') {
-    event.waitUntil(
-      clients.openWindow('/')
-    );
-  }
-});
-
-// Message handling
+// Message handling for cache management
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
+  
+  if (event.data && event.data.type === 'CLEAR_CACHE') {
+    event.waitUntil(
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => caches.delete(cacheName))
+        );
+      })
+    );
+  }
 });
+
+console.log('🛠️ Service Worker loaded');

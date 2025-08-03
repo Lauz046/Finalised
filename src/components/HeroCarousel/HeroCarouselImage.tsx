@@ -1,6 +1,7 @@
 "use client"
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback, memo } from "react"
 import styles from "./HeroCarousel.module.css"
+import { getPersistedState, persistComponentState } from "@/utils/cacheUtils"
 
 // Image URLs for hero carousel
 const HERO_IMAGES = [
@@ -11,9 +12,11 @@ const HERO_IMAGES = [
   "/image5.jpeg",
 ]
 
-const HeroCarouselImage = () => {
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [progress, setProgress] = useState(0)
+const HeroCarouselImage = memo(() => {
+  // Initialize state with persisted data if available
+  const persistedState = getPersistedState<{activeIndex: number; progress: number}>('hero-carousel');
+  const [activeIndex, setActiveIndex] = useState(persistedState?.activeIndex || 0)
+  const [progress, setProgress] = useState(persistedState?.progress || 0)
   const [isPlaying] = useState(true)
   const [imagesLoaded, setImagesLoaded] = useState(false)
   
@@ -30,6 +33,15 @@ const HeroCarouselImage = () => {
   ]
 
   const carouselLength = HERO_IMAGES.length
+
+  // Persist state when it changes
+  useEffect(() => {
+    persistComponentState('hero-carousel', {
+      activeIndex,
+      progress,
+      timestamp: Date.now()
+    });
+  }, [activeIndex, progress]);
 
   // Initialize images
   useEffect(() => {
@@ -73,7 +85,7 @@ const HeroCarouselImage = () => {
     const progressIncrement = 100 / (8 * 10) // 8 seconds = 8000ms, update every 100ms
     
     progressInterval.current = setInterval(() => {
-      setProgress((prev) => {
+      setProgress((prev: number) => {
         const newProgress = prev + progressIncrement
         if (newProgress >= 100) {
           handleNext()
@@ -85,13 +97,13 @@ const HeroCarouselImage = () => {
   }, [])
 
   const handleNext = useCallback(() => {
-    setActiveIndex((prev) => (prev + 1) % carouselLength)
+    setActiveIndex((prev: number) => (prev + 1) % carouselLength)
     // Reset progress when changing slides
     setProgress(0)
   }, [carouselLength])
 
   const handlePrev = useCallback(() => {
-    setActiveIndex((prev) => (prev - 1 + carouselLength) % carouselLength)
+    setActiveIndex((prev: number) => (prev - 1 + carouselLength) % carouselLength)
     // Reset progress when changing slides
     setProgress(0)
   }, [carouselLength])
@@ -226,6 +238,8 @@ const HeroCarouselImage = () => {
       </div>
     </section>
   )
-}
+})
+
+HeroCarouselImage.displayName = 'HeroCarouselImage'
 
 export default HeroCarouselImage 

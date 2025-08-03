@@ -10,37 +10,33 @@ import BentoGrid from '@/components/BentoGrid/BentoGrid';
 import PremiumScrollRow from '@/components/scrollrow/PremiumScrollRow';
 import PremiumIconRow from '@/components/scrollrow/PremiumIconRow';
 
-// Progressive loading component
+// CSS-based progressive loading component
 const ProgressiveLoader: React.FC<{ children: React.ReactNode; delay: number }> = ({ children, delay }) => {
-  const [shouldRender, setShouldRender] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setShouldRender(true);
+      setIsVisible(true);
     }, delay);
 
     return () => clearTimeout(timer);
   }, [delay]);
 
-  if (!shouldRender) {
-    return null;
-  }
-
-  return <>{children}</>;
+  return (
+    <div 
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+        transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out',
+        willChange: 'opacity, transform'
+      }}
+    >
+      {children}
+    </div>
+  );
 };
 
 const HomePage = () => {
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
-
-  useEffect(() => {
-    // Mark initial load as complete after 100ms
-    const timer = setTimeout(() => {
-      setIsInitialLoad(false);
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <>
       <Head>
@@ -59,25 +55,25 @@ const HomePage = () => {
       <HeroCarouselImage/>
       <PremiumScrollRow uniqueId="top"/>
       
-      {/* Secondary components - load after 100ms */}
+      {/* Secondary components - fade in after 100ms */}
       <ProgressiveLoader delay={100}>
         <BentoGrid/>
         <ShowcaseMoodSection/>
       </ProgressiveLoader>
       
-      {/* Tertiary components - load after 200ms */}
+      {/* Tertiary components - fade in after 200ms */}
       <ProgressiveLoader delay={200}>
         <NewArrivals/>
         <PremiumIconRow uniqueId="bottom"/>
       </ProgressiveLoader>
       
-      {/* Heavy components - load after 300ms */}
+      {/* Heavy components - fade in after 300ms */}
       <ProgressiveLoader delay={300}>
         <InfiniteCardSection/>
         <ProductSlider360/>
       </ProgressiveLoader>
       
-      {/* Final components - load after 400ms */}
+      {/* Final components - fade in after 400ms */}
       <ProgressiveLoader delay={400}>
         <HeroShowcase/> 
       </ProgressiveLoader>

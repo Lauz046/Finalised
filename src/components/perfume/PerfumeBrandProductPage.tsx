@@ -41,7 +41,7 @@ export const PERFUMES_QUERY = gql`
 const PRODUCTS_PER_PAGE = 21;
 
 export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apolloState }: { brand: string, initialPerfumeData?: unknown[], apolloState?: unknown }) {
-  const [showFilter, setShowFilter] = useState(true);
+  const [showFilter, setShowFilter] = useState(false);
   const [sortBy, setSortBy] = useState('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
@@ -66,6 +66,67 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
       return () => window.removeEventListener('resize', checkMobile);
     }
   }, []);
+
+  // Update showFilter based on mobile detection
+  useEffect(() => {
+    setShowFilter(!isMobile);
+  }, [isMobile]);
+
+  // Function to calculate responsive text size and position based on brand name length
+  const getBrandTextStyle = (brandName: string, isMobileView: boolean) => {
+    const nameLength = brandName.length;
+    
+    if (isMobileView) {
+      // Mobile responsive text sizing - smaller and better positioned
+      let fontSize = '2.2rem';
+      let transformY = '-5%';
+      let lineHeight = '1.2';
+      
+      if (nameLength > 20) {
+        fontSize = '1.4rem';
+        transformY = '0%';
+        lineHeight = '1.1';
+      } else if (nameLength > 15) {
+        fontSize = '1.6rem';
+        transformY = '-2%';
+        lineHeight = '1.15';
+      } else if (nameLength > 10) {
+        fontSize = '1.8rem';
+        transformY = '-4%';
+        lineHeight = '1.2';
+      } else if (nameLength > 6) {
+        fontSize = '2rem';
+        transformY = '-6%';
+        lineHeight = '1.2';
+      }
+      
+      return {
+        fontSize,
+        transform: `translate(-50%, ${transformY})`,
+        lineHeight
+      };
+    } else {
+      // Desktop responsive text sizing
+      let fontSize = '5rem';
+      let transformY = '-10%';
+      
+      if (nameLength > 20) {
+        fontSize = '3.5rem';
+        transformY = '-5%';
+      } else if (nameLength > 15) {
+        fontSize = '4rem';
+        transformY = '-8%';
+      } else if (nameLength > 10) {
+        fontSize = '4.5rem';
+        transformY = '-9%';
+      }
+      
+      return {
+        fontSize,
+        transform: `translate(-50%, ${transformY})`
+      };
+    }
+  };
 
   const { data: brandsData } = useQuery(ALL_PERFUME_BRANDS);
   const { data: subcategoriesData } = useQuery(ALL_PERFUME_SUBCATEGORIES);
@@ -95,6 +156,24 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
     }
     return [];
   }, [perfumesData?.perfumes]);
+
+  // Derive unique concentrations from perfumes
+  const allConcentrations = useMemo(() => {
+    const set = new Set<string>();
+    perfumes.forEach((p: unknown) => {
+      if (p.concentration && typeof p.concentration === 'string' && p.concentration.trim() !== '') {
+        set.add(p.concentration.trim());
+      }
+    });
+    const result = Array.from(set).sort();
+    
+    // If no concentrations found in data, provide common ones for testing
+    if (result.length === 0) {
+      return ['EDP', 'EDT', 'Parfum', 'Cologne', 'Body Mist'];
+    }
+    
+    return result;
+  }, [perfumes]);
 
   const allSizes = useMemo(() => {
     const set = new Set<string>();
@@ -166,10 +245,81 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
     return () => observer.disconnect();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  // Loading state with skeleton
+  if (loading) {
+    return (
+      <>
+        {/* Static image banner skeleton */}
+        <div style={{ 
+          width: '100vw', 
+          marginLeft: 'calc(50% - 50vw)', 
+          height: isMobile ? 300 : 400, 
+          overflow: 'hidden', 
+          background: '#eee', 
+          position: 'relative' 
+        }}>
+          <div style={{
+            width: '100%',
+            height: '100%',
+            background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+            backgroundSize: '200% 100%',
+            animation: 'loading 1.5s infinite'
+          }} />
+        </div>
+        
+        {/* Breadcrumbs skeleton */}
+        <div style={{ maxWidth: 1500, margin: '0 auto', padding: '24px 32px 0 32px' }}>
+          <div style={{ height: 20, background: '#f0f0f0', width: '60%', borderRadius: 4 }} />
+        </div>
+        
+        {/* Brand list skeleton */}
+        <div style={{ maxWidth: 1500, margin: '0 auto', padding: '4px 32px 0 32px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, overflowX: 'hidden' }}>
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} style={{
+                width: 120,
+                height: 48,
+                background: '#f0f0f0',
+                borderRadius: 8,
+                flexShrink: 0
+              }} />
+            ))}
+          </div>
+        </div>
+        
+        {/* Product grid skeleton */}
+        <div style={{ maxWidth: 1500, margin: '0 auto', padding: '24px 32px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+            {Array.from({ length: 8 }).map((_, index) => (
+              <div key={index} style={{ background: '#f0f0f0', height: 400, borderRadius: 8 }} />
+            ))}
+          </div>
+        </div>
+        
+        <style jsx>{`
+          @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+          }
+        `}</style>
+      </>
+    );
+  }
 
   return (
     <>
+      <Navbar onSearchClick={() => setIsSearchOpen(true)} />
+      {isSearchOpen && <SearchOverlay onClose={() => setIsSearchOpen(false)} />}
+      
+      {/* Background scroll prevention when filter is open */}
+      {showFilter && (
+        <style jsx global>{`
+          body {
+            overflow: hidden;
+          }
+        `}</style>
+      )}
+      
       {/* Mobile UI */}
       {isMobile ? (
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#f1f1f1', paddingTop: 2 }}>
@@ -177,19 +327,19 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
           <div style={{ 
             width: '100vw', 
             marginLeft: 'calc(50% - 50vw)', 
-            height: 250, 
+            height: 300, 
             overflow: 'hidden', 
             background: '#eee', 
             position: 'relative' 
           }}>
-            <img src="/static.jpg" alt="Brand Banner" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            <img src="/static.jpg" alt="Brand Banner" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', marginTop: '40px' }} />
             <div style={{
               position: 'absolute',
               top: '50%',
               left: '50%',
-              transform: 'translate(-50%, -30%)',
+              transform: getBrandTextStyle(brand, true).transform,
               color: '#ffffff',
-              fontSize: '2.5rem',
+              fontSize: getBrandTextStyle(brand, true).fontSize,
               fontWeight: '600',
               textAlign: 'center',
               textShadow: '2px 2px 8px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5)',
@@ -197,7 +347,10 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
               zIndex: 2,
-              opacity: 1
+              opacity: 1,
+              lineHeight: getBrandTextStyle(brand, true).lineHeight,
+              maxWidth: '90%',
+              whiteSpace: brand.length > 15 ? 'normal' : 'nowrap'
             }}>
               {brand}
             </div>
@@ -207,7 +360,7 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
             <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Perfume', href: '/perfume' }, { label: brand }]} />
           </div>
           
-          {/* Mobile Brand Selector - Desktop style but smaller */}
+          {/* Mobile Brand Selector - matching sneaker page exactly */}
           <div style={{
             margin: '16px auto 0 auto',
             padding: '4px 16px 0 16px',
@@ -220,8 +373,8 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
             marginBottom: 8,
             maxWidth: '100%',
           }}>
-            {/* Brand buttons row with arrows - mobile optimized */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 48, position: 'relative', maxWidth: '85vw' }}>
+            {/* Brand buttons row with arrows - matching sneaker page */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 48, position: 'relative', maxWidth: '100%' }}>
               <button
                 aria-label="Scroll left"
                 style={{
@@ -232,7 +385,7 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
                   alignItems: 'center',
                   cursor: 'pointer',
                   height: 40,
-                  marginRight: 2,
+                  marginRight: 10,
                 }}
                 onClick={() => {
                   const el = document.getElementById('brand-scroll-row-mobile');
@@ -243,7 +396,7 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                 </svg>
               </button>
-              <div id="brand-scroll-row-mobile" style={{ display: 'flex', gap: 8, overflowX: 'auto', flex: 'none', scrollbarWidth: 'none', msOverflowStyle: 'none', minHeight: 40, maxWidth: '75vw' }}>
+              <div id="brand-scroll-row-mobile" style={{ display: 'flex', gap: 8, overflowX: 'auto', flex: 'none', scrollbarWidth: 'none', msOverflowStyle: 'none', minHeight: 40, maxWidth: 'calc(100% - 75px)' }}>
                 {brands.map((b: string) => (
                   <button
                     key={b}
@@ -251,7 +404,7 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
                       if (b !== brand) window.location.href = `/perfume/brand/${getBrandUrl(b)}`;
                     }}
                     style={{
-                      border: b === brand ? '2px solid #22304a' : '2px solid #bfc9d1',
+                      border: '2px solid #bfc9d1',
                       background: '#fff',
                       color: '#22304a',
                       borderRadius: 6,
@@ -260,8 +413,8 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
                       fontFamily: 'Inter, Segoe UI, Arial, sans-serif',
                       fontSize: '0.7rem',
                       cursor: 'pointer',
-                      boxShadow: b === brand ? '0 2px 8px rgba(30,167,253,0.08)' : 'none',
-                      borderBottom: b === brand ? '2.5px solid #0a2230' : '2.5px solid #bfc9d1',
+                      boxShadow: 'none',
+                      borderBottom: '2.5px solid #bfc9d1',
                       minWidth: 100,
                       maxWidth: 160,
                       outline: 'none',
@@ -293,7 +446,7 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
                   alignItems: 'center',
                   cursor: 'pointer',
                   height: 40,
-                  marginLeft: 2,
+                  marginLeft: 10,
                 }}
                 onClick={() => {
                   const el = document.getElementById('brand-scroll-row-mobile');
@@ -310,7 +463,7 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
           {/* Sticky mobile filter/sort bar */}
           <div style={{
             position: 'sticky',
-            top: 67,
+            top: 90,
             zIndex: 50,
             background: '#f1f1f1',
             width: '100%',
@@ -382,7 +535,7 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
             onSubcategoryChange={subcategory => setSelectedSubcategories(prev =>
               prev.includes(subcategory) ? prev.filter(s => s !== subcategory) : [...prev, subcategory]
             )}
-            concentrations={[]}
+            concentrations={allConcentrations}
             selectedConcentrations={selectedConcentrations}
             onConcentrationChange={concentration => setSelectedConcentrations(prev =>
               prev.includes(concentration) ? prev.filter(c => c !== concentration) : [...prev, concentration]
@@ -412,6 +565,7 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={setCurrentPage}
+              loading={loading}
             />
           </div>
         </div>
@@ -422,19 +576,19 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
           <div style={{ 
             width: '100vw', 
             marginLeft: 'calc(50% - 50vw)', 
-            height: 350, 
+            height: 400, 
             overflow: 'hidden', 
             background: '#eee', 
             position: 'relative' 
           }}>
-            <img src="/static.jpg" alt="Brand Banner" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            <img src="/static.jpg" alt="Brand Banner" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', marginTop: '20px' }} />
             <div style={{
               position: 'absolute',
               top: '50%',
               left: '50%',
-              transform: 'translate(-50%, -30%)',
+              transform: getBrandTextStyle(brand, false).transform,
               color: 'rgba(255, 255, 255, 0.85)',
-              fontSize: '3.5rem',
+              fontSize: getBrandTextStyle(brand, false).fontSize,
               fontWeight: '600',
               textAlign: 'center',
               textShadow: '1px 1px 4px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.2)',
@@ -619,7 +773,7 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
                 onSubcategoryChange={subcategory => setSelectedSubcategories(prev =>
                   prev.includes(subcategory) ? prev.filter(s => s !== subcategory) : [...prev, subcategory]
                 )}
-                concentrations={[]}
+                concentrations={allConcentrations}
                 selectedConcentrations={selectedConcentrations}
                 onConcentrationChange={concentration => setSelectedConcentrations(prev =>
                   prev.includes(concentration) ? prev.filter(c => c !== concentration) : [...prev, concentration]
@@ -653,6 +807,7 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={setCurrentPage}
+                loading={loading}
               />
             </div>
           </div>

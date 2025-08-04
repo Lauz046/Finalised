@@ -54,14 +54,14 @@ const WatchBrandTicker: React.FC<WatchBrandTickerProps> = ({ brands, onBrandClic
     return () => cancelAnimationFrame(animationFrame);
   }, [brands, paused]);
 
-  // Create fixed watch categories in specific order
+  // Create fixed watch categories in specific order (using exact database brand names)
   const watchCategories = useMemo(() => {
     return [
-      { name: 'Vacheron Constantin', image: '/watchticker/VACHERON CONSTANTIN.png', filterType: 'Vacheron Constantin', bgColor: '#f5f5dc' }, // Beige
-      { name: 'Bell & Ross', image: '/watchticker/BELL & ROSS.png', filterType: 'Bell & Ross', bgColor: '#1e3a8a' }, // Blue
-      { name: 'Rolex', image: '/watchticker/ROLEX.png', filterType: 'Rolex', bgColor: '#f5f5dc' }, // Beige
-      { name: 'Carl F Bucherer', image: '/watchticker/CARL F BUCHERER.png', filterType: 'Carl F Bucherer', bgColor: '#1e3a8a' }, // Blue
-      { name: 'Glashutte Original', image: '/watchticker/GLASHUTTE.png', filterType: 'Glashutte Original', bgColor: '#f5f5dc' }, // Beige
+      { name: 'VACHERON CONSTANTIN', image: '/watchticker/Vacheron%20Constantin.png', filterType: 'VACHERON CONSTANTIN', bgColor: '#f5f5dc' }, // Beige
+      { name: 'BELL & ROSS', image: '/watchticker/BELL%20%26%20ROSS.png', filterType: 'BELL & ROSS', bgColor: '#1e3a8a' }, // Blue
+      { name: 'ROLEX', image: '/watchticker/Rolex.png', filterType: 'ROLEX', bgColor: '#f5f5dc' }, // Beige
+      { name: 'CARL F BUCHERER', image: '/watchticker/Carl%20F%20Bucherer.png', filterType: 'CARL F BUCHERER', bgColor: '#1e3a8a' }, // Blue
+      { name: 'GLASHUTTE ORIGINAL', image: '/watchticker/GLASHUTTE.png', filterType: 'GLASHUTTE ORIGINAL', bgColor: '#f5f5dc' }, // Beige
     ];
   }, []);
 
@@ -136,7 +136,74 @@ const WatchBrandTicker: React.FC<WatchBrandTickerProps> = ({ brands, onBrandClic
                   }}
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    target.src = '/image1.jpeg';
+                    
+                    // Try multiple fallback variations for each brand with URL encoding
+                    if (target.src.includes('Vacheron Constantin') || target.src.includes('VACHERON CONSTANTIN')) {
+                      const fallbacks = [
+                        '/watchticker/Vacheron%20Constantin.png',
+                        '/watchticker/Vacheron Constantin.png',
+                        '/watchticker/VACHERON CONSTANTIN.png',
+                        '/watchticker/vacheron-constantin.png'
+                      ];
+                      const nextFallback = fallbacks.find(f => !target.src.includes(f));
+                      if (nextFallback) {
+                        target.src = nextFallback;
+                      } else {
+                        target.src = '/nav/Plutus logo blue.svg';
+                      }
+                    } else if (target.src.includes('BELL & ROSS') || target.src.includes('Bell & Ross')) {
+                      const fallbacks = [
+                        '/watchticker/BELL%20%26%20ROSS.png',
+                        '/watchticker/BELL & ROSS.png',
+                        '/watchticker/Bell & Ross.png',
+                        '/watchticker/bell-ross.png'
+                      ];
+                      const nextFallback = fallbacks.find(f => !target.src.includes(f));
+                      if (nextFallback) {
+                        target.src = nextFallback;
+                      } else {
+                        target.src = '/nav/Plutus logo blue.svg';
+                      }
+                    } else if (target.src.includes('Rolex') || target.src.includes('ROLEX')) {
+                      const fallbacks = [
+                        '/watchticker/Rolex.png',
+                        '/watchticker/ROLEX.png',
+                        '/watchticker/rolex.png'
+                      ];
+                      const nextFallback = fallbacks.find(f => !target.src.includes(f));
+                      if (nextFallback) {
+                        target.src = nextFallback;
+                      } else {
+                        target.src = '/nav/Plutus logo blue.svg';
+                      }
+                    } else if (target.src.includes('Carl F Bucherer') || target.src.includes('CARL F BUCHERER')) {
+                      const fallbacks = [
+                        '/watchticker/Carl%20F%20Bucherer.png',
+                        '/watchticker/Carl F Bucherer.png',
+                        '/watchticker/CARL F BUCHERER.png',
+                        '/watchticker/carl-f-bucherer.png'
+                      ];
+                      const nextFallback = fallbacks.find(f => !target.src.includes(f));
+                      if (nextFallback) {
+                        target.src = nextFallback;
+                      } else {
+                        target.src = '/nav/Plutus logo blue.svg';
+                      }
+                    } else if (target.src.includes('GLASHUTTE') || target.src.includes('Glashutte')) {
+                      const fallbacks = [
+                        '/watchticker/GLASHUTTE.png',
+                        '/watchticker/Glashutte.png',
+                        '/watchticker/glashutte.png'
+                      ];
+                      const nextFallback = fallbacks.find(f => !target.src.includes(f));
+                      if (nextFallback) {
+                        target.src = nextFallback;
+                      } else {
+                        target.src = '/nav/Plutus logo blue.svg';
+                      }
+                    } else {
+                      target.src = '/nav/Plutus logo blue.svg';
+                    }
                   }}
                 />
 

@@ -43,7 +43,7 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
   const { categoryData, isPreloaded } = useProductContext();
   // Mobile overlay tab state
   const [mobileOverlayTab, setMobileOverlayTab] = useState<'filter' | 'sort'>('filter');
-  const [showFilter, setShowFilter] = useState(true);
+  const [showFilter, setShowFilter] = useState(false);
   const [sortBy, setSortBy] = useState('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
@@ -62,6 +62,11 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
       return () => window.removeEventListener('resize', checkMobile);
     }
   }, []);
+
+  // Update showFilter based on mobile detection
+  useEffect(() => {
+    setShowFilter(!isMobile);
+  }, [isMobile]);
 
   // Use pre-loaded data if available for brands
   const brands = useMemo(() => {
@@ -233,6 +238,53 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
   const gridContainerRef = useRef<HTMLDivElement>(null);
   const [gridScrollable, setGridScrollable] = useState(false);
 
+  // Function to calculate responsive text size and position based on brand name length
+  const getBrandTextStyle = (brandName: string, isMobileView: boolean) => {
+    const nameLength = brandName.length;
+    
+    if (isMobileView) {
+      // Mobile responsive text sizing
+      let fontSize = '3.2rem';
+      let transformY = '5%';
+      
+      if (nameLength > 15) {
+        fontSize = '2.2rem';
+        transformY = '0%';
+      } else if (nameLength > 10) {
+        fontSize = '2.6rem';
+        transformY = '2%';
+      } else if (nameLength > 6) {
+        fontSize = '2.8rem';
+        transformY = '3%';
+      }
+      
+      return {
+        fontSize,
+        transform: `translate(-50%, ${transformY})`
+      };
+    } else {
+      // Desktop responsive text sizing
+      let fontSize = '5rem';
+      let transformY = '-10%';
+      
+      if (nameLength > 20) {
+        fontSize = '3.5rem';
+        transformY = '-5%';
+      } else if (nameLength > 15) {
+        fontSize = '4rem';
+        transformY = '-8%';
+      } else if (nameLength > 10) {
+        fontSize = '4.5rem';
+        transformY = '-9%';
+      }
+      
+      return {
+        fontSize,
+        transform: `translate(-50%, ${transformY})`
+      };
+    }
+  };
+
   useEffect(() => {
     const stickyBar = stickyBarRef.current;
     if (!stickyBar) return;
@@ -253,7 +305,63 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
   // Use brands from query if available, otherwise use preloaded data
   const availableBrands = brandsData?.allSneakerBrands || brands;
 
-  if (loading && !shouldUsePreloadedData) return <ProductGridSkeleton count={8} />;
+  // Loading state with skeleton
+  if (loading && !shouldUsePreloadedData) {
+    return (
+      <>
+        <Navbar onSearchClick={() => setIsSearchOpen(true)} />
+        {/* Static image banner skeleton */}
+        <div style={{ 
+          width: '100vw', 
+          marginLeft: 'calc(50% - 50vw)', 
+          height: isMobile ? 300 : 400, 
+          overflow: 'hidden', 
+          background: '#eee', 
+          position: 'relative' 
+        }}>
+          <div style={{
+            width: '100%',
+            height: '100%',
+            background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+            backgroundSize: '200% 100%',
+            animation: 'loading 1.5s infinite'
+          }} />
+        </div>
+        
+        {/* Breadcrumbs skeleton */}
+        <div style={{ maxWidth: 1500, margin: '0 auto', padding: '24px 32px 0 32px' }}>
+          <div style={{ height: 20, background: '#f0f0f0', width: '60%', borderRadius: 4 }} />
+        </div>
+        
+        {/* Brand list skeleton */}
+        <div style={{ maxWidth: 1500, margin: '0 auto', padding: '4px 32px 0 32px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, overflowX: 'hidden' }}>
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} style={{
+                width: 120,
+                height: 48,
+                background: '#f0f0f0',
+                borderRadius: 8,
+                flexShrink: 0
+              }} />
+            ))}
+          </div>
+        </div>
+        
+        {/* Product grid skeleton */}
+        <div style={{ maxWidth: 1500, margin: '0 auto', padding: '24px 32px' }}>
+          <ProductGridSkeleton count={8} />
+        </div>
+        
+        <style jsx>{`
+          @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+          }
+        `}</style>
+      </>
+    );
+  }
 
   return (
     <>
@@ -264,19 +372,19 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
           <div style={{ 
             width: '100vw', 
             marginLeft: 'calc(50% - 50vw)', 
-            height: 250, 
+            height: 300, 
             overflow: 'hidden', 
             background: '#eee', 
             position: 'relative' 
           }}>
-            <img src="/static.jpg" alt="Brand Banner" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            <img src="/static.jpg" alt="Brand Banner" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', marginTop: '40px' }} />
             <div style={{
               position: 'absolute',
               top: '50%',
               left: '50%',
-              transform: 'translate(-50%, -30%)',
+              transform: getBrandTextStyle(brand, true).transform,
               color: '#ffffff',
-              fontSize: '2.5rem',
+              fontSize: getBrandTextStyle(brand, true).fontSize,
               fontWeight: '600',
               textAlign: 'center',
               textShadow: '2px 2px 8px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5)',
@@ -294,7 +402,7 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
             <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Sneaker', href: '/sneaker' }, { label: brand }]} />
           </div>
 
-          {/* Mobile Brand Selector - Desktop style but smaller */}
+          {/* Mobile Brand Selector - matching sneaker page exactly */}
           <div style={{
             margin: '16px auto 0 auto',
             padding: '4px 16px 0 16px',
@@ -307,8 +415,8 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
             marginBottom: 8,
             maxWidth: '100%',
           }}>
-            {/* Brand buttons row with arrows - mobile optimized */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 48, position: 'relative', maxWidth: '85vw' }}>
+            {/* Brand buttons row with arrows - matching sneaker page */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 48, position: 'relative', maxWidth: '100%' }}>
               <button
                 aria-label="Scroll left"
                 style={{
@@ -319,7 +427,7 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
                   alignItems: 'center',
                   cursor: 'pointer',
                   height: 40,
-                  marginRight: 2,
+                  marginRight: 10,
                 }}
                 onClick={() => {
                   const el = document.getElementById('brand-scroll-row-mobile');
@@ -330,7 +438,7 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                 </svg>
               </button>
-              <div id="brand-scroll-row-mobile" style={{ display: 'flex', gap: 8, overflowX: 'auto', flex: 'none', scrollbarWidth: 'none', msOverflowStyle: 'none', minHeight: 40, maxWidth: '75vw' }}>
+              <div id="brand-scroll-row-mobile" style={{ display: 'flex', gap: 8, overflowX: 'auto', flex: 'none', scrollbarWidth: 'none', msOverflowStyle: 'none', minHeight: 40, maxWidth: 'calc(100% - 75px)' }}>
                 {availableBrands.map((b: string) => (
                   <button
                     key={b}
@@ -338,7 +446,7 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
                       if (b !== brand) window.location.href = `/sneaker/brand/${getBrandUrl(b)}`;
                     }}
                     style={{
-                      border: b === brand ? '2px solid #22304a' : '2px solid #bfc9d1',
+                      border: '2px solid #bfc9d1',
                       background: '#fff',
                       color: '#22304a',
                       borderRadius: 6,
@@ -347,8 +455,8 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
                       fontFamily: 'Inter, Segoe UI, Arial, sans-serif',
                       fontSize: '0.7rem',
                       cursor: 'pointer',
-                      boxShadow: b === brand ? '0 2px 8px rgba(30,167,253,0.08)' : 'none',
-                      borderBottom: b === brand ? '2.5px solid #0a2230' : '2.5px solid #bfc9d1',
+                      boxShadow: 'none',
+                      borderBottom: '2.5px solid #bfc9d1',
                       minWidth: 100,
                       maxWidth: 160,
                       outline: 'none',
@@ -380,7 +488,7 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
                   alignItems: 'center',
                   cursor: 'pointer',
                   height: 40,
-                  marginLeft: 2,
+                  marginLeft: 10,
                 }}
                 onClick={() => {
                   const el = document.getElementById('brand-scroll-row-mobile');
@@ -473,6 +581,15 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
             setTab={setMobileOverlayTab}
           />
           
+          {/* Prevent scroll when filter is open */}
+          {showFilter && (
+            <style jsx global>{`
+              body {
+                overflow: hidden !important;
+              }
+            `}</style>
+          )}
+          
           <div style={{ width: '100%', padding: 0, marginTop: 0 }}>
             <SneakerProductGrid 
               products={sneakerProducts}
@@ -483,6 +600,7 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={setCurrentPage}
+              loading={loading && !shouldUsePreloadedData}
             />
           </div>
         </div>
@@ -493,19 +611,29 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
       <div style={{ 
         width: '100vw', 
         marginLeft: 'calc(50% - 50vw)', 
-        height: 350, 
+        height: isMobile ? 300 : 400, 
         overflow: 'hidden', 
         background: '#eee', 
         position: 'relative' 
       }}>
-        <img src="/static.jpg" alt="Brand Banner" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        <img 
+          src="/static.jpg" 
+          alt="Brand Banner" 
+          style={{ 
+            width: '100%', 
+            height: '100%', 
+            objectFit: 'cover', 
+            display: 'block',
+            marginTop: isMobile ? '40px' : '20px'
+          }} 
+        />
         <div style={{
           position: 'absolute',
           top: '50%',
           left: '50%',
-          transform: 'translate(-50%, -30%)',
-          color: 'rgba(255, 255, 255, 0.85)',
-          fontSize: '3.5rem',
+          transform: getBrandTextStyle(brand, false).transform,
+          color: '#ffffff',
+          fontSize: getBrandTextStyle(brand, false).fontSize,
           fontWeight: '600',
           textAlign: 'center',
           textShadow: '1px 1px 4px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.2)',
@@ -513,7 +641,7 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
           letterSpacing: '0.1em',
           textTransform: 'uppercase',
           zIndex: 2,
-          opacity: 0.9
+          opacity: 1
         }}>
           {brand}
         </div>
@@ -701,11 +829,12 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
               transition: 'margin-left 0.3s ease',
               marginLeft: showFilter ? 0 : -14
             }}>
-          <SneakerProductGrid products={sneakerProducts} />
+          <SneakerProductGrid products={sneakerProducts} loading={loading && !shouldUsePreloadedData} />
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}
+            loading={loading && !shouldUsePreloadedData}
           />
         </div>
       </div>

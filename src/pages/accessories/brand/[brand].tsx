@@ -26,13 +26,12 @@ export const getStaticProps: GetStaticProps = async (context) => {
     const apolloClient = initializeApollo();
     const brandUrl = context.params?.brand as string;
     const brand = getBrandFromUrl(brandUrl);
-    const normalizedBrand = normalizeBrandForDatabase(brand);
     
     // Only fetch first page of products to reduce data size
     const { data } = await apolloClient.query({
       query: ACCESSORIES_QUERY,
       variables: { 
-        brand: normalizedBrand,
+        brand: brand,
         limit: 21, // First page only
         offset: 0
       },
@@ -42,7 +41,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     return {
       props: {
         initialAccessoriesData: data?.accessories || [],
-        brand: normalizedBrand,
+        brand: brand,
         apolloState: apolloClient.cache.extract(),
       },
       // Cache for 5 minutes
@@ -62,20 +61,14 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default function AccessoriesBrandPage({ 
-  initialAccessoriesData, 
-  brand, 
-  apolloState 
+  brand 
 }: { 
-  initialAccessoriesData: unknown[]; 
   brand: string;
-  apolloState?: unknown;
 }) {
   return (
     <ErrorBoundary>
       <AccessoriesBrandProductPage 
         brand={brand} 
-        initialAccessoriesData={initialAccessoriesData}
-        apolloState={apolloState}
       />
     </ErrorBoundary>
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useStash } from '../components/StashContext';
 import StashEmptyState from '../components/stash/StashEmptyState';
@@ -8,6 +8,12 @@ import styles from './stash.module.css';
 const StashPage: React.FC = () => {
   const { stashedProducts } = useStash();
   const router = useRouter();
+
+  // Preload stash background image
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/restof/Stash.png';
+  }, []);
 
   const handleClose = () => {
     // Go back to the previous page

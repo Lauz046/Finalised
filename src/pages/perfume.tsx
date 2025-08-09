@@ -386,7 +386,7 @@ const PerfumePage = () => {
           <div style={{
             margin: '16px auto 0 auto',
             padding: '4px 16px 0 16px',
-            display: 'flex',
+            display: 'none', // Hidden on mobile
             alignItems: 'center',
             justifyContent: 'center',
             gap: 8,

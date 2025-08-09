@@ -25,6 +25,12 @@ const StashProductGrid: React.FC<StashProductGridProps> = ({ products }) => {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const { removeFromStash } = useStash();
 
+  // Preload background image for faster loading
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/restof/Stash.png';
+  }, []);
+
   // Initialize scroll position to show first card
   useEffect(() => {
     if (scrollContainerRef.current && products.length > 0) {

@@ -33,14 +33,14 @@
 }
 
 @media (max-width: 900px) {
+  .tickerWrapper {
+    display: none !important;
+  }
+  
   .ticker {
     gap: 0;
     height: 240px; /* Reduced height to prevent overlapping */
     align-items: center;
-  }
-  
-  .tickerWrapper {
-    padding: 10px 0;
   }
 }
 .brandCard {

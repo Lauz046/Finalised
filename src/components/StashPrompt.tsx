@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './StashPrompt.module.css';
 import { useStash } from './StashContext';
 import { useAuth } from '../context/AuthContext';
@@ -8,6 +8,15 @@ const StashPrompt: React.FC = () => {
   const { closePrompt } = useStash();
   const { isAuthenticated, user } = useAuth();
   const router = useRouter();
+  
+  // Auto-dismiss after 2 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      closePrompt();
+    }, 2000); // 2 seconds
+    
+    return () => clearTimeout(timer);
+  }, [closePrompt]);
   
   const handleAuthClick = () => {
     closePrompt();
@@ -19,11 +28,17 @@ const StashPrompt: React.FC = () => {
       <div className={styles.stashPromptContent}>
         <span>
           {isAuthenticated ? (
-            `Welcome back, ${user?.fullName}! Your stash is waiting for you.`
+            <div className={styles.welcomeMessage}>
+              <div>Welcome back, {user?.fullName}!</div>
+              <div>Your stash is waiting for you.</div>
+            </div>
           ) : (
-            <>
-              <button onClick={handleAuthClick} className={styles.link}>Sign in</button> or <button onClick={handleAuthClick} className={styles.link}>create an account</button> to access your wishlist from anywhere.
-            </>
+            <div className={styles.authMessage}>
+              <div>
+                <button onClick={handleAuthClick} className={styles.link}>Sign in</button> or <button onClick={handleAuthClick} className={styles.link}>create an account</button>
+              </div>
+              <div>to access your wishlist from anywhere.</div>
+            </div>
           )}
         </span>
         <button className={styles.closeBtn} onClick={closePrompt} aria-label="Close">×</button>

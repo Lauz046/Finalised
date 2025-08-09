@@ -25,13 +25,13 @@
 }
 
 @media (max-width: 900px) {
+  .tickerWrapper {
+    display: none !important;
+  }
+  
   .ticker {
     gap: 0;
     min-width: 400vw;
-  }
-  
-  .tickerWrapper {
-    padding: 10px 0;
   }
 }
 .ticker::-webkit-scrollbar {

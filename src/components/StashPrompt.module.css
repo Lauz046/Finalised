@@ -31,6 +31,28 @@
   color: #222;
   text-decoration: underline;
   margin: 0 2px;
+  background: none;
+  border: none;
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.welcomeMessage,
+.authMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
+}
+
+.welcomeMessage div:first-child {
+  font-weight: 600;
+}
+
+.authMessage div {
+  line-height: 1.3;
 }
 
 .closeBtn {
@@ -48,8 +70,17 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 14px 12px 14px 12px;
-    font-size: 1rem;
+    padding: 12px 16px 16px 16px;
+    font-size: 0.9rem;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .stashPromptContent span {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
   }
   .closeBtn {
     margin-left: 0;

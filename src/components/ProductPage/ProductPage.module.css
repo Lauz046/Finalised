@@ -151,10 +151,11 @@
     gap: 20px;
     position: static !important;
     top: auto !important;
-    z-index: auto !important;
+    z-index: 1 !important;
     order: 1;
     display: flex;
     flex-direction: column;
+    isolation: isolate;
   }
   .rightCol {
     width: 100%;
@@ -163,10 +164,11 @@
     gap: 20px;
     position: static !important;
     top: auto !important;
-    z-index: auto !important;
+    z-index: 2 !important;
     order: 2;
     display: flex;
     flex-direction: column;
+    isolation: isolate;
   }
   /* Remove sticky positioning on mobile */
   .leftSticky, .rightSticky {

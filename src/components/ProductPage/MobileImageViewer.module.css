@@ -10,6 +10,8 @@
   /* Ensure proper layout flow */
   contain: layout;
   transform: translateZ(0);
+  /* Prevent positioning issues during scroll */
+  isolation: isolate;
 }
 
 .imageContainer {

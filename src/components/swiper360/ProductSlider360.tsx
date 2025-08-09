@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper';
 import 'swiper/css';
@@ -29,6 +29,31 @@ const useIsMobile = () => {
 
   return isMobile;
 };
+
+// Device detection hook
+const useDeviceType = () => {
+  const [deviceType, setDeviceType] = useState<'ios' | 'android' | 'desktop'>('desktop');
+
+  useEffect(() => {
+    const checkDevice = () => {
+      const userAgent = navigator.userAgent.toLowerCase();
+      if (/iphone|ipad|ipod/.test(userAgent)) {
+        setDeviceType('ios');
+      } else if (/android/.test(userAgent)) {
+        setDeviceType('android');
+      } else {
+        setDeviceType('desktop');
+      }
+    };
+
+    checkDevice();
+  }, []);
+
+  return deviceType;
+};
+
+// Image cache for better performance
+const imageCache = new Map<string, HTMLImageElement>();
 
 // Optimized product data with local images
 const products = [
@@ -79,59 +104,158 @@ const ProductSlider360 = () => {
   const [activeSlide, setActiveSlide] = useState(0);
   const [loadProgress, setLoadProgress] = useState(0);
   const [imagesLoaded, setImagesLoaded] = useState(0);
+  const [cachedProducts, setCachedProducts] = useState<Set<string>>(new Set());
+  const [preloadedFrames, setPreloadedFrames] = useState<Set<string>>(new Set());
   
   const containerRef = useRef<HTMLDivElement | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const lastXRef = useRef<number | null>(null);
   const isMobile = useIsMobile();
+  const deviceType = useDeviceType();
 
   // Image optimizer hook
   const { preloadImages, getLoadingProgress } = useImageOptimizer();
 
-  // Filter products for mobile (show only 4)
-  const displayProducts = isMobile ? products.slice(0, 4) : products;
+  // Reorder products for mobile - Louis Vuitton first, then others (no Yeezy)
+  const displayProducts = useMemo(() => {
+    if (isMobile) {
+      // Mobile order: Louis Vuitton, Air Jordan, New Balance 9060, New Balance 550
+      const mobileOrder = [
+        products[4], // Louis Vuitton
+        products[0], // Air Jordan
+        products[3], // New Balance 9060 (replacing Yeezy)
+        products[2], // New Balance 550
+      ];
+      return mobileOrder;
+    }
+    return products;
+  }, [isMobile]);
 
-  // Preload images for current product
+  // Android-specific preloading strategy
   const preloadProductImages = useCallback(async (product: typeof products[0]) => {
+    const productKey = product.name;
+    
+    // Check if product is already cached
+    if (cachedProducts.has(productKey)) {
+      setIsLoading(false);
+      setLoadProgress(100);
+      setImagesLoaded(product.images360.length);
+      return;
+    }
+
     setIsLoading(true);
     setLoadProgress(0);
     setImagesLoaded(0);
     
     try {
-      // Preload first 5 frames immediately
-      const priorityFrames = product.images360.slice(0, 5);
-      let loadedCount = 0;
-      
-      const loadFrame = (src: string) => {
-        return new Promise<void>((resolve) => {
-          const img = new Image();
-          img.onload = () => {
-            loadedCount++;
-            setImagesLoaded(loadedCount);
-            setLoadProgress((loadedCount / product.images360.length) * 100);
-            if (loadedCount >= 5) {
-              setIsLoading(false);
-            }
-            resolve();
-          };
-          img.onerror = () => resolve();
-          img.src = src;
-        });
-      };
+      // Phase 1: Load first frame immediately (for instant display)
+      const firstFrame = product.images360[0];
+      if (!imageCache.has(firstFrame)) {
+        const img = new Image();
+        img.src = firstFrame;
+        imageCache.set(firstFrame, img);
+      }
+      setImagesLoaded(1);
+      setLoadProgress((1 / product.images360.length) * 100);
+      setIsLoading(false); // Show first frame immediately
 
-      // Load priority frames
-      await Promise.all(priorityFrames.map(loadFrame));
+      // Phase 2: Android-specific loading strategy
+      if (deviceType === 'android') {
+        // For Android: Load more frames upfront for smoother rotation
+        const priorityFrames = product.images360.slice(1, 12); // Load more frames for Android
+        let loadedCount = 1;
+        
+        const loadFrame = (src: string) => {
+          return new Promise<void>((resolve) => {
+            if (imageCache.has(src)) {
+              loadedCount++;
+              setImagesLoaded(loadedCount);
+              setLoadProgress((loadedCount / product.images360.length) * 100);
+              resolve();
+              return;
+            }
+
+            const img = new Image();
+            img.onload = () => {
+              imageCache.set(src, img);
+              loadedCount++;
+              setImagesLoaded(loadedCount);
+              setLoadProgress((loadedCount / product.images360.length) * 100);
+              resolve();
+            };
+            img.onerror = () => resolve();
+            img.src = src;
+          });
+        };
+
+        // Load priority frames for Android
+        await Promise.all(priorityFrames.map(loadFrame));
+        
+        // Phase 3: Load remaining frames in background for Android
+        setTimeout(() => {
+          product.images360.slice(12).forEach((src) => {
+            if (!imageCache.has(src)) {
+              const img = new Image();
+              img.onload = () => {
+                imageCache.set(src, img);
+                setImagesLoaded(prev => prev + 1);
+              };
+              img.src = src;
+            }
+          });
+        }, 200); // Faster loading for Android
+      } else {
+        // iOS/Desktop: Standard loading strategy
+        const priorityFrames = product.images360.slice(1, 5);
+        let loadedCount = 1;
+        
+        const loadFrame = (src: string) => {
+          return new Promise<void>((resolve) => {
+            if (imageCache.has(src)) {
+              loadedCount++;
+              setImagesLoaded(loadedCount);
+              setLoadProgress((loadedCount / product.images360.length) * 100);
+              resolve();
+              return;
+            }
+
+            const img = new Image();
+            img.onload = () => {
+              imageCache.set(src, img);
+              loadedCount++;
+              setImagesLoaded(loadedCount);
+              setLoadProgress((loadedCount / product.images360.length) * 100);
+              resolve();
+            };
+            img.onerror = () => resolve();
+            img.src = src;
+          });
+        };
+
+        await Promise.all(priorityFrames.map(loadFrame));
+        
+        setTimeout(() => {
+          product.images360.slice(5).forEach((src) => {
+            if (!imageCache.has(src)) {
+              const img = new Image();
+              img.onload = () => {
+                imageCache.set(src, img);
+                setImagesLoaded(prev => prev + 1);
+              };
+              img.src = src;
+            }
+          });
+        }, 500);
+      }
       
-      // Load remaining frames in background
-      setTimeout(() => {
-        product.images360.slice(5).forEach(loadFrame);
-      }, 100);
+      // Mark product as cached
+      setCachedProducts(prev => new Set([...prev, productKey]));
       
     } catch (error) {
       console.error('Failed to preload images:', error);
       setIsLoading(false);
     }
-  }, []);
+  }, [cachedProducts, deviceType]);
 
   useEffect(() => {
     preloadProductImages(selectedProduct);
@@ -139,35 +263,55 @@ const ProductSlider360 = () => {
     setFrameIndex(0);
   }, [selectedProduct, preloadProductImages]);
 
-  // Auto-rotation when not hovering
+  // Auto-rotation with device-specific timing
   useEffect(() => {
     if (!isHovering && !isLoading) {
+      const interval = deviceType === 'android' ? 100 : 150; // Faster rotation for Android
       intervalRef.current = setInterval(() => {
         setFrameIndex((prev) => (prev + 1) % selectedProduct.images360.length);
-      }, 150);
+      }, interval);
     }
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isHovering, selectedProduct, isLoading]);
+  }, [isHovering, selectedProduct, isLoading, deviceType]);
 
-  // Update current image when frame changes
+  // Update current image when frame changes with Android optimization
   useEffect(() => {
     if (selectedProduct && selectedProduct.images360[frameIndex]) {
-      setCurrentImageSrc(selectedProduct.images360[frameIndex]);
+      const imageSrc = selectedProduct.images360[frameIndex];
+      setCurrentImageSrc(imageSrc);
+      
+      // Android-specific preloading: Load more frames ahead
+      const preloadCount = deviceType === 'android' ? 6 : 3;
+      const nextFrames = Array.from({ length: preloadCount }, (_, i) => 
+        selectedProduct.images360[(frameIndex + i + 1) % selectedProduct.images360.length]
+      );
+      
+      nextFrames.forEach(src => {
+        if (!imageCache.has(src) && !preloadedFrames.has(src)) {
+          const img = new Image();
+          img.onload = () => {
+            imageCache.set(src, img);
+            setPreloadedFrames(prev => new Set([...prev, src]));
+          };
+          img.src = src;
+        }
+      });
     }
-  }, [frameIndex, selectedProduct]);
+  }, [frameIndex, selectedProduct, deviceType, preloadedFrames]);
 
-  // Mouse handling for manual rotation
+  // Mouse handling for manual rotation with Android optimization
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!isHovering || isLoading) return;
     
     const x = e.clientX;
     if (lastXRef.current !== null) {
       const delta = x - lastXRef.current;
-      if (Math.abs(delta) > 3) { // Reduced threshold for smoother control
+      const threshold = deviceType === 'android' ? 2 : 3; // More sensitive for Android
+      if (Math.abs(delta) > threshold) {
         setFrameIndex((prev) => {
           const newIndex = prev + (delta > 0 ? 1 : -1);
           return (newIndex + selectedProduct.images360.length) % selectedProduct.images360.length;
@@ -177,7 +321,7 @@ const ProductSlider360 = () => {
     } else {
       lastXRef.current = x;
     }
-  }, [isHovering, selectedProduct, isLoading]);
+  }, [isHovering, selectedProduct, isLoading, deviceType]);
 
   const handleMouseEnter = useCallback(() => {
     setIsHovering(true);
@@ -202,7 +346,8 @@ const ProductSlider360 = () => {
       <Swiper
         slidesPerView={1}
         onSlideChange={(swiper) => {
-          setSelectedProduct(displayProducts[swiper.activeIndex]);
+          const newProduct = displayProducts[swiper.activeIndex];
+          setSelectedProduct(newProduct);
           setActiveSlide(swiper.activeIndex);
           setFrameIndex(0);
           setIsLoading(true);
@@ -264,10 +409,16 @@ const ProductSlider360 = () => {
                     transition: 'opacity 0.3s ease',
                     maxWidth: '55%',
                     height: 'auto',
-                    filter: isLoading ? 'blur(2px)' : 'none'
+                    filter: isLoading ? 'blur(2px)' : 'none',
+                    // Android-specific optimizations
+                    ...(deviceType === 'android' && {
+                      imageRendering: 'optimizeSpeed' as any,
+                      backfaceVisibility: 'hidden' as any,
+                      transform: 'translateZ(0)' as any,
+                    })
                   }}
                   onLoad={() => {
-                    if (isLoading && imagesLoaded >= 5) {
+                    if (isLoading && imagesLoaded >= (deviceType === 'android' ? 12 : 5)) {
                       setIsLoading(false);
                     }
                   }}

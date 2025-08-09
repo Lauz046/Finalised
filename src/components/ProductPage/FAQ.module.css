@@ -2,10 +2,10 @@
   background: #fff;
   border: none;
   padding: 0;
-  margin: 40px 0 0 0;
+  margin: 40px 0 40px 0;
   color: #051F2D;
   font-family: 'Montserrat', sans-serif;
-  min-height: 140px;
+  min-height: 180px;
   border-radius: 0;
 }
 
@@ -28,15 +28,22 @@
   margin-bottom: 0;
 }
 
-/* Add spacing below the header row before the first question */
-.headerRow + .item,
-.headerRow + div .item:first-child {
-  margin-top: 48px;
+/* Add consistent spacing for all FAQ items */
+.item {
+  margin-bottom: 24px;
   margin-left: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
 }
-.item:nth-child(3) {
-  margin-left: 10px;   /* or whatever value you want */
-  margin-top: 34px;    /* optional, for vertical spacing */
+
+.item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+/* Add spacing below the header row before the first question */
+.headerRow + .item {
+  margin-top: 32px;
 }
 
 .header, .summary, .answer {
@@ -49,16 +56,25 @@
   margin-left: 16px;
 }
 
-/* Remove extra margin from questions */
-.item {
-  margin-bottom: 0;
-}
-
 .summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-weight: 600;
+  padding: 8px 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.summary:hover {
+  color: #C7A77B;
+}
+
+.answer {
+  padding: 12px 0 8px 0;
+  line-height: 1.6;
+  color: #374151;
+  margin-top: 8px;
 }
 
 .arrow {
@@ -78,9 +94,10 @@
 
 .arrowOpen, .arrowClosed {
   margin-top: 3px;
-  margin-left: 300px;
+  margin-left: auto;
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .arrowSvg {
@@ -100,8 +117,13 @@
 
 /* Mobile responsive fixes for FAQ arrows */
 @media (max-width: 768px) {
+  .container {
+    margin: 32px 0;
+    min-height: 160px;
+  }
+  
   .arrowOpen, .arrowClosed {
-    margin-left: 20px;
+    margin-left: auto;
   }
   
   .header {
@@ -111,21 +133,26 @@
   
   .item {
     margin-left: 8px;
+    margin-bottom: 20px;
+    padding: 10px 0;
   }
   
-  .item:nth-child(3) {
-    margin-left: 8px;
-  }
-  
-  /* Fix header row spacing for mobile */
-  .headerRow + .item,
-  .headerRow + div .item:first-child {
-    margin-top: 32px;
-    margin-left: 8px;
+  .headerRow + .item {
+    margin-top: 24px;
   }
   
   .headerRow {
     height: 40px;
     font-size: 1.1rem;
+  }
+  
+  .summary {
+    font-size: 14px;
+    padding: 6px 0;
+  }
+  
+  .answer {
+    font-size: 14px;
+    padding: 10px 0 6px 0;
   }
 } 

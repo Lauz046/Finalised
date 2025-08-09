@@ -12,6 +12,7 @@ export const MobileImageViewer: React.FC<MobileImageViewerProps> = ({ images, la
   const [currentFrame, setCurrentFrame] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
@@ -119,12 +120,17 @@ export const MobileImageViewer: React.FC<MobileImageViewerProps> = ({ images, la
   return (
     <div className={styles.container}>
       <div className={styles.imageContainer}>
-        <img
-          src={displayImages[0]}
-          alt="Product image"
-          className={styles.image}
-          ref={lastImageRef}
-        />
+        <div className={styles.imageWrapper}>
+          <img
+            src={displayImages[0]}
+            alt="Product image"
+            className={styles.image}
+            ref={lastImageRef}
+            onLoad={() => setImageLoaded(true)}
+            onError={() => setImageLoaded(true)}
+            style={{ opacity: imageLoaded ? 1 : 0 }}
+          />
+        </div>
       </div>
     </div>
   );

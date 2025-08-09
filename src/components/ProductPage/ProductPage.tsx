@@ -434,8 +434,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
       };
     });
 
-  // For now, use placeholder sellers and recommendations
-  const mockDescription = product.description || 'With crisp detailing and nostalgic blue accents, this 2024 release captures the essence of vintage basketball with a modern edge.';
+  // Get product link for description
+  const productLink = product.productLink || product.link || product.url || '';
 
   const display = getDisplayFields(product);
 
@@ -534,7 +534,12 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
           )}
           {product.sizePrices && productType === 'sneaker' && <SizeChart />}
           <PriceHistory />
-          <ProductDescription description={mockDescription} />
+          <ProductDescription 
+            productLink={productLink}
+            productName={display.name}
+            brand={product.brand}
+            category={productType}
+          />
           <FAQ />
         </div>
       </div>

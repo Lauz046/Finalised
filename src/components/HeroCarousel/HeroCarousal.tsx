@@ -2,24 +2,35 @@
 "use client"
 import { useState, useEffect, useRef, useCallback } from "react"
 import styles from "./HeroCarousel.module.css"
+import VideoOptimizer from "./VideoOptimizer"
 
-// Optimized 10-second video URLs
-const OPTIMIZED_VIDEOS = [
-  "/herosection/optimized/hero-video-1.webm",
-  "/herosection/optimized/hero-video-2.webm", 
-  "/herosection/optimized/hero-video-3.webm",
-  "/herosection/optimized/hero-video-4.webm",
-  "/herosection/optimized/hero-video-5.webm",
-]
+// Video format detection and fallback system
+const getVideoFormats = () => {
+  // iOS detection
+  const isIOS = typeof navigator !== 'undefined' && 
+    /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+  
+  // Android detection
+  const isAndroid = typeof navigator !== 'undefined' && 
+    /Android/.test(navigator.userAgent)
+  
+  return {
+    preferredFormat: 'mp4', // Always use MP4 for consistency
+    isIOS,
+    isAndroid
+  }
+}
 
-// Fallback to original videos if optimized ones don't exist
-const FALLBACK_VIDEOS = [
-  "/herosection/StorySaver.to_AQMiiL2ymzY2G0kqVs2OLw37rR5PwqdeSPY4Op1sUmtSQSXL8NwtA7r00YqdE1AEMu0ELk9x1MZ9NxIdYGo8Jd7wS4Hjc.webm",
-  "/herosection/StorySaver.to_AQNRVdeF2ejk-sqw5JUDMy_23uzXuD2m1jqUBnYxUodDN_38d8AFtBk-n4pjN13bvNcAiNFdx2EsLUHMFYoY3sx.webm",
-  "/herosection/StorySaver.to_AQObCzPuN2j23kjIwDyRbd4rgniYN7kM8ZAn_fO09Q_ZhVpRCGVQya6evieaDdlyqwx0hZOnX1q72VjoW2-PGhw.webm",
-  "/herosection/StorySaver.to_AQP8TheManZYkoMPUGyyyzhRfH5jlRZ8veRzG5zO9o3Jw4Pql8C71K27_MG7DFMr7x1MZ9NxIdYGo8Jd7wS4Hjc.webm",
-  "/herosection/StorySaver.to_AQOKbDbVhs6Jnnb0LVccp3FdKXqVba9a7ps5E53RcALtrDbCosTs8ub03_Gb0-IV7Ju9m0AIAoO-Zl0TCDu9w7i.webm",
-]
+// Optimized video URLs - only MP4 files
+const getOptimizedVideos = () => {
+  return [
+    "/herosection/optimized/hero-video-1.mp4",
+    "/herosection/optimized/hero-video-2.mp4", 
+    "/herosection/optimized/hero-video-3.mp4",
+    "/herosection/optimized/hero-video-4.mp4",
+    "/herosection/optimized/hero-video-5.mp4",
+  ]
+}
 
 const HeroCarousel = () => {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -27,6 +38,8 @@ const HeroCarousel = () => {
   const [isPlaying] = useState(true)
   const [videosLoaded, setVideosLoaded] = useState(false)
   const [currentVideos, setCurrentVideos] = useState<string[]>([])
+  const [isIOS, setIsIOS] = useState(false)
+  const [loadedVideos, setLoadedVideos] = useState<Set<number>>(new Set())
   
   const progressInterval = useRef<NodeJS.Timeout | null>(null)
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
@@ -44,27 +57,35 @@ const HeroCarousel = () => {
 
   const carouselLength = currentVideos.length || 5
 
-  // Initialize videos (try optimized first, fallback to originals)
+  // Initialize videos with format detection and fallbacks
   useEffect(() => {
     if (initialized.current) return
     initialized.current = true
 
     const initializeVideos = async () => {
-      // Try to load optimized videos first
-      let videosToUse = OPTIMIZED_VIDEOS
+      const { isIOS: iosDevice } = getVideoFormats()
+      setIsIOS(iosDevice)
+      
+      console.log(`📱 Device detected: ${iosDevice ? 'iOS' : 'Other'}`)
+      console.log(`🎬 Using MP4 format for all devices`)
+      
+      // Use optimized MP4 videos
+      const videosToUse = getOptimizedVideos()
       
       // Check if optimized videos exist by testing the first one
       try {
-        const testResponse = await fetch(OPTIMIZED_VIDEOS[0], { method: 'HEAD' })
+        const testResponse = await fetch(videosToUse[0], { method: 'HEAD' })
         if (!testResponse.ok) {
-          console.log('📹 Using fallback videos (optimized not found)')
-          videosToUse = FALLBACK_VIDEOS
+          console.log('❌ Optimized videos not found')
+          setVideosLoaded(false)
+          return
         } else {
-          console.log('📹 Using optimized 10-second videos')
+          console.log(`📹 Using optimized MP4 videos`)
         }
-      } catch {
-        console.log('📹 Using fallback videos (optimized not accessible)')
-        videosToUse = FALLBACK_VIDEOS
+      } catch (error) {
+        console.log('❌ Optimized videos not accessible:', error)
+        setVideosLoaded(false)
+        return
       }
       
       setCurrentVideos(videosToUse)
@@ -130,41 +151,14 @@ const HeroCarousel = () => {
     setProgress(0)
   }, [activeIndex])
 
-  // Handle video playback with optimization
-  useEffect(() => {
-    if (!videosLoaded) return
+  // Handle video loading
+  const handleVideoLoad = (index: number) => {
+    setLoadedVideos(prev => new Set([...prev, index]))
+  }
 
-    const safePlay = (video: HTMLVideoElement | null) => {
-      if (!video) return
-      
-      // Reset video to beginning
-      video.currentTime = 0
-      
-      // Play with error handling
-      const playPromise = video.play()
-      if (playPromise !== undefined) {
-        playPromise.catch((error) => {
-          console.warn('Video play failed:', error)
-        })
-      }
-    }
-
-    // Reset all videos
-    videoRefs.current.forEach((v) => {
-      if (v) {
-        v.currentTime = 0
-      }
-    })
-    fgVideoRefs.current.forEach((v) => {
-      if (v) {
-        v.currentTime = 0
-      }
-    })
-    
-    // Play current video
-    safePlay(videoRefs.current[activeIndex])
-    safePlay(fgVideoRefs.current[activeIndex])
-  }, [activeIndex, videosLoaded])
+  const handleVideoError = (index: number, error: string) => {
+    console.error(`Video ${index} failed to load:`, error)
+  }
 
   // Loading state
   if (!videosLoaded) {
@@ -188,14 +182,16 @@ const HeroCarousel = () => {
               key={`bg-${index}`}
               className={`${styles.videoContainer} ${index === activeIndex ? styles.active : ""}`}
             >
-              <video
-                ref={(el) => { videoRefs.current[index] = el; }}
-                className={styles.video}
+              <VideoOptimizer
                 src={videoSrc}
-                playsInline
-                muted
-                loop
+                className={styles.video}
+                playsInline={true}
+                muted={true}
+                loop={true}
                 preload="metadata"
+                isIOS={isIOS}
+                onLoad={() => handleVideoLoad(index)}
+                onError={(error) => handleVideoError(index, error)}
               />
             </div>
           ))}
@@ -210,14 +206,16 @@ const HeroCarousel = () => {
                 key={`fg-${index}`}
                 className={`${styles.fgVideoContainer} ${index === activeIndex ? styles.active : ""}`}
               >
-                <video
-                  ref={(el) => { fgVideoRefs.current[index] = el; }}
-                  className={styles.fgVideo}
+                <VideoOptimizer
                   src={currentVideos[previewIndex]}
-                  playsInline
-                  muted
-                  loop
+                  className={styles.fgVideo}
+                  playsInline={true}
+                  muted={true}
+                  loop={true}
                   preload="metadata"
+                  isIOS={isIOS}
+                  onLoad={() => handleVideoLoad(previewIndex)}
+                  onError={(error) => handleVideoError(previewIndex, error)}
                 />
               </div>
             )

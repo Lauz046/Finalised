@@ -3,12 +3,16 @@ import styles from './FAQ.module.css';
 
 const faqData = [
   {
-    question: 'How do I find the right size?',
-    answer: 'Refer to the size chart above for guidance on sizing.',
+    question: 'Are your products brand new and authentic?',
+    answer: 'Yes — 100%. We only list brand-new, verified luxury products sourced directly from trusted vendors and outlets.',
   },
   {
-    question: 'What is the return policy?',
-    answer: 'We offer a 30-day return policy for all unused items in their original packaging.',
+    question: 'Can I trust the authenticity of the products?',
+    answer: 'Absolutely. Each item is manually verified to ensure it meets our standards for luxury and legitimacy.',
+  },
+  {
+    question: 'How do I get in touch if I have a question?',
+    answer: 'You can reach out us anytime at support@houseofplutus.com - we personally handle every message so you\'re never left waiting for help.',
   },
 ];
 

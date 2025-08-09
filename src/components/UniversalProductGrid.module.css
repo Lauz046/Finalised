@@ -73,8 +73,8 @@
 
 .content {
   width: 100%;
-  min-height: 80px;
-  max-height: 80px;
+  min-height: 110px;
+  max-height: 110px;
   background: #0d1a2f;
   border-radius: 0;
   padding: 16px 18px 16px 18px;
@@ -118,7 +118,7 @@
 }
 
 .price {
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   color: #fff;
   font-weight: 500;
   font-family: 'Montserrat';
@@ -212,17 +212,17 @@
     gap: 20px 12px;
   }
   .card, .skeletonCard {
-    height: 220px;
+    height: 250px;
   }
   .imageContainer, .skeletonImage {
-    height: 100px;
+    height: 120px;
   }
   .image {
     width: 80px;
     height: 80px;
   }
   .content, .skeletonContent {
-    min-height: 48px;
+    min-height: 80px;
     padding: 10px 8px 8px 8px;
   }
 }
@@ -234,11 +234,11 @@
     padding: 18px 0;
   }
   .card, .skeletonCard {
-    height: 380px;
-    min-height: 380px;
+    height: 420px;
+    min-height: 420px;
   }
   .imageContainer, .skeletonImage {
-    height: 220px;
+    height: 250px;
     margin-bottom: 50px;
   }
   .image {
@@ -246,7 +246,7 @@
     height: 160px;
   }
   .content, .skeletonContent {
-    min-height: 70px;
+    min-height: 100px;
     padding: 16px 14px 12px 14px;
   }
 }
@@ -258,17 +258,17 @@
     padding: 10px 0;
   }
   .card, .skeletonCard {
-    height: 180px;
+    height: 220px;
   }
   .imageContainer, .skeletonImage {
-    height: 60px;
+    height: 80px;
   }
   .image {
     width: 50px;
     height: 50px;
   }
   .content, .skeletonContent {
-    min-height: 36px;
+    min-height: 60px;
     padding: 8px 6px 6px 6px;
   }
 }
@@ -280,11 +280,11 @@
     padding: 10px 0;
   }
   .card, .skeletonCard {
-    height: 260px;
-    min-height: 260px;
+    height: 300px;
+    min-height: 300px;
   }
   .imageContainer, .skeletonImage {
-    height: 120px;
+    height: 140px;
     margin-bottom: 24px;
   }
   .image {
@@ -292,7 +292,7 @@
     height: 100px;
   }
   .content, .skeletonContent {
-    min-height: 48px;
+    min-height: 80px;
     padding: 10px 8px 8px 8px;
   }
   .name {
@@ -300,5 +300,8 @@
   }
   .brand {
     font-size: 0.5rem;
+  }
+  .price {
+    font-size: 0.65rem;
   }
 } 

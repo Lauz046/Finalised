@@ -1,48 +1,136 @@
 .container {
-  background: #fff;
-  border: none;
-  padding: 20px 0 20px 4px;
-  margin: 24px 0 40px 0;
-  color: #051F2D;
-  font-family: 'Montserrat', sans-serif;
+  background: #ffffff;
   border-radius: 0;
+  padding: 24px;
+  margin: 20px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
 }
 
 .header {
-  font-size: 1.15rem;
-  font-weight: 800;
-  margin-bottom: 12px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #051F2D;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
   font-family: 'Montserrat', sans-serif;
 }
 
+.productName {
+  font-size: 28px;
+  font-weight: 700;
+  color: #051F2D;
+  margin-bottom: 20px;
+  font-family: 'Montserrat', sans-serif;
+  line-height: 1.3;
+}
+
 .text {
-  font-size: 1rem;
-  color: #464646;
-  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+  text-align: justify;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.error {
+  font-size: 16px;
+  color: #ef4444;
+  font-style: italic;
   margin: 0;
   font-family: 'Montserrat', sans-serif;
 }
 
-/* Mobile styles */
+.readMore {
+  background: none;
+  border: none;
+  color: #051F2D;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 12px 0;
+  margin-top: 16px;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.readMore:hover {
+  color: #C7A77B;
+}
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeletonLine {
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeletonLine:nth-child(1) {
+  width: 80%;
+}
+
+.skeletonLine:nth-child(2) {
+  width: 90%;
+}
+
+.skeletonLine:nth-child(3) {
+  width: 60%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
   .container {
-    padding: 16px 0 16px 4px;
-    margin: 16px 0 24px 0;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
+    padding: 16px;
+    margin: 16px 0;
   }
   
   .header {
-    font-size: 1rem;
-    margin-bottom: 10px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+  
+  .productName {
+    font-size: 22px;
+    margin-bottom: 16px;
   }
   
   .text {
-    font-size: 0.9rem;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+}
+
+@media (max-width: 480px) {
+  .productName {
+    font-size: 20px;
+    margin-bottom: 14px;
+  }
+  
+  .header {
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+  
+  .text {
+    font-size: 13px;
+    line-height: 1.5;
   }
 } 

@@ -68,31 +68,31 @@ function Card({
 
     if (isMobile) {
       // Mobile layout: 5 cards in a horizontal line
-      const delta = index - activeIndex;
+      let delta = index - activeIndex;
       if (delta > config.NUM_CARDS / 2) delta -= config.NUM_CARDS;
       if (delta < -config.NUM_CARDS / 2) delta += config.NUM_CARDS;
 
       // Horizontal spacing for mobile with non-uniform distribution
-      const x = 0;
+      let x = 0;
       if (delta === 0) x = 0; // Center card
-      else if (delta === 1) x = 1.7; // Right card - more space from center
-      else if (delta === -1) x = -1.7; // Left card - more space from center
-      else if (delta === 2) x =3; // Far right - even more space
-      else if (delta === -2) x = -3; // Far left - even more space
+      else if (delta === 1) x = 2.2; // Right card - increased gap from center
+      else if (delta === -1) x = -2.2; // Left card - increased gap from center
+      else if (delta === 2) x = 3.8; // Far right - even more space
+      else if (delta === -2) x = -3.8; // Far left - even more space
       
       const z = 0; // All cards on same z-plane
       const y = 0;
 
       // Mobile tilt logic
-      const rotY = 0;
+      let rotY = 0;
       if (delta === 0) rotY = 0; // Center card no tilt
       else if (delta === 1) rotY = -1.4; // Right card slight tilt
       else if (delta === -1) rotY = 1.4; // Left card slight tilt
       else if (delta === 2) rotY = -1.3; // Far right more tilt
       else if (delta === -2) rotY = 1.3; // Far left more tilt
 
-      const scale = 0.8;
-      if (delta === 0) scale = 1.3; // Center card larger
+      let scale = 0.8;
+      if (delta === 0) scale = 1.1; // Center card smaller
       else if (Math.abs(delta) === 1) scale = 1.3;
       else if (Math.abs(delta) === 2) scale = 1.4;
 
@@ -108,7 +108,7 @@ function Card({
       mesh.scale.setScalar(THREE.MathUtils.lerp(mesh.scale.x, scale, 0.15));
     } else {
       // Desktop layout: Original curved layout
-      const delta = index - activeIndex;
+      let delta = index - activeIndex;
       if (delta > config.NUM_CARDS / 2) delta -= config.NUM_CARDS;
       if (delta < -config.NUM_CARDS / 2) delta += config.NUM_CARDS;
 
@@ -120,7 +120,7 @@ function Card({
       const z = Math.cos(angle) * radius - radius;
       const rotY = -angle;
 
-      const tiltMultiplier = 1;
+      let tiltMultiplier = 1;
       if (Math.abs(delta) === 1) tiltMultiplier = 3;
       else if (Math.abs(delta) === 2) tiltMultiplier = 2.1;
       else if (Math.abs(delta) === 3) tiltMultiplier = 1.3; // less tilt for outermost
@@ -128,7 +128,7 @@ function Card({
       const adjustedRotY = rotY * tiltMultiplier;
       const y = delta === 0 ? -0.2 : -0.3;
 
-      const scale = 0.6;
+      let scale = 0.6;
       if (delta === 0) scale = 1.1;
       else if (Math.abs(delta) === 1) scale = 1;
       else if (Math.abs(delta) === 2) scale = 1;
@@ -271,7 +271,7 @@ export default function FlipbookComponent() {
           zIndex: 0,
           pointerEvents: 'none',
         }}
-        src="/background.webm"
+        src="/background.mp4"
       />
       {/* Title */}
       <div
@@ -384,7 +384,7 @@ export default function FlipbookComponent() {
         <div
           style={{
             position: 'absolute',
-            bottom: isMobile ? 120 : 30,
+            bottom: isMobile ? 140 : 70,
             width: '100%',
             display: 'flex',
             flexDirection: 'column',

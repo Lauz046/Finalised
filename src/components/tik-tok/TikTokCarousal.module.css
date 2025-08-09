@@ -380,6 +380,67 @@
   }
 }
 
+/* Video Placeholder Styles */
+.videoPlaceholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.1);
+  color: #666;
+  z-index: 5;
+  border-radius: inherit;
+}
+
+.videoPlaceholder .loadingSpinner {
+  width: 30px;
+  height: 30px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top: 2px solid #051f2d;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 0.5rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.videoPlaceholder p {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  margin: 0;
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+/* Dot Loading States */
+.dot.loaded {
+  background: #051f2d;
+  opacity: 0.8;
+}
+
+.dot.loading {
+  background: rgba(0, 0, 0, 0.2);
+  opacity: 0.4;
+}
+
+.activeDot.loaded {
+  background: #051f2d;
+  opacity: 1;
+}
+
+.activeDot.loading {
+  background: rgba(0, 0, 0, 0.3);
+  opacity: 0.6;
+}
+
 /* Additional Enhancements */
 .wrapper::before {
   content: '';

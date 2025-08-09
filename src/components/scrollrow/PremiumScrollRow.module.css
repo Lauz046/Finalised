@@ -190,7 +190,7 @@
   .premiumScrollWrapper {
     gap: 0.8rem;
     padding: 1rem 0 1rem 0;
-    margin-bottom: 60px; /* Add gap after Premium Icon Row */
+    margin-bottom: 10px; /* Add gap after Premium Icon Row */
   }
   .marqueeWrapper {
     height: 45px;

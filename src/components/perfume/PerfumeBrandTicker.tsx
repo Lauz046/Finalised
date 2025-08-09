@@ -49,8 +49,8 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
   return (
     <div style={{ fontFamily: 'Montserrat, Inter, Segoe UI, Arial, sans-serif' }}>
       <div className={styles.tickerWrapper} style={{
-        marginTop: isMobile ? '40px' : '80px', // Reduced mobile margin to move cards up
-        height: isMobile ? '280px' : 'auto',
+        marginTop: isMobile ? '20px' : '80px',
+        height: isMobile ? '280px' : 'auto', // Reduced height to prevent overlapping
         overflow: 'hidden',
         width: '100%'
       }}>
@@ -84,7 +84,7 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
                   border: isSelected ? '1px solidrgb(9, 51, 74)' : 'none',
                   borderRadius: '12px',
                   width: '33.33%',
-                  minHeight: isMobile ? 280 : 600,
+                  minHeight: isMobile ? 240 : 600, // Reduced height to prevent overlapping
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',

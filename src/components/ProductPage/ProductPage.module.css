@@ -149,6 +149,15 @@
     max-width: 100%;
     align-items: stretch;
     gap: 20px;
+    position: static !important;
+    top: auto !important;
+    z-index: auto !important;
+  }
+  /* Remove sticky positioning on mobile */
+  .leftSticky, .rightSticky {
+    position: static !important;
+    top: auto !important;
+    z-index: auto !important;
   }
   .brandName {
     font-size: 0.6rem;

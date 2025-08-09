@@ -7,6 +7,9 @@
   overflow: visible;
   position: relative;
   z-index: 1;
+  /* Ensure proper layout flow */
+  contain: layout;
+  transform: translateZ(0);
 }
 
 .imageContainer {
@@ -39,6 +42,9 @@
   max-width: 100%;
   position: relative;
   z-index: 1;
+  /* Prevent layout shift */
+  contain: layout style;
+  will-change: transform;
 }
 
 .image {
@@ -50,6 +56,9 @@
   margin: 0 auto;
   position: relative;
   z-index: 1;
+  /* Improve image loading stability */
+  transition: opacity 0.2s ease-in-out;
+  opacity: 1;
 }
 
 .progressContainer {

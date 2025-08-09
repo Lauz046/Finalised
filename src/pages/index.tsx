@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
-import HeroCarouselImage from '../components/HeroCarousel/HeroCarouselImage';
+import OptimizedHeroCarousel from '../components/HeroCarousel/OptimizedHeroCarousel';
 import InfiniteCardSection from '@/components/infinitescroll/infiniteScroll';
 import NewArrivals from '@/components/newArrivals/NewArrivals';
 import ProductSlider360 from '@/components/swiper360/ProductSlider360';
@@ -9,6 +9,7 @@ import ShowcaseMoodSection from '@/components/moodmatch/ShowcaseMoodSection';
 import BentoGrid from '@/components/BentoGrid/BentoGrid';
 import PremiumScrollRow from '@/components/scrollrow/PremiumScrollRow';
 import PremiumIconRow from '@/components/scrollrow/PremiumIconRow';
+
 
 // CSS-based progressive loading component
 const ProgressiveLoader: React.FC<{ children: React.ReactNode; delay: number }> = ({ children, delay }) => {
@@ -52,7 +53,7 @@ const HomePage = () => {
       </Head>
       
       {/* Critical components - load immediately */}
-      <HeroCarouselImage/>
+      <OptimizedHeroCarousel/>
       <PremiumScrollRow uniqueId="top"/>
       
       {/* Secondary components - fade in after 100ms */}
@@ -77,6 +78,8 @@ const HomePage = () => {
       <ProgressiveLoader delay={400}>
         <HeroShowcase/> 
       </ProgressiveLoader>
+      
+
     </>
   );
 };

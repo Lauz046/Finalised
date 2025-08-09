@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './ApparelProductGrid.module.css';
 import Link from 'next/link';
 import ProductGridSkeleton from '../ProductGridSkeleton';
+import { ProductDescriptionPreview } from '../ProductDescriptionPreview';
 
 interface ApparelProduct {
   id: string;
@@ -9,6 +10,7 @@ interface ApparelProduct {
   productName: string;
   images: string[];
   price: number;
+  productLink?: string;
 }
 
 interface ApparelProductGridProps {
@@ -72,6 +74,15 @@ const ApparelProductGrid: React.FC<ApparelProductGridProps> = ({ products, onPro
             <div className={styles.name} title={product.productName}>
               {truncateProductName(product.productName, mobile)}
             </div>
+            {product.productLink && (
+              <ProductDescriptionPreview
+                productLink={product.productLink}
+                productName={product.productName}
+                brand={product.brand}
+                maxLength={mobile ? 60 : 80}
+                className={styles.description}
+              />
+            )}
             <div className={styles.priceRow}>
               <span className={styles.startingFrom}>Starting from</span>
               <span className={styles.price}>{formatPrice(product.price)}</span>

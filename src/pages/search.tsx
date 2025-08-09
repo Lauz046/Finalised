@@ -108,7 +108,7 @@ const APPAREL_SEARCH_QUERY = gql`
   }
 `;
 
-const PAGE_SIZE = 16;
+const PAGE_SIZE = 50;
 
 interface Product {
   id: string;
@@ -122,6 +122,13 @@ interface Product {
   gender?: string;
   fragranceFamily?: string;
   color?: string;
+  concentration?: string;
+  material?: string;
+  size?: string;
+  price?: number;
+  salePrice?: number;
+  sizePrices?: Array<{ size: string; price: number }>;
+  variants?: Array<{ price: number }>;
 }
 
 export default function SearchPage() {
@@ -129,7 +136,7 @@ export default function SearchPage() {
   const queryParam = typeof router.query.q === 'string' ? router.query.q : '';
   const [search, setSearch] = useState(queryParam);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showFilter, setShowFilter] = useState(true);
+  const [showFilter, setShowFilter] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -142,6 +149,9 @@ export default function SearchPage() {
   const [selectedGenders, setSelectedGenders] = useState<string[]>([]);
   const [selectedFragranceFamilies, setSelectedFragranceFamilies] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [selectedConcentrations, setSelectedConcentrations] = useState<string[]>([]);
+  const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('New In');
   const [isMobile, setIsMobile] = useState(false);
   const [mobileOverlayTab, setMobileOverlayTab] = useState<'filter' | 'sort'>('filter');
@@ -199,12 +209,12 @@ export default function SearchPage() {
         setTotalProducts(totalCount);
         console.log('🔍 SearchPage: Total products for search:', search, '=', totalCount);
 
-        // Fetch first page of products (100 items)
-        const response = await fetch(`/api/search?q=${encodeURIComponent(search)}&limit=100&offset=0`);
+        // Fetch first page of products (50 items)
+        const response = await fetch(`/api/search?q=${encodeURIComponent(search)}&limit=50&offset=0`);
         const data = await response.json();
         const products = data.products || [];
         setSearchResults(products);
-        setHasMoreProducts(products.length === 100 && totalCount > 100);
+        setHasMoreProducts(products.length === 50 && totalCount > 50);
         console.log('🔍 SearchPage: Loaded first page with', products.length, 'products');
       } catch (error) {
         console.error('🔍 SearchPage: Error fetching search results:', error);
@@ -219,20 +229,14 @@ export default function SearchPage() {
     fetchSearchResults();
   }, [search]);
 
-  // Load more products when page changes
+  // Load products for current page
   useEffect(() => {
-    const loadMoreProducts = async () => {
-      if (!search || search.trim() === '' || currentPage === 1) {
+    const loadPageProducts = async () => {
+      if (!search || search.trim() === '') {
         return;
       }
 
       const offset = (currentPage - 1) * PAGE_SIZE;
-      
-      // Check if we already have enough products loaded
-      if (offset < searchResults.length) {
-        console.log('🔍 SearchPage: Already have enough products loaded, skipping API call');
-        return;
-      }
       
       // Check if we've reached the total number of products
       if (offset >= totalProducts) {
@@ -243,35 +247,34 @@ export default function SearchPage() {
 
       setIsLoading(true);
       try {
-        const response = await fetch(`/api/search?q=${encodeURIComponent(search)}&limit=100&offset=${offset}`);
+        const response = await fetch(`/api/search?q=${encodeURIComponent(search)}&limit=50&page=${currentPage}`);
         const data = await response.json();
-        const newProducts = data.products || [];
+        const pageProducts = data.products || [];
         
-        // Check if we got any new products
-        if (newProducts.length === 0) {
+        // Check if we got any products
+        if (pageProducts.length === 0) {
           setHasMoreProducts(false);
           console.log('🔍 SearchPage: No more products available');
           return;
         }
         
-        // Append new products to existing results
-        setSearchResults(prev => [...prev, ...newProducts]);
+        // Set products for current page
+        setSearchResults(pageProducts);
         
         // Check if we have more products to load
-        const totalLoaded = searchResults.length + newProducts.length;
-        setHasMoreProducts(newProducts.length === 100 && totalLoaded < totalProducts);
+        setHasMoreProducts(pageProducts.length === 50 && (offset + pageProducts.length) < totalProducts);
         
-        console.log('🔍 SearchPage: Loaded page', currentPage, 'with', newProducts.length, 'products. Total loaded:', totalLoaded, 'of', totalProducts);
+        console.log('🔍 SearchPage: Loaded page', currentPage, 'with', pageProducts.length, 'products. Offset:', offset, 'of', totalProducts);
       } catch (error) {
-        console.error('🔍 SearchPage: Error loading more products:', error);
+        console.error('🔍 SearchPage: Error loading page products:', error);
         setHasMoreProducts(false);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadMoreProducts();
-  }, [currentPage, search, totalProducts, searchResults.length]);
+    loadPageProducts();
+  }, [currentPage, search, totalProducts]);
 
   // Load category data if not already loaded
   useEffect(() => {
@@ -347,8 +350,49 @@ export default function SearchPage() {
     return allProducts;
   }, [search, searchResults, allProducts]);
 
-  // Extract unique filter values
-  const brands = brandsData?.allSneakerBrands || [];
+  // Create comprehensive filter data from all available products for the search term
+  const comprehensiveFilterData = useMemo(() => {
+    if (!search || search.trim() === '') {
+      return allProducts;
+    }
+    
+    // For search terms, we need to get ALL products that match the search term
+    // This is used for generating comprehensive filters, not for display
+    let allMatchingProducts: Product[] = [];
+    
+    // Combine all category data to find all products matching the search term
+    const allCategoryProducts = [
+      ...(categoryData.sneakers || []).map((p: Product) => ({ ...p, type: 'Sneaker' })),
+      ...(categoryData.apparel || []).map((p: Product) => ({ ...p, type: 'Apparel' })),
+      ...(categoryData.accessories || []).map((p: Product) => ({ ...p, type: 'Accessory' })),
+      ...(categoryData.perfumes || []).map((p: Product) => ({ ...p, type: 'Perfume' })),
+      ...(categoryData.watches || []).map((p: Product) => ({ ...p, type: 'Watch' }))
+    ];
+    
+    // Filter all products by search term
+    const normalizedSearch = search.toLowerCase();
+    allMatchingProducts = allCategoryProducts.filter(product => {
+      const brandMatch = product.brand?.toLowerCase().includes(normalizedSearch);
+      const nameMatch = product.productName?.toLowerCase().includes(normalizedSearch) ||
+                       product.name?.toLowerCase().includes(normalizedSearch) ||
+                       product.title?.toLowerCase().includes(normalizedSearch);
+      return brandMatch || nameMatch;
+    });
+    
+    return allMatchingProducts;
+  }, [search, categoryData]);
+
+  // Extract unique filter values from search results (dynamic filters)
+  const brands = useMemo(() => {
+    if (search && search.trim() !== '') {
+      // For search results, use brands from search results
+      const values = searchFilteredProducts.map(p => p.brand).filter((b): b is string => Boolean(b));
+      return Array.from(new Set(values));
+    } else {
+      // For browsing, use all brands
+      return brandsData?.allSneakerBrands || [];
+    }
+  }, [search, searchFilteredProducts, brandsData]);
   
   // Auto-scroll brand ticker
   useEffect(() => {
@@ -381,49 +425,89 @@ export default function SearchPage() {
     };
   }, [brands]);
   
+  // Get unique categories present in comprehensive search results
+  const presentCategories = useMemo(() => {
+    const categories = comprehensiveFilterData.map(p => p.type).filter((t): t is string => Boolean(t));
+    return Array.from(new Set(categories));
+  }, [comprehensiveFilterData]);
+
+  // Dynamic filter generation based on comprehensive search results
   const subcategories = useMemo(() => {
-    const values = allProducts.map(p => p.subcategory).filter((s): s is string => Boolean(s));
+    const values = comprehensiveFilterData.map(p => p.subcategory).filter((s): s is string => Boolean(s));
     return Array.from(new Set(values));
-  }, [allProducts]);
+  }, [comprehensiveFilterData]);
+  
   const genders = useMemo(() => {
-    const values = allProducts.map(p => p.gender).filter((g): g is string => Boolean(g));
+    const values = comprehensiveFilterData.map(p => p.gender).filter((g): g is string => Boolean(g));
     return Array.from(new Set(values));
-  }, [allProducts]);
+  }, [comprehensiveFilterData]);
+  
   const fragranceFamilies = useMemo(() => {
-    const values = allProducts.filter(p => p.type === 'Perfume').map(p => p.fragranceFamily).filter((f): f is string => Boolean(f));
+    // Only show fragrance families if Perfume category is present
+    if (!presentCategories.includes('Perfume')) return [];
+    const values = comprehensiveFilterData.filter(p => p.type === 'Perfume').map(p => p.fragranceFamily).filter((f): f is string => Boolean(f));
     return Array.from(new Set(values));
-  }, [allProducts]);
+  }, [comprehensiveFilterData, presentCategories]);
+  
   const colors = useMemo(() => {
-    const values = allProducts.filter(p => p.type === 'Watch').map(p => p.color).filter((c): c is string => Boolean(c));
+    // Only show colors if Watch category is present
+    if (!presentCategories.includes('Watch')) return [];
+    const values = comprehensiveFilterData.filter(p => p.type === 'Watch').map(p => p.color).filter((c): c is string => Boolean(c));
     return Array.from(new Set(values));
-  }, [allProducts]);
+  }, [comprehensiveFilterData, presentCategories]);
+  
+  // Additional filters for different categories
+  const concentrations = useMemo(() => {
+    // Only show concentrations if Perfume category is present
+    if (!presentCategories.includes('Perfume')) return [];
+    const values = comprehensiveFilterData.filter(p => p.type === 'Perfume').map(p => p.concentration).filter((c): c is string => Boolean(c));
+    return Array.from(new Set(values));
+  }, [comprehensiveFilterData, presentCategories]);
+  
+  const materials = useMemo(() => {
+    // Only show materials if Accessory category is present
+    if (!presentCategories.includes('Accessory')) return [];
+    const values = comprehensiveFilterData.filter(p => p.type === 'Accessory').map(p => p.material).filter((m): m is string => Boolean(m));
+    return Array.from(new Set(values));
+  }, [comprehensiveFilterData, presentCategories]);
+  
+  const sizes = useMemo(() => {
+    // Only show sizes if Sneaker or Apparel category is present
+    if (!presentCategories.some(cat => ['Sneaker', 'Apparel'].includes(cat))) return [];
+    const values = comprehensiveFilterData.filter(p => ['Sneaker', 'Apparel'].includes(p.type || '')).map(p => p.size).filter((s): s is string => Boolean(s));
+    return Array.from(new Set(values));
+  }, [comprehensiveFilterData, presentCategories]);
 
   // Filter products based on selected filters
   const filteredResults = useMemo(() => {
     console.log('🔍 SearchPage: filteredResults - searchFilteredProducts.length:', searchFilteredProducts.length);
     
-    const filtered = searchFilteredProducts.filter(product => {
+    // Use searchResults when there's a search term, otherwise use searchFilteredProducts
+    const productsToFilter = search && search.trim() !== '' ? searchResults : searchFilteredProducts;
+    
+    const filtered = productsToFilter.filter(product => {
       if (selectedBrands.length && !selectedBrands.includes(product.brand)) return false;
       if (selectedSubcategories.length && product.subcategory && !selectedSubcategories.includes(product.subcategory)) return false;
       if (selectedGenders.length && product.gender && !selectedGenders.includes(product.gender)) return false;
       if (selectedFragranceFamilies.length && product.type === 'Perfume' && product.fragranceFamily && !selectedFragranceFamilies.includes(product.fragranceFamily)) return false;
       if (selectedColors.length && product.type === 'Watch' && product.color && !selectedColors.includes(product.color)) return false;
+      if (selectedConcentrations.length && product.type === 'Perfume' && product.concentration && !selectedConcentrations.includes(product.concentration)) return false;
+      if (selectedMaterials.length && product.type === 'Accessory' && product.material && !selectedMaterials.includes(product.material)) return false;
+      if (selectedSizes.length && product.size && !selectedSizes.includes(product.size)) return false;
       return true;
     });
     
     console.log('🔍 SearchPage: Final filtered results:', filtered.length);
     return filtered;
-  }, [searchFilteredProducts, selectedBrands, selectedSubcategories, selectedGenders, selectedFragranceFamilies, selectedColors]);
+  }, [search, searchResults, searchFilteredProducts, selectedBrands, selectedSubcategories, selectedGenders, selectedFragranceFamilies, selectedColors, selectedConcentrations, selectedMaterials, selectedSizes]);
 
   // Pagination logic for lazy loading
-  const PAGE_SIZE = 100;
   const totalPages = Math.ceil(totalProducts / PAGE_SIZE);
   
-  // Get products for current page (show all loaded products up to current page)
+  // Get products for current page (searchResults already contains the current page products)
   const paginatedResults = useMemo(() => {
-    const endIndex = currentPage * PAGE_SIZE;
-    return searchResults.slice(0, endIndex);
-  }, [searchResults, currentPage]);
+    return searchResults;
+  }, [searchResults]);
 
   // Only show pagination if we have more than one page and there are more products to load
   const shouldShowPagination = totalPages > 1 && (hasMoreProducts || currentPage < totalPages);
@@ -431,13 +515,13 @@ export default function SearchPage() {
   // Use filtered results for display
   const displayResults = useMemo(() => {
     if (search && search.trim() !== '') {
-      // For search results, use the paginated results
-      return paginatedResults;
+      // For search results, apply filters to the current page results
+      return filteredResults;
     } else {
       // For browsing, use the filtered results
       return filteredResults;
     }
-  }, [search, paginatedResults, filteredResults]);
+  }, [search, filteredResults]);
 
   // Optimized loading state - only show loading when actually fetching search data
 
@@ -461,6 +545,21 @@ export default function SearchPage() {
   };
   const handleColorChange = (color: string) => {
     setSelectedColors(prev => prev.includes(color) ? prev.filter(c => c !== color) : [...prev, color]);
+    setCurrentPage(1);
+  };
+  
+  const handleConcentrationChange = (concentration: string) => {
+    setSelectedConcentrations(prev => prev.includes(concentration) ? prev.filter(c => c !== concentration) : [...prev, concentration]);
+    setCurrentPage(1);
+  };
+  
+  const handleMaterialChange = (material: string) => {
+    setSelectedMaterials(prev => prev.includes(material) ? prev.filter(m => m !== material) : [...prev, material]);
+    setCurrentPage(1);
+  };
+  
+  const handleSizeChange = (size: string) => {
+    setSelectedSizes(prev => prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]);
     setCurrentPage(1);
   };
 
@@ -504,103 +603,7 @@ export default function SearchPage() {
             <Breadcrumbs items={breadcrumbItems} />
           </div>
           
-          {/* Mobile Brand Selector - Auto-moving */}
-          <div style={{
-            margin: '16px auto 0 auto',
-            padding: '4px 16px 0 16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 8,
-            overflowX: 'visible',
-            minHeight: 48,
-            marginBottom: 8,
-            maxWidth: '100%',
-          }}>
-            {/* Brand buttons row with arrows - mobile optimized */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 'none', minHeight: 48, position: 'relative', maxWidth: '85vw' }}>
-              <button
-                aria-label="Scroll left"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  padding: '0 4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  cursor: 'pointer',
-                  height: 40,
-                  marginRight: 2,
-                }}
-                onClick={() => {
-                  const el = document.getElementById('brand-scroll-row-mobile');
-                  if (el) el.scrollBy({ left: -120, behavior: 'smooth' });
-                }}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 20, height: 20 }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-                </svg>
-              </button>
-              <div id="brand-scroll-row-mobile" style={{ display: 'flex', gap: 8, overflowX: 'auto', flex: 'none', scrollbarWidth: 'none', msOverflowStyle: 'none', minHeight: 40, maxWidth: '75vw' }}>
-                {brands.map((b: string) => (
-                  <button
-                    key={b}
-                    onClick={() => handleBrandChange(b)}
-                    style={{
-                      border: selectedBrands.includes(b) ? '2px solid #22304a' : '2px solid #bfc9d1',
-                      background: '#fff',
-                      color: '#22304a',
-                      borderRadius: 6,
-                      padding: '6px 12px',
-                      fontWeight: 500,
-                      fontFamily: 'Inter, Segoe UI, Arial, sans-serif',
-                      fontSize: '0.7rem',
-                      cursor: 'pointer',
-                      boxShadow: selectedBrands.includes(b) ? '0 2px 8px rgba(30,167,253,0.08)' : 'none',
-                      borderBottom: selectedBrands.includes(b) ? '2.5px solid #0a2230' : '2.5px solid #bfc9d1',
-                      minWidth: 100,
-                      maxWidth: 160,
-                      outline: 'none',
-                      transition: 'border 0.15s, box-shadow 0.15s',
-                      height: 40,
-                      margin: 0,
-                      whiteSpace: 'nowrap',
-                      lineHeight: 1,
-                      textAlign: 'center',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                    title={b}
-                  >
-                    <span style={{ display: 'block', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{b}</span>
-                  </button>
-                ))}
-              </div>
-              <button
-                aria-label="Scroll right"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  padding: '0 4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  cursor: 'pointer',
-                  height: 40,
-                  marginLeft: 2,
-                }}
-                onClick={() => {
-                  const el = document.getElementById('brand-scroll-row-mobile');
-                  if (el) el.scrollBy({ left: 120, behavior: 'smooth' });
-                }}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 20, height: 20 }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                </svg>
-              </button>
-            </div>
-          </div>
+
           
           {/* Mobile Results Summary */}
           <div style={{
@@ -633,7 +636,7 @@ export default function SearchPage() {
               textAlign: 'center',
               marginTop: 4,
             }}>
-              {filteredResults.length} {filteredResults.length === 1 ? 'result' : 'results'} found
+              {search && search.trim() !== '' ? totalProducts : displayResults.length} {search && search.trim() !== '' ? (totalProducts === 1 ? 'result' : 'results') : (displayResults.length === 1 ? 'result' : 'results')} found
             </div>
           </div>
           
@@ -710,8 +713,8 @@ export default function SearchPage() {
           <div style={{ width: '100%', padding: '0 8px', marginTop: 0 }}>
             <UniversalProductGrid 
               products={displayResults}
+              category="search"
               loading={isLoading}
-              isMobile={true}
             />
             {shouldShowPagination && <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />}
           </div>
@@ -722,6 +725,43 @@ export default function SearchPage() {
           {/* Add a large top margin so nothing is hidden behind the fixed Navbar */}
           <div style={{ maxWidth: 1500, margin: '0 auto', padding: '104px 32px 0 32px' }}>
             <Breadcrumbs items={breadcrumbItems} />
+          </div>
+          
+          {/* Desktop Search Results Summary */}
+          <div style={{
+            maxWidth: 1500,
+            margin: '0 auto',
+            padding: '16px 32px 8px 32px',
+            background: '#f8f9fa',
+            borderBottom: '1px solid #e0e0e0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+            <div style={{
+              fontFamily: 'Montserrat, sans-serif',
+              fontWeight: 700,
+              fontSize: '1.3rem',
+              color: '#22304a',
+              lineHeight: 1.4,
+            }}>
+              {search ? (
+                <>
+                  <span style={{ color: '#666' }}>Search results for </span>
+                  <span style={{ color: '#22304a' }}>"{search}"</span>
+                </>
+              ) : (
+                <span>All Products</span>
+              )}
+            </div>
+            <div style={{
+              fontFamily: 'Montserrat, sans-serif',
+              fontWeight: 600,
+              fontSize: '1.1rem',
+              color: '#666',
+            }}>
+              {search && search.trim() !== '' ? totalProducts : displayResults.length} {search && search.trim() !== '' ? (totalProducts === 1 ? 'result' : 'results') : (displayResults.length === 1 ? 'result' : 'results')} found
+            </div>
           </div>
           
           {/* Brand bar with arrows and Hide Filter, matching SneakerBrandProductPage */}
@@ -891,6 +931,15 @@ export default function SearchPage() {
                 colors={colors}
                 selectedColors={selectedColors}
                 onColorChange={handleColorChange}
+                concentrations={concentrations}
+                selectedConcentrations={selectedConcentrations}
+                onConcentrationChange={handleConcentrationChange}
+                materials={materials}
+                selectedMaterials={selectedMaterials}
+                onMaterialChange={handleMaterialChange}
+                sizes={sizes}
+                selectedSizes={selectedSizes}
+                onSizeChange={handleSizeChange}
               />
             </div>
             <div style={{ 
@@ -902,8 +951,8 @@ export default function SearchPage() {
             }}>
               <UniversalProductGrid 
                 products={displayResults}
+                category="search"
                 loading={isLoading}
-                isMobile={false}
               />
               {shouldShowPagination && <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />}
             </div>

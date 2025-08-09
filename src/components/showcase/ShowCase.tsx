@@ -2,24 +2,24 @@ import React, { useRef, useState, useEffect } from 'react';
 import styles from './Showcase.module.css';
 
 const showcaseItems = [
-  { src: '/perfumeticker/All Perfume.png', alt: 'All Perfume' },
-  { src: '/perfumeticker/designer perfume.png', alt: 'Designer Perfume' },
-  { src: '/accessoriesticker/BELT.png', alt: 'Belt' },
-  { src: '/accessoriesticker/Sunglasses.png', alt: 'Sunglasses' },
-  { src: '/sneakerticker/AF1.png', alt: 'Nike AF1' },
-  { src: '/apparelticker/CARHARRT MEN.png', alt: 'Carhartt WIP' },
-  { src: '/apparelticker/BAPE MEN.png', alt: 'BAPE' },
-  { src: '/sneakerticker/AIR JORDAN CARD.png', alt: 'Air Jordan' },
+  { src: '/beyound/baccarat.png', alt: 'Baccarat', category: 'Luxury' },
+  { src: '/beyound/LV jacket.png', alt: 'Louis Vuitton', category: 'Fashion' },
+  { src: '/beyound/Balenciaga hoodie.png', alt: 'Balenciaga', category: 'Streetwear' },
+  { src: '/beyound/LV shoes.png', alt: 'LV Shoes', category: 'Footwear' },
+  { src: '/beyound/van cleef.png', alt: 'Van Cleef', category: 'Jewelry' },
+  { src: '/beyound/yeezy red october.png', alt: 'Yeezy', category: 'Sneakers' },
+  { src: '/beyound/loropiana.png', alt: 'Loro Piana', category: 'Premium' },
+  { src: '/beyound/P_11_KELLY_PRODUIT_1_fit_wrap_0_wid_414_resMode_sharp2_op_usm_1_1_6_0-removebg-preview.png', alt: 'Hermès Kelly', category: 'Bags' },
 ];
 
 const VISIBLE_CARDS = 7;
-const CARD_WIDTH = 220;
-const CARD_HEIGHT = 340;
-const GAP = 40;
+const CARD_WIDTH = 240; // Further increased for better visibility
+const CARD_HEIGHT = 320; // Further increased for better proportions
+const GAP = 35; // Increased for better spacing
 
 const MAX_TILT = 75;
-const ARC_HEIGHT = 8;
-const SCALES = [1.7, 1.3, 1.15, 1.12, 1.15, 1.3, 1.7];
+const ARC_HEIGHT = 10; // Increased for better arc effect
+const SCALES = [1.8, 1.4, 1.25, 1.2, 1.25, 1.4, 1.8]; // Made center card same size as side cards
 
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
@@ -93,6 +93,7 @@ const Showcase = () => {
   const progressBarRef = useRef<HTMLDivElement>(null);
   const [windowWidth, setWindowWidth] = useState(1200);
   const isDraggingRef = useRef(false);
+  const lastScrollTimeRef = useRef(0);
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -104,7 +105,11 @@ const Showcase = () => {
   const handleWheel = (e: React.WheelEvent) => {
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
       e.preventDefault();
-      velocityRef.current += e.deltaX * 0.002; // Reduced sensitivity for smoother scrolling
+      const now = Date.now();
+      const timeDiff = now - lastScrollTimeRef.current;
+      const sensitivity = timeDiff < 50 ? 0.002 : 0.003; // Increased sensitivity for smoother scrolling
+      velocityRef.current += e.deltaX * sensitivity;
+      lastScrollTimeRef.current = now;
     }
   };
 
@@ -112,7 +117,7 @@ const Showcase = () => {
   const handleTouchStartCarousel = (e: React.TouchEvent) => {
     if (e.touches.length === 1) {
       touchXRef.current = e.touches[0].clientX;
-      velocityRef.current = 0; // reset inertia so it starts fresh
+      velocityRef.current = 0;
     }
   };
 
@@ -120,26 +125,24 @@ const Showcase = () => {
     if (e.touches.length === 1 && touchXRef.current !== null) {
       const currentX = e.touches[0].clientX;
       const diff = currentX - touchXRef.current;
-      // Convert pixel movement to scrollPos units with smoother factor
-      setScrollPos((prev) => prev - diff * 0.003); // Reduced factor for smoother movement
-      velocityRef.current = -diff * 0.015; // Reduced velocity accumulation
+      const sensitivity = 0.003; // Increased for more responsive movement
+      setScrollPos((prev) => prev - diff * sensitivity);
+      velocityRef.current = -diff * 0.015; // Increased velocity for smoother feel
       touchXRef.current = currentX;
     }
   };
 
   const handleTouchEndCarousel = () => {
     touchXRef.current = null;
-    // inertia will continue via velocityRef during animate loop
   };
 
-  // Inertia animation loop
+  // Inertia animation loop with improved smoothness
   useEffect(() => {
     let raf: number;
     const animate = () => {
-      // apply velocity with smoother friction
-      if (Math.abs(velocityRef.current) > 0.001) {
+      if (Math.abs(velocityRef.current) > 0.0005) {
         setScrollPos((prev) => prev + velocityRef.current);
-        velocityRef.current *= 0.95; // Increased friction for smoother stop
+        velocityRef.current *= 0.92; // Increased friction for smoother stop
       }
       raf = requestAnimationFrame(animate);
     };
@@ -149,25 +152,33 @@ const Showcase = () => {
 
   const progress = (mod(Math.round(scrollPos), showcaseItems.length) + 0.5) / showcaseItems.length;
 
+  // Fixed infinite scrolling - only repeat after all cards are shown
   const getVisibleItems = () => {
     const items = [];
     const half = Math.floor(VISIBLE_CARDS / 2);
+    const centerIndex = Math.round(scrollPos);
+    
     for (let i = -half; i <= half; i++) {
-      const idx = mod(Math.round(scrollPos) + i, showcaseItems.length);
-      items.push(showcaseItems[idx]);
+      const idx = mod(centerIndex + i, showcaseItems.length);
+      items.push({ ...showcaseItems[idx], originalIndex: idx });
     }
     return items;
   };
 
   // Helper for mobile: get 3 visible items (left, center, right)
   const getMobileVisibleItems = () => {
-    const centerIdx = mod(Math.round(scrollPos), showcaseItems.length);
+    // Use smooth scrollPos instead of rounded for continuous movement
+    const centerIdx = mod(Math.floor(scrollPos), showcaseItems.length);
     const leftIdx = mod(centerIdx - 1, showcaseItems.length);
     const rightIdx = mod(centerIdx + 1, showcaseItems.length);
+    
+    // Calculate smooth transition between cards
+    const smoothOffset = scrollPos - Math.floor(scrollPos);
+    
     return [
-      { ...showcaseItems[leftIdx], pos: 'left' },
-      { ...showcaseItems[centerIdx], pos: 'center' },
-      { ...showcaseItems[rightIdx], pos: 'right' },
+      { ...showcaseItems[leftIdx], pos: 'left', index: leftIdx, offset: smoothOffset },
+      { ...showcaseItems[centerIdx], pos: 'center', index: centerIdx, offset: smoothOffset },
+      { ...showcaseItems[rightIdx], pos: 'right', index: rightIdx, offset: smoothOffset },
     ];
   };
 
@@ -175,36 +186,41 @@ const Showcase = () => {
     const center = Math.floor(VISIBLE_CARDS / 2);
     const offset = i - center + (scrollPos - Math.round(scrollPos));
     const scale = SCALES[i];
-    const tilt = -MAX_TILT * (offset / center);
-    const arcY = -Math.pow(offset / center, 2) * ARC_HEIGHT + ARC_HEIGHT;
+    // Fixed tilt angles instead of dynamic calculation
+    const fixedTilts = [75, 45, 20, 0, -20, -45, -75]; // Fixed tilt values
+    const tilt = fixedTilts[i] || 0;
+    // Removed arcY to prevent vertical movement
     const totalWidth = (CARD_WIDTH + GAP) * (VISIBLE_CARDS - 1);
     const x = (i * (CARD_WIDTH + GAP)) - totalWidth / 2;
     const z = 100 - Math.abs(offset) * 10;
     return {
-      transform: `translateX(${x}px) translateY(${arcY}px) scale(${scale}) rotateY(${tilt}deg)`,
+      transform: `translateX(${x}px) scale(${scale}) rotateY(${tilt}deg)`, // Removed translateY
       zIndex: z,
       opacity: 1,
       position: 'absolute',
       top: `0px`,
       left: `44%`,
       transformOrigin: 'center center',
-      transition: 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s', // Smoother transition
+      transition: 'transform 0.15s ease-out, opacity 0.15s ease-out', // Smoother, faster transition
       pointerEvents: 'auto',
     };
   };
 
   const INDICATOR_WIDTH = 80;
 
-  // Progress bar drag helpers
+  // Improved progress bar drag helpers with smoother interaction
   const handleProgressInteract = (clientX: number) => {
     if (!progressBarRef.current) return;
     const rect = progressBarRef.current.getBoundingClientRect();
-    const ratio = (clientX - rect.left) / rect.width;
+    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
     const newIdx = ratio * showcaseItems.length;
     setScrollPos(newIdx);
+    velocityRef.current = 0; // Reset velocity when manually dragging
   };
 
   const onProgressMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     isDraggingRef.current = true;
     handleProgressInteract(e.clientX);
   };
@@ -227,11 +243,15 @@ const Showcase = () => {
   }, []);
 
   const onProgressTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     isDraggingRef.current = true;
     handleProgressInteract(e.touches[0].clientX);
   };
   const onProgressTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     if (isDraggingRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
       handleProgressInteract(e.touches[0].clientX);
     }
   };
@@ -240,10 +260,14 @@ const Showcase = () => {
   };
 
   const onProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     handleProgressInteract(e.clientX);
   };
 
   const onProgressTouch = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     handleProgressInteract(e.touches[0].clientX);
   };
 
@@ -261,7 +285,7 @@ const Showcase = () => {
         muted
         playsInline
         className={styles.backgroundVideo}
-        src="/background.webm"
+        src="/background.mp4"
         style={{
           position: 'absolute',
           top: 0,
@@ -273,27 +297,31 @@ const Showcase = () => {
           pointerEvents: 'none',
         }}
       />
-      <div style={{ marginTop: '2.5rem' }} />
+      <div style={{ marginTop: '2rem' }} />
       <h1 className={styles.title}>BEYOND ORDINARY</h1>
       <div className={styles.subtitle}>
         Curated for those who crave the exceptional,<br />
         not the expected.
       </div>
+      
       <div className={styles.carouselContainer} style={{ height: CARD_HEIGHT + ARC_HEIGHT }}>
         <div className={styles.carousel} style={{ height: CARD_HEIGHT + ARC_HEIGHT }}>
           {windowWidth <= 700
             ? getMobileVisibleItems().map((item, i) => {
-                // Position: left (25%), center (50%), right (75%)
-                const positions = ['left', 'center', 'right'];
-                const leftPercents = ['25%', '50%', '75%'];
+                // Calculate smooth position based on offset
+                const basePosition = item.pos === 'left' ? -80 : item.pos === 'right' ? 80 : 0;
+                const smoothPosition = basePosition + (item.offset * 20); // Smooth transition
+                
                 return (
                   <div
-                    key={i}
+                    key={`${item.index}-${item.pos}`}
                     className={`${styles.card} ${styles[item.pos]}`}
                     style={{
-                      left: leftPercents[i],
-                      marginLeft: '-40px',
                       position: 'absolute',
+                      left: '50%',
+                      top: '50%',
+                      transform: `translate(-50%, -50%) translateX(${smoothPosition}px)`,
+                      transition: 'transform 0.1s ease-out', // Very fast transition for smooth movement
                     }}
                   >
                     <img src={item.src} alt={item.alt} />
@@ -301,13 +329,13 @@ const Showcase = () => {
                 );
               })
             : getVisibleItems().map((item, i) => (
-                <div key={i} className={styles.card} style={getCardStyle(i)}>
+                <div key={`${item.originalIndex}-${i}`} className={styles.card} style={getCardStyle(i)}>
                   <img src={item.src} alt={item.alt} />
                 </div>
               ))}
         </div>
       </div>
-      <button className={styles.stepInsideBtn}>Step Inside</button>
+      
       <div
         className={styles.progressBarContainer}
         style={{ position: 'absolute', left: 0, right: 0, bottom: 0, margin: '0 auto 2.5rem auto', zIndex: 10 }}
@@ -326,11 +354,14 @@ const Showcase = () => {
               height: '100%',
               background: 'linear-gradient(90deg, #e6c76e 0%, #fffbe6 100%)',
               borderRadius: '4px',
-              transition: 'left 0.4s cubic-bezier(0.77,0,0.175,1)',
+              transition: 'left 0.3s cubic-bezier(0.77,0,0.175,1)',
             }}
           />
         </div>
       </div>
+      
+      {/* Step Inside button positioned after progress bar */}
+      <button className={styles.stepInsideBtn}>Step Inside</button>
     </section>
   );
 };

@@ -55,9 +55,8 @@ const Footer = () => {
 
   const quickLinks = [
     { name: 'Contact Us', href: '/contact' },
-    { name: 'FAQs', href: '/faqs' },
     { name: 'Terms & Conditions', href: '/terms' },
-    { name: 'Privacy Policies', href: '/privacy' },
+    { name: 'Privacy Policy', href: '/privacy' },
   ];
 
   const getBrandUrl = (brand: string, category: string) => {

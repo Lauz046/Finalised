@@ -220,12 +220,67 @@
   margin-right: 24px;
   background: #fff;
   border-radius: 8px;
+  overflow: hidden;
 }
 
 .productImage img {
   border-radius: 8px;
   object-fit: contain;
   background-color: #fff;
+  width: 100%;
+  height: 100%;
+}
+
+/* Responsive image sizing */
+@media (max-width: 768px) {
+  .productImage {
+    width: 80px;
+    height: 80px;
+    margin-right: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .productImage {
+    width: 70px;
+    height: 70px;
+    margin-right: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .productImage {
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+  }
+}
+
+/* Fallback logo sizing for different screen sizes */
+.productImage img[src*="Plutus logo blue.svg"] {
+  width: 60% !important;
+  height: 60% !important;
+}
+
+@media (max-width: 768px) {
+  .productImage img[src*="Plutus logo blue.svg"] {
+    width: 65% !important;
+    height: 65% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .productImage img[src*="Plutus logo blue.svg"] {
+    width: 70% !important;
+    height: 70% !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .productImage img[src*="Plutus logo blue.svg"] {
+    width: 75% !important;
+    height: 75% !important;
+  }
 }
 
 .productInfo {

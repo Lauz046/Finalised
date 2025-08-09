@@ -4,11 +4,71 @@ const GRAPHQL_ENDPOINT = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || 'https://fi
 
 const ALL_PRODUCTS_QUERY = `
   query AllProducts {
-    sneakers { id brand productName images productLink }
-    apparel { id brand productName images productLink }
-    accessories { id brand productName images productLink }
-    perfumes { id brand title images url }
-    watches { id brand name images link }
+    sneakers { 
+      id 
+      brand 
+      productName 
+      images 
+      productLink 
+      soldOut
+      sizePrices { 
+        size 
+        price 
+      } 
+    }
+    apparel { 
+      id 
+      brand 
+      productName 
+      images 
+      productLink 
+      inStock
+      subcategory
+      gender
+      sizePrices { 
+        size 
+        price 
+      } 
+    }
+    accessories { 
+      id 
+      brand 
+      productName 
+      images 
+      productLink 
+      inStock
+      subcategory
+      gender
+      sizePrices { 
+        size 
+        price 
+      } 
+    }
+    perfumes { 
+      id 
+      brand 
+      title 
+      images 
+      url 
+      fragranceFamily
+      concentration
+      subcategory
+      variants { 
+        size 
+        price 
+      } 
+    }
+    watches { 
+      id 
+      brand 
+      name 
+      images 
+      link 
+      color
+      salePrice
+      marketPrice
+      gender
+    }
   }
 `;
 
@@ -28,12 +88,12 @@ async function delay(ms: number) {
 export async function getAllProducts() {
   const now = Date.now();
   
-        // Return cached data if it's still valid
-      if (globalProductCache.length > 0 && (now - cacheTimestamp) < CACHE_DURATION) {
-        console.log('✅ Using cached products data (fast load)');
-        return globalProductCache;
-      }
-  
+  // Return cached data if it's still valid
+  if (globalProductCache.length > 0 && (now - cacheTimestamp) < CACHE_DURATION) {
+    console.log('✅ Using cached products data (fast load)');
+    return globalProductCache;
+  }
+
   // Try with retries
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     try {
@@ -51,10 +111,17 @@ export async function getAllProducts() {
       clearTimeout(timeoutId);
       
       if (!res.ok) {
+        const errorText = await res.text();
+        console.error(`GraphQL Error Response: ${res.status} ${res.statusText}`, errorText);
         throw new Error(`GraphQL request failed: ${res.status} ${res.statusText}`);
       }
       
       const responseData = await res.json();
+      
+      if (responseData.errors) {
+        console.error('GraphQL Errors:', responseData.errors);
+        throw new Error(`GraphQL errors: ${responseData.errors.map((e: any) => e.message).join(', ')}`);
+      }
       
       if (!responseData.data) {
         console.error('No data in GraphQL response:', responseData);

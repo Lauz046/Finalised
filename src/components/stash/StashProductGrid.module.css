@@ -101,7 +101,7 @@
   margin-bottom: 4px;
   align-self: flex-end;
   margin-right: 0;
-  margin-left: 0;
+  margin-left: 32px;
 }
 
 @media (max-width: 1100px) {
@@ -154,8 +154,8 @@
     align-items: flex-start;
   }
   .navigation {
-    bottom: 18px;
-    padding: 0;
+    bottom: 45px;
+    padding: 0 20px;
   }
   .line {
     width: 3px;
@@ -166,6 +166,25 @@
   }
   .productCount {
     font-size: 1rem;
-    margin-left: 0;
+    margin-left: 20px;
+  }
+}
+
+/* Extra small mobile screens */
+@media (max-width: 480px) {
+  .navigation {
+    bottom: 50px;
+    padding: 0 24px;
+  }
+  .productCount {
+    font-size: 0.95rem;
+    margin-left: 24px;
+  }
+  .lineContainer {
+    gap: 6px;
+  }
+  .line {
+    width: 2.5px;
+    height: 26px;
   }
 } 

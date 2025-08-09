@@ -30,11 +30,11 @@
 }
 
 .card {
-  background: #ffffff;
+  background: #fff;
   border-radius: 0px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #e0e6ed;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 12px rgba(30,40,90,0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
   width: 100%; /* Ensure full width */
@@ -43,8 +43,8 @@
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(30,40,90,0.12);
 }
 
 .card__imageContainer {

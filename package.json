@@ -10,6 +10,7 @@
     "start": "next start",
     "lint": "next lint",
     "optimize-videos": "node scripts/optimize-hero-videos.js",
+    "convert-to-mp4": "node scripts/convert-to-mp4.js",
     "simple-optimize": "node scripts/simple-video-optimizer.js",
     "trim-videos": "node scripts/trim-videos.js",
     "cleanup-videos": "node scripts/cleanup-videos.js",

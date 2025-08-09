@@ -195,7 +195,7 @@
     padding: 0.6rem 2rem;
     position: relative;
     top: 0;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
   
   .progressBarContainer {
@@ -204,6 +204,18 @@
     position: relative;
     bottom: 0;
     margin-bottom: 1rem;
+    margin-top: 0.5rem;
+  }
+}
+
+/* Specific fix for 740px height - reduce gap between step inside button and slider */
+@media (max-height: 740px) and (min-height: 700px) {
+  .stepInsideBtn {
+    margin-bottom: 0.3rem;
+  }
+  
+  .progressBarContainer {
+    margin-top: 0.3rem;
   }
 }
 

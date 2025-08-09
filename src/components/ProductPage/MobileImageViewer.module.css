@@ -5,13 +5,15 @@
   flex-direction: column;
   align-items: center;
   overflow: visible;
-  position: relative;
+  position: static;
   z-index: 1;
   /* Ensure proper layout flow */
-  contain: layout;
+  contain: layout style;
   transform: translateZ(0);
   /* Prevent positioning issues during scroll */
   isolation: isolate;
+  /* Force into normal document flow */
+  float: none;
 }
 
 .imageContainer {

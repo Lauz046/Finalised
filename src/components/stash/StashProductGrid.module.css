@@ -14,8 +14,13 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: #051F2D url('/restof/stash.png') center center / cover no-repeat;
+  background: #051F2D url('/restof/Stash.png') center center / cover no-repeat !important;
+  background-attachment: fixed;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
   box-sizing: border-box;
+  z-index: 1;
 }
 
 .productGrid {

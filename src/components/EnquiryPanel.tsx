@@ -42,7 +42,7 @@ const EnquiryPanel: React.FC = () => {
             <div className={styles.optionBox}>
               <div className={styles.optionTitle}>CONTACT OUR TEAM</div>
               <div className={styles.optionSub}>Speak to our representative for the product enquiry.</div>
-              <button className={styles.optionBtn} style={{ background: '#fff', color: '#051f2d', border: '1.5px solid #051f2d' }}>1-800-555-0000</button>
+              <button className={styles.optionBtn} style={{ background: '#fff', color: '#051f2d', border: '1.5px solid #051f2d' }}>6398639624</button>
             </div>
             <div className={styles.optionBox}>
               <div className={styles.optionTitle}>FIND A STORE</div>

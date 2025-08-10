@@ -5,7 +5,7 @@ import AccessoriesFilterSidebar from './AccessoriesFilterSidebar';
 import AccessoriesProductGrid from './AccessoriesProductGrid';
 import AccessoriesMobileFilterOverlay from './AccessoriesMobileFilterOverlay';
 import Pagination from './Pagination';
-import { getBrandUrl } from '../../utils/brandUtils';
+import { getBrandUrl, normalizeBrandForDatabase } from '../../utils/brandUtils';
 
 const ALL_ACCESSORY_BRANDS = gql`
   query AllAccessoryBrands {
@@ -52,6 +52,7 @@ export default function AccessoriesBrandProductPage({ brand }: { brand: string }
   const [shouldResetPriceRange, setShouldResetPriceRange] = useState(true);
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
+  const [gridScrollable, setGridScrollable] = useState(false);
   
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -132,7 +133,7 @@ export default function AccessoriesBrandProductPage({ brand }: { brand: string }
 
   const { data: accessoriesData, loading } = useQuery(ACCESSORIES_QUERY, {
     variables: {
-      brand,
+      brand: normalizeBrandForDatabase(brand),
       subcategory: selectedSubcategories.length === 1 ? selectedSubcategories[0] : undefined,
       gender: selectedGenders.length === 1 ? selectedGenders[0] : undefined,
       size: selectedSizes.length === 1 ? selectedSizes[0] : undefined,

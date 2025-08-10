@@ -29,6 +29,18 @@ const BRAND_MAPPINGS: Record<string, string> = {
   'canada-goose': 'Canada Goose',
   'the-north-face': 'The North Face',
   
+  // Accessories brands
+  'aime-leon-dore': 'Aimé Leon Dore',
+  'aim-leon-dore': 'Aimé Leon Dore', // Handle missing 'e' case
+  'paris-saint-germain': 'Paris Saint-Germain',
+  'off-white': 'OFF-WHITE',
+  'ray-ban': 'Ray-Ban',
+  'y-3': 'Y-3',
+  'mlb-all-star-game': 'MLB All-Star Game',
+  'gentle-monster': 'Gentle Monster',
+  'givenchy': 'Givenchy',
+  'jacquemus': 'Jacquemus',
+  
   // Watch brands
   'a-lange-sohne': 'A. LANGE & SOHNE',
   'a-lange-söhne': 'A. LANGE & SOHNE',
@@ -146,11 +158,15 @@ export function getBrandFromUrl(brandUrl: string): string {
 
 // Enhanced brand matching for better compatibility
 export function normalizeBrandForDatabase(brand: string): string {
-  return brand
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, ' ') // Normalize multiple spaces to single space
-    .replace(/[^\w\s-]/g, ''); // Remove special characters except spaces and hyphens
+  // First, try to get the exact brand name from mappings
+  const normalizedUrl = normalizeBrandForUrl(brand);
+  if (BRAND_MAPPINGS[normalizedUrl]) {
+    return BRAND_MAPPINGS[normalizedUrl];
+  }
+  
+  // If no mapping found, return the original brand name as-is
+  // This preserves accents and special characters for database matching
+  return brand.trim();
 }
 
 export function getBrandUrl(brand: string): string {

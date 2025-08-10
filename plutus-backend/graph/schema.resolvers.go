@@ -58,9 +58,11 @@ func (r *queryResolver) Sneakers(ctx context.Context, brand *string, size *strin
 		WHERE 1=1
 	`
 	if brand != nil && *brand != "" {
-		// Use case-insensitive brand comparison with normalization
-		normalizedBrand := strings.ToLower(strings.TrimSpace(*brand))
-		query += fmt.Sprintf(" AND LOWER(TRIM(brand)) = '%s'", normalizedBrand)
+		// Use case-insensitive brand comparison with accent normalization
+		normalizedBrand := normalizeAccents(strings.ToLower(strings.TrimSpace(*brand)))
+		// Use multiple conditions to handle both with and without accents
+		query += fmt.Sprintf(" AND (LOWER(TRIM(brand)) = '%s' OR LOWER(TRIM(brand)) = '%s')",
+			strings.ToLower(strings.TrimSpace(*brand)), normalizedBrand)
 	}
 	if size != nil && *size != "" {
 		query += fmt.Sprintf(" AND size_prices::text ILIKE '%%%s%%'", *size)
@@ -387,9 +389,11 @@ func (r *queryResolver) Accessories(ctx context.Context, brand *string, subcateg
 		WHERE 1=1
 	`
 	if brand != nil && *brand != "" {
-		// Use case-insensitive brand comparison with normalization
-		normalizedBrand := strings.ToLower(strings.TrimSpace(*brand))
-		query += fmt.Sprintf(" AND LOWER(TRIM(brand)) = '%s'", normalizedBrand)
+		// Use case-insensitive brand comparison with accent normalization
+		normalizedBrand := normalizeAccents(strings.ToLower(strings.TrimSpace(*brand)))
+		// Use multiple conditions to handle both with and without accents
+		query += fmt.Sprintf(" AND (LOWER(TRIM(brand)) = '%s' OR LOWER(TRIM(brand)) = '%s')",
+			strings.ToLower(strings.TrimSpace(*brand)), normalizedBrand)
 	}
 	if subcategory != nil && *subcategory != "" {
 		query += fmt.Sprintf(" AND subcategory ILIKE '%%%s%%'", *subcategory)
@@ -501,9 +505,11 @@ func (r *queryResolver) Apparel(ctx context.Context, brand *string, subcategory 
 		WHERE 1=1
 	`
 	if brand != nil && *brand != "" {
-		// Use case-insensitive brand comparison with normalization
-		normalizedBrand := strings.ToLower(strings.TrimSpace(*brand))
-		query += fmt.Sprintf(" AND LOWER(TRIM(brand)) = '%s'", normalizedBrand)
+		// Use case-insensitive brand comparison with accent normalization
+		normalizedBrand := normalizeAccents(strings.ToLower(strings.TrimSpace(*brand)))
+		// Use multiple conditions to handle both with and without accents
+		query += fmt.Sprintf(" AND (LOWER(TRIM(brand)) = '%s' OR LOWER(TRIM(brand)) = '%s')",
+			strings.ToLower(strings.TrimSpace(*brand)), normalizedBrand)
 	}
 	if subcategory != nil && *subcategory != "" {
 		query += fmt.Sprintf(" AND subcategory ILIKE '%%%s%%'", *subcategory)

@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
-import { useRouter } from 'next/router';
 import { useStash } from '../components/StashContext';
+import { useEnhancedNavigation } from '../hooks/useEnhancedNavigation';
 import StashEmptyState from '../components/stash/StashEmptyState';
 import StashProductGrid from '../components/stash/StashProductGrid';
 import styles from './stash.module.css';
 
 const StashPage: React.FC = () => {
   const { stashedProducts } = useStash();
-  const router = useRouter();
+  const { router } = useEnhancedNavigation();
 
   // Preload stash background image
   useEffect(() => {

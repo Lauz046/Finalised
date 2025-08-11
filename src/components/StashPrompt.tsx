@@ -2,12 +2,12 @@ import React, { useEffect } from 'react';
 import styles from './StashPrompt.module.css';
 import { useStash } from './StashContext';
 import { useAuth } from '../context/AuthContext';
-import { useRouter } from 'next/router';
+import { useEnhancedNavigation } from '../hooks/useEnhancedNavigation';
 
 const StashPrompt: React.FC = () => {
   const { closePrompt } = useStash();
   const { isAuthenticated, user } = useAuth();
-  const router = useRouter();
+  const { navigateWithScrollPreservation } = useEnhancedNavigation();
   
   // Auto-dismiss after 2 seconds
   useEffect(() => {
@@ -20,7 +20,7 @@ const StashPrompt: React.FC = () => {
   
   const handleAuthClick = () => {
     closePrompt();
-    router.push('/auth/signin');
+    navigateWithScrollPreservation('/auth/signin');
   };
 
   return (

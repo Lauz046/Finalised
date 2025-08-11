@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { useStash } from './StashContext';
 import { useAuth } from '../context/AuthContext';
-import { useRouter } from 'next/router';
+import { useEnhancedNavigation } from '../hooks/useEnhancedNavigation';
 import styles from './AddToStashButton.module.css';
 
 interface AddToStashButtonProps {
@@ -26,7 +26,7 @@ const AddToStashButton: React.FC<AddToStashButtonProps> = ({
 }) => {
   const { addToStash, isInStash } = useStash();
   const { isAuthenticated } = useAuth();
-  const router = useRouter();
+  const { navigateWithScrollPreservation } = useEnhancedNavigation();
   const isStashed = isInStash(product.id);
 
   const handleClick = (e: React.MouseEvent) => {
@@ -34,7 +34,7 @@ const AddToStashButton: React.FC<AddToStashButtonProps> = ({
     e.stopPropagation();
     
     if (!isAuthenticated) {
-      router.push('/auth/signin');
+      navigateWithScrollPreservation('/auth/signin');
       return;
     }
     

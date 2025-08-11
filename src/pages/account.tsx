@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useRouter } from 'next/router';
+import { useEnhancedNavigation } from '../hooks/useEnhancedNavigation';
 import { Breadcrumbs } from '../components/ProductPage/Breadcrumbs';
 import Navbar from '../components/nav/Navbar';
 import SearchOverlay from '../components/SearchOverlay';
 
 const AccountPage = () => {
   const { user, isAuthenticated, logout } = useAuth();
-  const router = useRouter();
+  const { navigateWithScrollPreservation, router } = useEnhancedNavigation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // Redirect to signin if not authenticated
   React.useEffect(() => {
     if (!isAuthenticated) {
-      router.push('/auth/signin');
+      navigateWithScrollPreservation('/auth/signin');
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, navigateWithScrollPreservation]);
 
   if (!isAuthenticated || !user) {
     return null; // Will redirect to signin
@@ -23,7 +23,7 @@ const AccountPage = () => {
 
   const handleLogout = () => {
     logout();
-    router.push('/');
+    navigateWithScrollPreservation('/');
   };
 
   const breadcrumbItems = [

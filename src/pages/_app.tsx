@@ -13,6 +13,7 @@ import { EnquiryPanelProvider } from '../components/EnquiryPanelContext';
 import EnquiryPanel from '../components/EnquiryPanel';
 import { ProductProvider } from '../context/ProductContext';
 import { AuthProvider } from '../context/AuthContext';
+import { NavigationProvider } from '../context/NavigationContext';
 import HornLoader from '../components/loading/HornLoader';
 import { useRouter } from 'next/router';
 import { registerServiceWorker, handleServiceWorkerUpdate } from '../utils/serviceWorker';
@@ -59,25 +60,27 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ProductProvider>
         <StashProvider>
           <AuthProvider>
-            <EnquiryPanelProvider>
-              <EnquiryPanel />
-              <StashPromptWrapper />
-              {isLoading ? (
-                <HornLoader 
-                  onComplete={handleLoadingComplete} 
-                  duration={2000}
-                />
-              ) : (
-                <>
-                  <main className={montserrat.className}>
-                    {!isAuthPage && <Navbar onSearchClick={() => setIsSearchOpen(true)} />}
-                    {!isAuthPage && <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />}
-                    <Component {...pageProps} />
-                    {!isStashPage && !isAuthPage && <Footer />}
-                  </main>
-                </>
-              )}
-            </EnquiryPanelProvider>
+            <NavigationProvider>
+              <EnquiryPanelProvider>
+                <EnquiryPanel />
+                <StashPromptWrapper />
+                {isLoading ? (
+                  <HornLoader 
+                    onComplete={handleLoadingComplete} 
+                    duration={2000}
+                  />
+                ) : (
+                  <>
+                    <main className={montserrat.className}>
+                      {!isAuthPage && <Navbar onSearchClick={() => setIsSearchOpen(true)} />}
+                      {!isAuthPage && <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />}
+                      <Component {...pageProps} />
+                      {!isStashPage && !isAuthPage && <Footer />}
+                    </main>
+                  </>
+                )}
+              </EnquiryPanelProvider>
+            </NavigationProvider>
           </AuthProvider>
         </StashProvider>
       </ProductProvider>

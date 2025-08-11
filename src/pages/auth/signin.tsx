@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Head from 'next/head';
 import { useAuth } from '../../context/AuthContext';
+import { useEnhancedNavigation } from '../../hooks/useEnhancedNavigation';
 import styles from './AuthPage.module.css';
 
 const SigninPage = () => {
@@ -14,10 +14,10 @@ const SigninPage = () => {
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
   
   const { login } = useAuth();
-  const router = useRouter();
+  const { navigateWithScrollPreservation, router } = useEnhancedNavigation();
 
   const handleClose = () => {
-    router.push('/');
+    navigateWithScrollPreservation('/');
   };
 
   const validateEmail = (email: string) => {
@@ -52,7 +52,7 @@ const SigninPage = () => {
 
       if (result.success) {
         setTimeout(() => {
-          router.push('/');
+          navigateWithScrollPreservation('/');
         }, 1500);
       }
     } catch (error) {
@@ -101,13 +101,13 @@ const SigninPage = () => {
           <div className={styles.tabs}>
             <button 
               className={styles.tab}
-              onClick={() => router.push('/auth/signup')}
+              onClick={() => navigateWithScrollPreservation('/auth/signup')}
             >
               Sign Up
             </button>
             <button 
               className={`${styles.tab} ${styles.activeTab}`}
-              onClick={() => router.push('/auth/signin')}
+              onClick={() => navigateWithScrollPreservation('/auth/signin')}
             >
               Log In
             </button>

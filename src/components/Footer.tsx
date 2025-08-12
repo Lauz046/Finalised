@@ -61,7 +61,12 @@ const Footer = () => {
           <div className={styles.brandColumn}>
             <div className={styles.brandInfo}>
               <div className={styles.brandLogo}>
-                <span className={styles.logoText}>HOUSE OF PLUTUS</span>
+                <Image 
+                  src="/blue_nav_icons/Blue PLUTUS LOGO.svg" 
+                  alt="House of Plutus" 
+                  width={200} 
+                  height={50}
+                />
               </div>
               <p className={styles.tagline}>Because luxury isn&apos;t bought — it&apos;s chosen!</p>
               <p className={styles.brandDescription}>

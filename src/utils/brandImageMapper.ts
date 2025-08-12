@@ -9,8 +9,8 @@ export const getBrandImage = (brandName: string, category: string): string => {
     sneaker: {
       'nike': '/sneakerticker/NIKE.png',
       'air jordan': '/sneakerticker/AIR JORDAN CARD.png',
-      'adidas': '/sneakerticker/SAMBA CARDS.png',
-      'yeezy': '/sneakerticker/SAMBA CARDS.png',
+      'adidas': '/sneakerticker/AF1.png', // Using AF1 as fallback since SAMBA CARDS.png is missing
+      'yeezy': '/sneakerticker/AF1.png', // Using AF1 as fallback since SAMBA CARDS.png is missing
       'new balance': '/sneakerticker/NEW BALANCE.png',
       'on': '/sneakerticker/ON CLOUD CARD.png',
       'dunks': '/sneakerticker/Dunks card.png',
@@ -33,7 +33,7 @@ export const getBrandImage = (brandName: string, category: string): string => {
       'fear of god': '/apparelticker/Fear of God Men.png',
       'bape': '/apparelticker/BAPE.png',
       'essentials': '/apparelticker/Essentials.png',
-      'aime leon dore': '/apparelticker/aime leon dore.png',
+      'aime leon dore': '/apparelticker/AIME LEON DORE.png',
       'bottega veneta': '/apparelticker/bottegaveneta Men.png',
       '3eleven': '/apparelticker/3eleven-27.png',
       'aimé leon dore': '/apparelticker/Aimé Leon Dore\'s SS19 Is the Ultimate Sportswear & Preppy Flex.jpg',
@@ -119,7 +119,7 @@ const getCategoryFallbacks = (category: string): string[] => {
       '/apparelticker/ASSC.png',
       '/apparelticker/BAPE.png',
       '/apparelticker/Essentials.png',
-      '/apparelticker/aime leon dore.png',
+      '/apparelticker/AIME LEON DORE.png',
     ],
     accessories: [
       '/accessoriesticker/Sunglasses.png',

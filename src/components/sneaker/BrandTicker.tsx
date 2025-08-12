@@ -33,7 +33,7 @@ const BrandTicker: React.FC<BrandTickerProps> = ({ brands, onBrandClick }) => {
       { name: 'Air Jordan', image: '/sneakerticker/AIR JORDAN CARD.png', filterType: 'Air Jordan', bgColor: '#f5f5dc' }, // Beige
       { name: 'Luxury', image: '/sneakerticker/LUXURY CARD.png', filterType: 'Luxury', bgColor: '#1e3a8a' }, // Blue
       { name: 'New Balance', image: '/sneakerticker/NEW BALANCE.png', filterType: 'New Balance', bgColor: '#f5f5dc' }, // Beige
-      { name: 'Samba', image: '/sneakerticker/SAMBA CARDS.png', filterType: 'Samba', bgColor: '#1e3a8a' }, // Blue
+      { name: 'Samba', image: '/sneakerticker/AF1.png', filterType: 'Samba', bgColor: '#1e3a8a' }, // Blue - Using AF1 as fallback
       { name: 'Nike', image: '/sneakerticker/NIKE.png', filterType: 'Nike', bgColor: '#f5f5dc' }, // Beige
     ];
   }, []);

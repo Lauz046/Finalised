@@ -5,11 +5,11 @@ import { cacheUtils, searchCache, menuCache, categoryCache } from '../utils/cach
 
 const ALL_PRODUCTS_QUERY = gql`
   query AllProducts {
-    sneakers(limit: 21) { id brand productName images productLink }
-    apparel(limit: 21) { id brand productName images productLink }
-    accessories(limit: 21) { id brand productName images productLink }
-    perfumes(limit: 21) { id brand title images url }
-    watches(limit: 21) { id brand name images link }
+    sneakers(limit: 24) { id brand productName images productLink }
+    apparel(limit: 24) { id brand productName images productLink }
+    accessories(limit: 24) { id brand productName images productLink }
+    perfumes(limit: 24) { id brand title images url }
+    watches(limit: 24) { id brand name images link }
   }
 `;
 
@@ -145,7 +145,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         async () => {
           const result = await apolloClient.query({ 
             query: query, 
-            variables: { limit: 21, offset: 0 } 
+            variables: { limit: 24, offset: 0 } 
           });
           return result.data?.[category] || [];
         },

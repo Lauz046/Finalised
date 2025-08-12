@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import styles from './SneakerFilterSidebar.module.css';
+import { formatGenderText } from '../../utils/brandUtils';
+import { SelectedFilters } from '../SelectedFilters';
 
 interface SneakerFilterSidebarProps {
   show: boolean;
@@ -49,6 +51,21 @@ const SneakerFilterSidebar: React.FC<SneakerFilterSidebarProps> = ({
     <aside className={show ? styles.sidebar : styles.sidebarHidden}>
       <div className={styles.heading}>Sort & Filter</div>
       <div className={styles.divider}></div>
+      
+      {/* Selected Filters Display */}
+      <SelectedFilters
+        selectedBrands={selectedBrands}
+        onBrandRemove={onBrandChange}
+        selectedSubcategories={[]}
+        onSubcategoryRemove={() => {}}
+        selectedGenders={[]}
+        onGenderRemove={() => {}}
+        selectedSizes={selectedSizes}
+        onSizeRemove={onSizeChange}
+        inStockOnly={inStockOnly}
+        onInStockRemove={() => onInStockChange(false)}
+      />
+      
       <div className={styles.section}>
         <div className={styles.sectionTitle}>Sort by</div>
         <div className={styles.sortOptions}>

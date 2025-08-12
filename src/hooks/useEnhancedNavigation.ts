@@ -1,17 +1,17 @@
 import { useRouter } from 'next/router';
 import { useNavigation } from '../context/NavigationContext';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 
 export const useEnhancedNavigation = () => {
   const router = useRouter();
   const { saveNavigationState, getPreviousNavigationState } = useNavigation();
 
   // Save scroll position before navigation
-  const navigateWithScrollPreservation = (url: string) => {
+  const navigateWithScrollPreservation = useCallback((url: string) => {
     const currentScrollPosition = window.scrollY;
     saveNavigationState(url, currentScrollPosition);
     router.push(url);
-  };
+  }, [saveNavigationState, router]);
 
   // Restore scroll position when component mounts
   useEffect(() => {
@@ -22,18 +22,7 @@ export const useEnhancedNavigation = () => {
         window.scrollTo(0, state.scrollPosition);
       });
     }
-  }, [router.asPath]);
-
-  // Save scroll position before leaving the page
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      const currentScrollPosition = window.scrollY;
-      saveNavigationState(router.asPath, currentScrollPosition);
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [router.asPath]);
+  }, [router.asPath, getPreviousNavigationState]);
 
   return {
     navigateWithScrollPreservation,

@@ -33,7 +33,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       query: ACCESSORIES_QUERY,
       variables: { 
         brand: normalizedBrand,
-        limit: 21, // First page only
+        limit: 24, // First page only
         offset: 0
       },
       errorPolicy: 'all', // Handle errors gracefully

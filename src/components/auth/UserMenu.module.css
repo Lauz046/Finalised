@@ -1,62 +1,64 @@
-.menuOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1000;
-}
-
-.menuContainer {
+.userMenu {
   position: absolute;
-  top: 60px;
-  right: 20px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  box-shadow: 
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  min-width: 280px;
+  top: 100%;
+  right: 0;
+  width: 280px;
+  background: #fff;
+  border: 1px solid #e6e8ea;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  margin-top: 8px;
+  overflow: hidden;
   animation: slideDown 0.2s ease-out;
 }
 
 .userInfo {
   display: flex;
   align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  border-bottom: 1px solid #e6e8ea;
+  background: #f8f9fa;
 }
 
 .userAvatar {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
+  background: #22304a;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-size: 20px;
   font-weight: 600;
-  margin-right: 16px;
+  font-size: 1rem;
+  margin-right: 12px;
+  flex-shrink: 0;
 }
 
 .userDetails {
   flex: 1;
+  min-width: 0;
 }
 
 .userName {
-  font-size: 16px;
+  font-family: 'Montserrat', 'Inter', 'Segoe UI', Arial, sans-serif;
+  font-size: 0.95rem;
   font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 4px;
+  color: #22304a;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .userEmail {
-  font-size: 14px;
-  color: #6b7280;
+  font-family: 'Montserrat', 'Inter', 'Segoe UI', Arial, sans-serif;
+  font-size: 0.8rem;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .menuItems {
@@ -64,37 +66,34 @@
 }
 
 .menuItem {
-  width: 100%;
-  padding: 12px 20px;
-  background: none;
-  border: none;
-  text-align: left;
-  font-size: 14px;
-  color: #374151;
-  cursor: pointer;
-  transition: all 0.2s ease;
   display: flex;
   align-items: center;
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Montserrat', 'Inter', 'Segoe UI', Arial, sans-serif;
+  font-size: 0.9rem;
+  color: #22304a;
+  transition: background-color 0.2s ease;
+  text-align: left;
 }
 
 .menuItem:hover {
-  background: rgba(0, 0, 0, 0.05);
-  color: #1f2937;
+  background-color: #f8f9fa;
 }
 
-.menuDivider {
-  height: 1px;
-  background: rgba(0, 0, 0, 0.1);
-  margin: 8px 0;
+.menuItem:active {
+  background-color: #e9ecef;
 }
 
-.logoutItem {
-  color: #dc2626;
-}
-
-.logoutItem:hover {
-  background: rgba(220, 38, 38, 0.1);
-  color: #dc2626;
+.menuIcon {
+  width: 18px;
+  height: 18px;
+  margin-right: 12px;
+  flex-shrink: 0;
+  color: #666;
 }
 
 @keyframes slideDown {
@@ -108,11 +107,47 @@
   }
 }
 
-/* Responsive Design */
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .userMenu {
+    width: 260px;
+    right: -10px;
+  }
+  
+  .userInfo {
+    padding: 12px;
+  }
+  
+  .userAvatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+    margin-right: 10px;
+  }
+  
+  .userName {
+    font-size: 0.9rem;
+  }
+  
+  .userEmail {
+    font-size: 0.75rem;
+  }
+  
+  .menuItem {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .menuIcon {
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
+  }
+}
+
 @media (max-width: 480px) {
-  .menuContainer {
-    right: 10px;
-    left: 10px;
-    min-width: auto;
+  .userMenu {
+    width: 240px;
+    right: -15px;
   }
 } 

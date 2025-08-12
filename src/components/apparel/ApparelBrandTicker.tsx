@@ -34,7 +34,7 @@ const ApparelBrandTicker: React.FC<ApparelBrandTickerProps> = ({ brands, onBrand
       { name: 'All Saints', image: '/apparelticker/ALLSAINTS WOMEN.png', filterType: 'All Saints', bgColor: '#1e3a8a' }, // Blue
       { name: 'Carhartt', image: '/apparelticker/CARHARRT MEN.png', filterType: 'Carhartt', bgColor: '#f5f5dc' }, // Beige
       { name: 'Bottega Veneta', image: '/apparelticker/BOTTEGA VENETA WOMEN.png', filterType: 'Bottega Veneta', bgColor: '#1e3a8a' }, // Blue
-      { name: 'Aime Leon Dore', image: '/apparelticker/aime leon doreMEN.png', filterType: 'Aime Leon Dore', bgColor: '#f5f5dc' }, // Beige
+      { name: 'Aime Leon Dore', image: '/apparelticker/AIME LEON DORE.png', filterType: 'Aime Leon Dore', bgColor: '#f5f5dc' }, // Beige
       { name: 'Burberry', image: '/apparelticker/BURBERRY WOMEN.png', filterType: 'Burberry', bgColor: '#1e3a8a' }, // Blue
       { name: 'BAPE', image: '/apparelticker/BAPE MEN.png', filterType: 'BAPE', bgColor: '#f5f5dc' }, // Beige
       { name: 'Lanvin Women', image: '/apparelticker/LANVIN WOMEN.png', filterType: 'Lanvin Women', bgColor: '#1e3a8a' }, // Blue

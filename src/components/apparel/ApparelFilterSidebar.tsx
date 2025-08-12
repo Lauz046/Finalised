@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import styles from './ApparelFilterSidebar.module.css';
+import { formatGenderText } from '../../utils/brandUtils';
+import { SelectedFilters } from '../SelectedFilters';
 
 interface ApparelFilterSidebarProps {
   show: boolean;
@@ -24,6 +26,7 @@ interface ApparelFilterSidebarProps {
   onGenderChange: (gender: string) => void;
   inStockOnly: boolean;
   onInStockChange: (val: boolean) => void;
+  isMobile?: boolean;
 }
 
 const ApparelFilterSidebar: React.FC<ApparelFilterSidebarProps> = ({
@@ -49,6 +52,7 @@ const ApparelFilterSidebar: React.FC<ApparelFilterSidebarProps> = ({
   onGenderChange,
   inStockOnly,
   onInStockChange,
+  isMobile,
 }) => {
   const [sizeExpanded, setSizeExpanded] = useState(true);
   const [brandExpanded, setBrandExpanded] = useState(true);
@@ -59,6 +63,22 @@ const ApparelFilterSidebar: React.FC<ApparelFilterSidebarProps> = ({
     <aside className={show ? styles.sidebar : styles.sidebarHidden}>
       <div className={styles.heading}>Sort & Filter</div>
       <div className={styles.divider}></div>
+      
+      {/* Selected Filters Display */}
+      <SelectedFilters
+        selectedBrands={selectedBrands}
+        onBrandRemove={onBrandChange}
+        selectedSubcategories={selectedSubcategories}
+        onSubcategoryRemove={onSubcategoryChange}
+        selectedGenders={selectedGenders}
+        onGenderRemove={onGenderChange}
+        selectedSizes={selectedSizes}
+        onSizeRemove={onSizeChange}
+        inStockOnly={inStockOnly}
+        onInStockRemove={() => onInStockChange(false)}
+        isMobile={isMobile}
+      />
+      
       <div className={styles.section}>
         <div className={styles.sectionTitle}>Sort by</div>
         <div className={styles.sortOptions}>
@@ -115,7 +135,7 @@ const ApparelFilterSidebar: React.FC<ApparelFilterSidebarProps> = ({
                   checked={selectedGenders.includes(gender)}
                   onChange={() => onGenderChange(gender)}
                 />
-                {gender}
+                {formatGenderText(gender)}
               </label>
             ))}
           </div>

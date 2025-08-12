@@ -173,3 +173,21 @@ export function getBrandUrl(brand: string): string {
   const normalized = normalizeBrandForUrl(brand);
   return normalized;
 } 
+
+export const formatGenderText = (gender: string): string => {
+  if (!gender) return gender;
+  
+  // Convert common gender formats to proper case
+  const genderMap: { [key: string]: string } = {
+    'MALE': 'Male',
+    'FEMALE': 'Female',
+    'male': 'Male',
+    'female': 'Female',
+    'MEN': 'Men',
+    'WOMEN': 'Women',
+    'men': 'Men',
+    'women': 'Women'
+  };
+  
+  return genderMap[gender] || gender;
+}; 

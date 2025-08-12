@@ -34,7 +34,7 @@ const ALL_SNEAKER_SIZES = gql`
   }
 `;
 
-const PRODUCTS_PER_PAGE = 21;
+const PRODUCTS_PER_PAGE = 24;
 
 const SneakerPage = () => {
   const { categoryData, isPreloaded, loadCategoryData, isCategoryLoaded } = useProductContext();
@@ -197,8 +197,8 @@ const SneakerPage = () => {
     const brandImageMapping: { [key: string]: string } = {
       'nike': '/sneakerticker/NIKE.png',
       'air jordan': '/sneakerticker/AIR JORDAN CARD.png',
-      'adidas': '/sneakerticker/SAMBA CARDS.png',
-      'yeezy': '/sneakerticker/SAMBA CARDS.png',
+      'adidas': '/sneakerticker/AF1.png', // Using AF1 as fallback since SAMBA CARDS.png is missing
+      'yeezy': '/sneakerticker/AF1.png', // Using AF1 as fallback since SAMBA CARDS.png is missing
       'new balance': '/sneakerticker/NEW BALANCE.png',
       'on': '/sneakerticker/ON CLOUD CARD.png',
       'dunks': '/sneakerticker/Dunks card.png',

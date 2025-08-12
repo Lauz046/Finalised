@@ -32,7 +32,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       query: SNEAKERS_QUERY,
       variables: { 
         brand: brand, // Use exact brand name from database mapping
-        limit: 21, // First page only
+        limit: 24, // First page only
         offset: 0
       },
       errorPolicy: 'all', // Handle errors gracefully

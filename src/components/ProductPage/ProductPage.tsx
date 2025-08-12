@@ -259,66 +259,59 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
 
   // ScrollTrigger logic - moved to top to avoid conditional hooks
   useEffect(() => {
-    // Only apply scroll triggers on desktop
-    if (isMobile || typeof window === 'undefined') return;
-    
-    if (!leftColRef.current || !rightColRef.current || !containerRef.current || !lastImageRef.current) return;
-    
-    const product = productProp || data?.[dataKey];
-    if (!product) return;
-    
+    if (!containerRef.current || !leftColRef.current || !rightColRef.current || !lastImageRef.current) return;
+
+    const container = containerRef.current;
+    const leftCol = leftColRef.current;
+    const rightCol = rightColRef.current;
+    const lastImg = lastImageRef.current;
+
     let cleanup: (() => void) | undefined;
-    
+
     const setupScrollTriggers = async () => {
-      const { gsap, ScrollTrigger } = await initGSAP();
-      if (!gsap || !ScrollTrigger) {
-        console.warn('GSAP not available, using fallback scroll behavior');
-        return;
+      // Check if we're on mobile - disable ScrollTrigger on mobile
+      const isMobile = window.innerWidth < 768;
+      if (isMobile) {
+        // On mobile, remove any sticky positioning and return early
+        leftCol.classList.remove('leftSticky');
+        rightCol.classList.remove('rightSticky');
+        return () => {};
       }
-      
-      const leftCol = leftColRef.current;
-      const rightCol = rightColRef.current;
-      const container = containerRef.current;
-      const lastImg = lastImageRef.current;
 
-      if (!leftCol || !rightCol || !container || !lastImg) return;
+      // Only proceed with ScrollTrigger on desktop
+      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+      const { gsap } = await import('gsap');
+      gsap.registerPlugin(ScrollTrigger);
 
-      // Check if product has only one image
-      const hasSingleImage = (product as ProductData)?.images?.length === 1;
-      
-      if (hasSingleImage) {
-        // For single image products: pin only the left column (image) until size chart is reached
-        const sizeChartElement = rightCol.querySelector('[data-size-chart]');
-        
-        if (sizeChartElement) {
-          // Pin only the left column (image) while right column scrolls
-          const singleImagePin = (ScrollTrigger as any).create({
-            trigger: container,
-            start: 'top 120px',
-            endTrigger: sizeChartElement,
-            end: 'top 200px',
-            pin: leftCol,
-            pinSpacing: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            onEnter: () => {
-              leftCol?.classList.add('leftSticky');
-            },
-            onLeave: () => {
-              leftCol?.classList.remove('leftSticky');
-            },
-            onEnterBack: () => {
-              leftCol?.classList.add('leftSticky');
-            },
-            onLeaveBack: () => {
-              leftCol?.classList.remove('leftSticky');
-            },
-          });
-          
-          return () => {
-            if (singleImagePin) singleImagePin.kill();
-          };
-        }
+      const product = productProp || data?.[dataKey];
+      if (!product) return;
+
+      if (product.images.length === 1) {
+        // Single image: pin right column until left column is scrolled
+        const rightPin = (ScrollTrigger as any).create({
+          trigger: container,
+          start: 'top 120px',
+          end: () => `+=${(leftCol as HTMLElement).offsetHeight - window.innerHeight + 200}`,
+          pin: rightCol,
+          pinSpacing: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onEnter: () => {
+            rightCol?.classList.add('rightSticky');
+          },
+          onLeave: () => {
+            rightCol?.classList.remove('rightSticky');
+          },
+          onEnterBack: () => {
+            rightCol?.classList.add('rightSticky');
+          },
+          onLeaveBack: () => {
+            rightCol?.classList.remove('rightSticky');
+          },
+        });
+        return () => {
+          if (rightPin) rightPin.kill();
+        };
       } else {
         // Original logic for multiple images
         // Pin the right column until the last image hits the top, then pin the left column
@@ -381,7 +374,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
     return () => {
       cleanup?.();
     };
-  }, [data, isMobile, productProp, dataKey]);
+  }, [productProp, data, dataKey]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error?.message || 'Unknown error'}</div>;

@@ -13,8 +13,8 @@
 @media (max-width: 900px) {
   .tickerWrapper {
     margin-top: 10px;
-    height: 280px; /* Reduced height to prevent overlapping */
-    padding: 15px 0;
+    height: 300px; /* Increased height to prevent image cutting */
+    padding: 10px 0;
   }
 }
 .ticker {
@@ -35,7 +35,7 @@
 @media (max-width: 900px) {
   .ticker {
     gap: 0;
-    height: 240px; /* Reduced height to prevent overlapping */
+    height: 280px; /* Fixed height for mobile */
     align-items: center;
   }
   
@@ -51,37 +51,38 @@
   margin: 0;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
-  border-radius: 0px;
+  border-radius: 0px; /* Sharp corners - no border radius */
   background: #fff;
   box-shadow: 0 2px 8px rgba(30,167,253,0.04);
   padding: 0;
+  overflow: hidden; /* Prevent image overflow */
 }
 
 @media (max-width: 900px) {
   .brandCard {
-    min-height: 240px; /* Reduced height to prevent overlapping */
-    width: 30%; /* Reduced width to prevent overlapping */
-    border-radius: 12px;
-    margin: 0 2px; /* Reduced margin */
+    height: 280px; /* Fixed height for mobile */
+    width: 33.33%; /* Equal width distribution */
+    border-radius: 0px; /* Sharp corners - no border radius */
+    margin: 0; /* Remove margin to prevent gaps */
   }
 }
 
 /* Extra small screens */
 @media (max-width: 430px) {
   .tickerWrapper {
-    height: 260px; /* Further reduced for very small screens */
+    height: 280px; /* Slightly reduced for very small screens */
     margin-top: 5px;
     padding: 10px 0;
   }
   
   .ticker {
-    height: 220px; /* Further reduced for very small screens */
+    height: 260px; /* Adjusted for very small screens */
   }
   
   .brandCard {
-    min-height: 220px; /* Further reduced for very small screens */
-    width: 28%; /* Further reduced width */
-    margin: 0 1px; /* Minimal margin */
+    height: 260px; /* Adjusted for very small screens */
+    width: 33.33%; /* Maintain equal width */
+    margin: 0; /* No margin */
   }
 }
 

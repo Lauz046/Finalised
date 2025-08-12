@@ -39,6 +39,7 @@
   display: flex;
   align-items: center;
   transition: transform 0.1s, filter 0.1s;
+  position: relative; /* Added for UserMenu positioning */
 }
 
 .iconBtn:hover {

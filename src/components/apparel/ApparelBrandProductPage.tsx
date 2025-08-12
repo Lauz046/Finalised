@@ -38,7 +38,7 @@ export const APPAREL_QUERY = gql`
     }
   }
 `;
-const PRODUCTS_PER_PAGE = 21;
+const PRODUCTS_PER_PAGE = 24;
 
 export default function ApparelBrandProductPage({ brand, initialApparelData }: { brand: string, initialApparelData?: unknown[] }) {
   // Mobile overlay tab state

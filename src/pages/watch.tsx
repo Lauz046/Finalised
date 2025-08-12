@@ -38,7 +38,7 @@ const WATCHES_QUERY = gql`
   }
 `;
 
-const PRODUCTS_PER_PAGE = 21;
+const PRODUCTS_PER_PAGE = 24;
 
 const WatchPage = () => {
   const { categoryData, isPreloaded, loadCategoryData, isCategoryLoaded } = useProductContext();

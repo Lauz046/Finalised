@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styles from './PerfumeFilterSidebar.module.css';
+import { SelectedFilters } from '../SelectedFilters';
 
 interface PerfumeFilterSidebarProps {
   show: boolean;
@@ -66,6 +67,25 @@ const PerfumeFilterSidebar: React.FC<PerfumeFilterSidebarProps> = ({
     <aside className={show ? styles.sidebar : styles.sidebarHidden}>
       <div className={styles.heading}>Sort & Filter</div>
       <div className={styles.divider}></div>
+      
+      {/* Selected Filters Display */}
+      <SelectedFilters
+        selectedBrands={selectedBrands}
+        onBrandRemove={onBrandChange}
+        selectedSubcategories={selectedSubcategories}
+        onSubcategoryRemove={onSubcategoryChange}
+        selectedGenders={[]}
+        onGenderRemove={() => {}}
+        selectedSizes={selectedSizes}
+        onSizeRemove={onSizeChange}
+        selectedConcentrations={selectedConcentrations}
+        onConcentrationRemove={onConcentrationChange}
+        selectedFragranceFamilies={selectedFragranceFamilies}
+        onFragranceFamilyRemove={onFragranceFamilyChange}
+        inStockOnly={false}
+        onInStockRemove={() => {}}
+      />
+      
       <div className={styles.section}>
         <div className={styles.sectionTitle}>Sort by</div>
         <div className={styles.sortOptions}>

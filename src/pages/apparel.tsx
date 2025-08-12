@@ -44,7 +44,7 @@ const APPAREL_QUERY = gql`
   }
 `;
 
-const PRODUCTS_PER_PAGE = 21;
+const PRODUCTS_PER_PAGE = 24;
 
 const ApparelPage = () => {
   const router = useRouter();
@@ -688,6 +688,7 @@ const ApparelPage = () => {
                 onSizeChange={handleSizeChange}
                 inStockOnly={inStockOnly}
                 onInStockChange={setInStockOnly}
+                isMobile={isMobile}
               />
             </div>
             <div style={{ 

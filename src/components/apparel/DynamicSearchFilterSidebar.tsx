@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import styles from './ApparelFilterSidebar.module.css';
+import { formatGenderText } from '../../utils/brandUtils';
+import { SelectedFilters } from '../SelectedFilters';
 
 interface DynamicSearchFilterSidebarProps {
   show: boolean;
@@ -110,6 +112,29 @@ const DynamicSearchFilterSidebar: React.FC<DynamicSearchFilterSidebarProps> = ({
     <aside className={show ? styles.sidebar : styles.sidebarHidden}>
       <div className={styles.heading}>Sort & Filter</div>
       <div className={styles.divider}></div>
+      
+      {/* Selected Filters Display */}
+      <SelectedFilters
+        selectedBrands={selectedBrands}
+        onBrandRemove={onBrandChange}
+        selectedSubcategories={selectedSubcategories}
+        onSubcategoryRemove={onSubcategoryChange}
+        selectedGenders={selectedGenders}
+        onGenderRemove={onGenderChange}
+        selectedSizes={selectedSizes || []}
+        onSizeRemove={onSizeChange || (() => {})}
+        selectedConcentrations={selectedConcentrations}
+        onConcentrationRemove={onConcentrationChange}
+        selectedFragranceFamilies={selectedFragranceFamilies}
+        onFragranceFamilyRemove={onFragranceFamilyChange}
+        selectedColors={selectedColors}
+        onColorRemove={onColorChange}
+        selectedMaterials={selectedMaterials}
+        onMaterialRemove={onMaterialChange}
+        inStockOnly={false}
+        onInStockRemove={() => {}}
+      />
+      
       <div className={styles.section}>
         <div className={styles.sectionTitle}>Sort by</div>
         <div className={styles.sortOptions}>

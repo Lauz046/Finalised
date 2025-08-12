@@ -54,7 +54,7 @@
   background: transparent;
   height: 100%;
   outline: none;
-  font-family: Inter;
+  font-family: Montserrat, Inter, Segoe UI, Arial, sans-serif;
 }
 
 .closeButton {
@@ -106,7 +106,7 @@
   color: #22304a;
   cursor: pointer;
   font-size: 0.9rem;
-  font-family: Inter;
+  font-family: Montserrat, Inter, Segoe UI, Arial, sans-serif;
   transition: all 0.2s ease;
   white-space: nowrap;
   overflow: hidden;
@@ -121,7 +121,7 @@
   color: #22304a;
   cursor: pointer;
   font-size: 0.8rem;
-  font-family: Inter;
+  font-family: Montserrat, Inter, Segoe UI, Arial, sans-serif;
   transition: all 0.2s ease;
   white-space: nowrap;
   overflow: hidden;
@@ -157,7 +157,7 @@
   padding: 32px 0;
   text-align: center;
   color: #22304a;
-  font-family: Inter;
+  font-family: Montserrat, Inter, Segoe UI, Arial, sans-serif;
   font-size: 1.2rem;
   opacity: 0.7;
   background: #fff;
@@ -183,7 +183,7 @@
   padding: 32px 0;
   text-align: center;
   color: #22304a;
-  font-family: Inter;
+  font-family: Montserrat, Inter, Segoe UI, Arial, sans-serif;
   font-size: 1.2rem;
   opacity: 0.7;
   background: #fff;
@@ -194,7 +194,7 @@
   border-bottom: 1px solid #e6e8ea;
   color: #666;
   font-size: 0.9rem;
-  font-family: Inter;
+  font-family: Montserrat, Inter, Segoe UI, Arial, sans-serif;
 }
 
 .productItem {
@@ -290,9 +290,9 @@
 }
 
 .productTitle {
-  font-family: Times New Roman;
+  font-family: Montserrat, Inter, Segoe UI, Arial, sans-serif;
   font-size: 1.18rem;
-  font-weight: 600;
+  font-weight: 500; /* Reduced from 600 to 500 */
   color: #22304a;
   margin-bottom: 2px;
   white-space: nowrap;
@@ -301,7 +301,7 @@
 }
 
 .productType {
-  font-family: Inter;
+  font-family: Montserrat, Inter, Segoe UI, Arial, sans-serif;
   font-size: 1.05rem;
   color: #22304a;
   opacity: 0.8;
@@ -334,7 +334,7 @@
   gap: 8px;
   padding: 16px;
   color: #22304a;
-  font-family: Inter;
+  font-family: Montserrat, Inter, Segoe UI, Arial, sans-serif;
   font-size: 0.9rem;
   opacity: 0.7;
   background: #fff;

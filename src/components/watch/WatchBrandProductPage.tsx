@@ -33,7 +33,7 @@ export const WATCHES_QUERY = gql`
     }
   }
 `;
-const PRODUCTS_PER_PAGE = 21;
+const PRODUCTS_PER_PAGE = 24;
 
 export default function WatchBrandProductPage({ brand, initialWatchData, apolloState }: { brand: string, initialWatchData?: unknown[], apolloState?: unknown }) {
   const [showFilter, setShowFilter] = useState(false);

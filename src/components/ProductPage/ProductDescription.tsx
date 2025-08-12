@@ -11,15 +11,15 @@ interface ProductDescriptionProps {
   maxLength?: number;
 }
 
-export const ProductDescription: React.FC<ProductDescriptionProps> = ({ 
-  productLink, 
-  productName, 
-  brand, 
+export const ProductDescription: React.FC<ProductDescriptionProps> = ({
+  productLink,
+  productName,
+  brand,
   category,
   showFull = false,
-  maxLength = 200 
+  maxLength = 200 // Reduced from default to 200 characters
 }) => {
-  const { description, loading, error } = useProductDescription(productLink, productName, brand);
+  const { description: productDescription, loading, error } = useProductDescription(productLink, productName, brand);
 
   if (loading) {
     return (
@@ -43,13 +43,13 @@ export const ProductDescription: React.FC<ProductDescriptionProps> = ({
     );
   }
 
-  if (!description) {
+  if (!productDescription) {
     // Use dynamic description when no description is found in the JSON
-    const dynamicDescription = productName && brand 
+    const dynamicDescription = productName && brand
       ? createDynamicDescription(productName, brand, category)
-      : `Experience the premium quality and craftsmanship of this ${brand || 'luxury'} ${productName || 'product'}. 
-         Expertly designed with meticulous attention to detail and crafted from the finest materials, this piece 
-         represents the perfect fusion of contemporary style, exceptional functionality, and enduring quality. 
+      : `Experience the premium quality and craftsmanship of this ${brand || 'luxury'} ${productName || 'product'}.
+         Expertly designed with meticulous attention to detail and crafted from the finest materials, this piece
+         represents the perfect fusion of contemporary style, exceptional functionality, and enduring quality.
          Each element has been carefully considered to deliver an unparalleled luxury experience that exceeds expectations.`;
 
     const displayText = showFull ? dynamicDescription : truncateDescription(dynamicDescription, maxLength);
@@ -62,7 +62,7 @@ export const ProductDescription: React.FC<ProductDescriptionProps> = ({
         )}
         <p className={styles.text}>{displayText}</p>
         {!showFull && dynamicDescription.length > maxLength && (
-          <button 
+          <button
             className={styles.readMore}
             onClick={() => {
               // This would typically trigger a modal or expand the description
@@ -76,7 +76,7 @@ export const ProductDescription: React.FC<ProductDescriptionProps> = ({
     );
   }
 
-  const formattedDescription = formatDescription(description.description);
+  const formattedDescription = formatDescription(productDescription.description);
   const displayText = showFull ? formattedDescription : truncateDescription(formattedDescription, maxLength);
 
   return (
@@ -87,7 +87,7 @@ export const ProductDescription: React.FC<ProductDescriptionProps> = ({
       )}
       <p className={styles.text}>{displayText}</p>
       {!showFull && formattedDescription.length > maxLength && (
-        <button 
+        <button
           className={styles.readMore}
           onClick={() => {
             // This would typically trigger a modal or expand the description

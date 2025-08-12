@@ -44,7 +44,7 @@ const PERFUMES_QUERY = gql`
   }
 `;
 
-const PRODUCTS_PER_PAGE = 21;
+const PRODUCTS_PER_PAGE = 24;
 
 const PerfumePage = () => {
   const router = useRouter();

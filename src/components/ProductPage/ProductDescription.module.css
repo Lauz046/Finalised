@@ -26,7 +26,7 @@
 }
 
 .text {
-  font-size: 16px;
+  font-size: 20px; /* Changed from 16px to 20px for desktop */
   line-height: 1.7;
   color: #374151;
   margin: 0;
@@ -108,12 +108,12 @@
   }
   
   .productName {
-    font-size: 22px;
+    font-size: 24px; /* Changed from 22px to 24px */
     margin-bottom: 16px;
   }
   
   .text {
-    font-size: 14px;
+    font-size: 16px; /* Changed from 14px to 16px for mobile */
     line-height: 1.6;
   }
 }

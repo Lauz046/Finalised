@@ -144,22 +144,7 @@
     margin-top: 120px;
     min-height: unset;
   }
-  .leftCol {
-    width: 100%;
-    max-width: 100%;
-    align-items: stretch;
-    gap: 20px;
-    position: relative !important;
-    top: auto !important;
-    z-index: 1 !important;
-    order: 1;
-    display: flex;
-    flex-direction: column;
-    isolation: isolate;
-    transform: translateZ(0);
-    contain: layout style;
-  }
-  .rightCol {
+  .leftCol, .rightCol {
     width: 100%;
     max-width: 100%;
     align-items: stretch;
@@ -173,20 +158,14 @@
     isolation: isolate;
     transform: translateZ(0);
     contain: layout style;
-    background: #f8f9fa;
-  }
-  /* Remove sticky positioning on mobile */
-  .leftSticky, .rightSticky {
-    position: static !important;
-    top: auto !important;
-    z-index: auto !important;
+    background: #ffffff;
   }
   .brandName {
     font-size: 0.6rem;
     margin-bottom: 2px;
   }
   .title {
-    font-size: 1.8rem;
+    font-size: 1.5rem; /* Changed from 1.8rem (28px) to 1.5rem (24px) */
     margin-bottom: 8px;
   }
   .addToStashBtn, .enquireBtn {
@@ -200,10 +179,22 @@
   .container {
     gap: 32px;
     padding: 0 12px;
+    flex-direction: column; /* Stack like mobile */
   }
   .leftCol, .rightCol {
     max-width: 100%;
     align-items: stretch;
+    width: 100%;
+    position: relative !important;
+    top: auto !important;
+    z-index: 10 !important;
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    isolation: isolate;
+    transform: translateZ(0);
+    contain: layout style;
+    background: #ffffff;
   }
   .brandName {
     font-size: 0.65rem;

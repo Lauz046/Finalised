@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
 
 interface NavigationState {
@@ -28,7 +28,7 @@ export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [navigationHistory, setNavigationHistory] = useState<Map<string, NavigationState>>(new Map());
 
   // Save navigation state when navigating away from a page
-  const saveNavigationState = (path: string, scrollPosition: number) => {
+  const saveNavigationState = useCallback((path: string, scrollPosition: number) => {
     const state: NavigationState = {
       previousPath: router.asPath,
       scrollPosition,
@@ -40,17 +40,17 @@ export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       newMap.set(path, state);
       return newMap;
     });
-  };
+  }, [router.asPath]);
 
   // Get previous navigation state for current path
-  const getPreviousNavigationState = (): NavigationState | null => {
+  const getPreviousNavigationState = useCallback((): NavigationState | null => {
     return navigationHistory.get(router.asPath) || null;
-  };
+  }, [navigationHistory, router.asPath]);
 
   // Clear navigation state
-  const clearNavigationState = () => {
+  const clearNavigationState = useCallback(() => {
     setNavigationHistory(new Map());
-  };
+  }, []);
 
   // Handle browser back button
   useEffect(() => {
@@ -77,13 +77,13 @@ export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       window.removeEventListener('beforeunload', handleBeforeUnload);
       window.removeEventListener('popstate', handlePopState);
     };
-  }, [router.asPath]);
+  }, [router.asPath, saveNavigationState, getPreviousNavigationState]);
 
-  const value: NavigationContextType = {
+  const value: NavigationContextType = useMemo(() => ({
     saveNavigationState,
     getPreviousNavigationState,
     clearNavigationState
-  };
+  }), [saveNavigationState, getPreviousNavigationState, clearNavigationState]);
 
   return (
     <NavigationContext.Provider value={value}>

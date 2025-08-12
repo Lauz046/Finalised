@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import styles from './AccessoriesFilterSidebar.module.css';
+import { formatGenderText } from '../../utils/brandUtils';
+import { SelectedFilters } from '../SelectedFilters';
 
 interface AccessoriesFilterSidebarProps {
   show: boolean;
@@ -13,17 +15,18 @@ interface AccessoriesFilterSidebarProps {
   brands: string[];
   selectedBrands: string[];
   onBrandChange: (brand: string) => void;
+  sizes: string[];
+  selectedSizes: string[];
+  onSizeChange: (size: string) => void;
   subcategories: string[];
   selectedSubcategories: string[];
   onSubcategoryChange: (subcategory: string) => void;
   genders: string[];
   selectedGenders: string[];
   onGenderChange: (gender: string) => void;
-  sizes: string[];
-  selectedSizes: string[];
-  onSizeChange: (size: string) => void;
   inStockOnly: boolean;
   onInStockChange: (val: boolean) => void;
+  isMobile?: boolean;
 }
 
 const AccessoriesFilterSidebar: React.FC<AccessoriesFilterSidebarProps> = ({
@@ -38,17 +41,18 @@ const AccessoriesFilterSidebar: React.FC<AccessoriesFilterSidebarProps> = ({
   brands,
   selectedBrands,
   onBrandChange,
+  sizes,
+  selectedSizes,
+  onSizeChange,
   subcategories,
   selectedSubcategories,
   onSubcategoryChange,
   genders,
   selectedGenders,
   onGenderChange,
-  sizes,
-  selectedSizes,
-  onSizeChange,
   inStockOnly,
   onInStockChange,
+  isMobile,
 }) => {
   const [brandExpanded, setBrandExpanded] = useState(true);
   const [subcategoryExpanded, setSubcategoryExpanded] = useState(true);
@@ -59,6 +63,22 @@ const AccessoriesFilterSidebar: React.FC<AccessoriesFilterSidebarProps> = ({
     <aside className={show ? styles.sidebar : styles.sidebarHidden}>
       <div className={styles.heading}>Sort & Filter</div>
       <div className={styles.divider}></div>
+      
+      {/* Selected Filters Display */}
+      <SelectedFilters
+        selectedBrands={selectedBrands}
+        onBrandRemove={onBrandChange}
+        selectedSubcategories={selectedSubcategories}
+        onSubcategoryRemove={onSubcategoryChange}
+        selectedGenders={selectedGenders}
+        onGenderRemove={onGenderChange}
+        selectedSizes={selectedSizes}
+        onSizeRemove={onSizeChange}
+        inStockOnly={inStockOnly}
+        onInStockRemove={() => onInStockChange(false)}
+        isMobile={isMobile}
+      />
+      
       <div className={styles.section}>
         <div className={styles.sectionTitle}>Sort by</div>
         <div className={styles.sortOptions}>
@@ -183,7 +203,7 @@ const AccessoriesFilterSidebar: React.FC<AccessoriesFilterSidebarProps> = ({
                   checked={selectedGenders.includes(gender)}
                   onChange={() => onGenderChange(gender)}
                 />
-                {gender}
+                {formatGenderText(gender)}
               </label>
             ))}
           </div>

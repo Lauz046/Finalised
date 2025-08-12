@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import styles from './WatchFilterSidebar.module.css';
+import { formatGenderText } from '../../utils/brandUtils';
+import { SelectedFilters } from '../SelectedFilters';
 
 interface WatchFilterSidebarProps {
   show: boolean;
@@ -95,6 +97,23 @@ const WatchFilterSidebar: React.FC<WatchFilterSidebarProps> = ({
     <aside className={show ? styles.sidebar : styles.sidebarHidden}>
       <div className={styles.heading}>Sort & Filter</div>
       <div className={styles.divider}></div>
+      
+      {/* Selected Filters Display */}
+      <SelectedFilters
+        selectedBrands={selectedBrands}
+        onBrandRemove={onBrandChange}
+        selectedSubcategories={[]}
+        onSubcategoryRemove={() => {}}
+        selectedGenders={selectedGenders}
+        onGenderRemove={onGenderChange}
+        selectedSizes={[]}
+        onSizeRemove={() => {}}
+        selectedColors={selectedColors}
+        onColorRemove={onColorChange}
+        inStockOnly={inStockOnly}
+        onInStockRemove={() => onInStockChange(false)}
+      />
+      
       <div className={styles.section}>
         <div className={styles.sectionTitle}>Sort by</div>
         <div className={styles.sortOptions}>

@@ -44,7 +44,7 @@ const ACCESSORIES_QUERY = gql`
   }
 `;
 
-const PRODUCTS_PER_PAGE = 21;
+const PRODUCTS_PER_PAGE = 24;
 
 const AccessoriesPage = () => {
   const { categoryData, isPreloaded, loadCategoryData, isCategoryLoaded } = useProductContext();
@@ -97,6 +97,13 @@ const AccessoriesPage = () => {
       loadCategoryData('accessories');
     }
   }, [loadCategoryData, isCategoryLoaded]);
+
+  // Handle URL parameters for handbags filter
+  useEffect(() => {
+    if (router.query.filter === 'handbags') {
+      setSelectedSubcategories(['Handbags', 'Bags']);
+    }
+  }, [router.query.filter]);
 
   /*
     Apply subcategory filter if it comes via query string, eg. /accessories?subcategory=bag
@@ -706,6 +713,7 @@ const AccessoriesPage = () => {
                 onSizeChange={handleSizeChange}
                 inStockOnly={inStockOnly}
                 onInStockChange={setInStockOnly}
+                isMobile={isMobile}
               />
             </div>
             <div style={{ 

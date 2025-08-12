@@ -1,0 +1,105 @@
+.container {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 12px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.filtersList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+
+.filterChip {
+  display: flex;
+  align-items: center;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 16px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: #374151;
+  transition: all 0.2s ease;
+  font-family: 'Montserrat', sans-serif;
+  flex-shrink: 0;
+}
+
+.filterChip:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.filterLabel {
+  margin-right: 6px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  transition: color 0.2s ease;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.removeButton:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.removeIcon {
+  width: 12px;
+  height: 12px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+    margin-bottom: 12px;
+    width: 100%;
+  }
+  
+  .title {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  
+  .filterChip {
+    padding: 5px 10px;
+    font-size: 11px;
+    max-width: calc(50% - 4px);
+  }
+  
+  .removeIcon {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .filtersList {
+    gap: 6px;
+  }
+} 

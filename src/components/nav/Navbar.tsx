@@ -111,7 +111,7 @@ const Navbar: React.FC<NavbarProps> = ({ onSearchClick, blueIcons }) => {
             aria-label="Account"
             onClick={() => {
               if (isAuthenticated) {
-                router.push('/account');
+                setIsUserMenuOpen(!isUserMenuOpen);
               } else {
                 router.push('/auth/signin');
               }

@@ -59,7 +59,7 @@ export const ProductDetailDescription: React.FC<ProductDetailDescriptionProps> =
   }
 
   const formattedDescription = description ? formatDescription(description.description) : '';
-  const isLongDescription = formattedDescription.length > 300;
+  const isLongDescription = formattedDescription.length > 200; // Reduced from 300 to 200 characters
 
   return (
     <div className={styles.container}>
@@ -69,7 +69,7 @@ export const ProductDetailDescription: React.FC<ProductDetailDescriptionProps> =
         {description ? (
           <div className={styles.descriptionContent}>
             <p className={styles.descriptionText}>
-              {showFullDescription ? formattedDescription : formattedDescription.substring(0, 300)}
+              {showFullDescription ? formattedDescription : formattedDescription.substring(0, 200)}
               {!showFullDescription && isLongDescription && '...'}
             </p>
             {isLongDescription && (

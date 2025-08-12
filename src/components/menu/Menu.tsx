@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { gql, useQuery } from '@apollo/client';
 import styles from './Menu.module.css';
 import { useProductContext } from '../../context/ProductContext';
-import { getBrandUrl } from '../../utils/brandUtils';
+import { getBrandUrl, formatGenderText } from '../../utils/brandUtils';
 
 // Brand Product Card Component
 const BrandProductCard = ({ product, onClick }: { product: any; onClick: () => void }) => {
@@ -415,7 +416,7 @@ const Menu = () => {
                       className={styles.menuBrandItem}
                       style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}
                     >
-                      {cat}
+                      {formatGenderText(cat)}
                     </button>
                   ))}
                 </div>
@@ -499,7 +500,7 @@ const Menu = () => {
                       className={styles.menuBrandItem}
                       style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}
                     >
-                      {subcat}
+                      {formatGenderText(subcat)}
                     </button>
                   ))}
                 </div>
@@ -562,7 +563,7 @@ const Menu = () => {
                       className={styles.menuBrandItem}
                       style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}
                     >
-                      {gender}
+                      {formatGenderText(gender)}
                     </button>
                   ))}
                 </div>

@@ -37,7 +37,7 @@ export const SNEAKERS_QUERY = gql`
   }
 `;
 
-const PRODUCTS_PER_PAGE = 21;
+const PRODUCTS_PER_PAGE = 24;
 
 export default function SneakerBrandProductPage({ brand, initialSneakerData, apolloState }: { brand: string, initialSneakerData?: unknown[], apolloState?: unknown }) {
   const { categoryData, isPreloaded } = useProductContext();

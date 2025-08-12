@@ -27,11 +27,11 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Create the 3 fixed perfume categories in the correct order
+  // Create the 3 fixed perfume categories with updated images
   const perfumeCategories = [
-    { name: 'Niche', image: '/perfumeticker/Niche perfume.png', filterType: 'niche', bgColor: '#f5f5dc' }, // Beige
-    { name: 'Explore All', image: '/perfumeticker/All Perfume.png', filterType: 'all', bgColor: '#1e3a8a' }, // Blue
-    { name: 'Designer', image: '/perfumeticker/designer perfume.png', filterType: 'designer', bgColor: '#f5f5dc' } // Beige
+    { name: 'Niche', image: '/perfumeticker/Niche perfume.png', filterType: 'niche', bgColor: '#f5f5dc' },
+    { name: 'All Perfume', image: '/perfumeticker/All perfume.png', filterType: 'all', bgColor: '#1e3a8a' },
+    { name: 'Designer', image: '/perfumeticker/Designer perfumes.png', filterType: 'designer', bgColor: '#f5f5dc' }
   ];
 
   // Use only the 3 categories for static display
@@ -50,7 +50,7 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
     <div style={{ fontFamily: 'Montserrat, Inter, Segoe UI, Arial, sans-serif' }}>
       <div className={styles.tickerWrapper} style={{
         marginTop: isMobile ? '20px' : '80px',
-        height: isMobile ? '280px' : 'auto', // Reduced height to prevent overlapping
+        height: isMobile ? '300px' : 'auto', // Increased height for mobile to prevent cutting
         overflow: 'hidden',
         width: '100%'
       }}>
@@ -58,7 +58,8 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
           display: 'flex', 
           gap: 0,
           width: '100%',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
+          height: isMobile ? '280px' : 'auto' // Fixed height for mobile
         }}>
           {displayCategories.map((category, idx) => {
             const isSelected = selected === category.name;
@@ -81,10 +82,10 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
                 }}
                 style={{
                   background: category.bgColor || '#fff',
-                  border: isSelected ? '1px solidrgb(9, 51, 74)' : 'none',
-                  borderRadius: '12px',
+                  border: isSelected ? '1px solid rgb(9, 51, 74)' : 'none',
+                  borderRadius: '0px', // Sharp corners - no border radius
                   width: '33.33%',
-                  minHeight: isMobile ? 240 : 600, // Reduced height to prevent overlapping
+                  height: isMobile ? '280px' : '600px', // Fixed height for mobile
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -100,6 +101,7 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
                   opacity: isFaded ? 0.5 : 1,
                   filter: isFaded ? 'blur(0.5px) grayscale(0.2)' : 'none',
                   zIndex: isSelected ? 2 : 1,
+                  overflow: 'hidden', // Prevent image overflow
                 }}
               >
                 <img
@@ -112,9 +114,9 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
                   loading="lazy"
                   style={{
                     width: '100%',
-                    height: isMobile ? 280 : 600,
+                    height: '100%', // Fill the entire container
                     objectFit: 'cover',
-                    borderRadius: '0px',
+                    borderRadius: '0px', // Sharp corners - no border radius
                     marginBottom: 0,
                     boxShadow: 'none',
                     background: 'transparent',

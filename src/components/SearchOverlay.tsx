@@ -54,6 +54,25 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
   const ITEMS_PER_PAGE = 50;
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
 
+  // Close overlay when route changes
+  useEffect(() => {
+    const handleRouteChange = () => {
+      if (isOpen) {
+        onClose();
+        setInput('');
+        setDisplayedResults([]);
+        setAllResults([]);
+        setCurrentPage(1);
+        initializedRef.current = false;
+      }
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [isOpen, onClose, router.events]);
+
   // Fetch product counts for each category
   const fetchProductCounts = useCallback(async () => {
     try {
@@ -225,14 +244,27 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  // Handle close
+  // Handle close with proper UX flow
   const handleCloseClick = () => {
-    onClose();
-    setInput('');
-    setDisplayedResults([]);
-    setAllResults([]);
-    setCurrentPage(1);
-    initializedRef.current = false;
+    if (input.trim()) {
+      // If there's text, clear it first
+      setInput('');
+      setDisplayedResults([]);
+      setAllResults([]);
+      setCurrentPage(1);
+      // Focus back to input after clearing
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    } else {
+      // If no text, close the overlay
+      onClose();
+      setInput('');
+      setDisplayedResults([]);
+      setAllResults([]);
+      setCurrentPage(1);
+      initializedRef.current = false;
+    }
   };
 
   // Focus input when overlay opens
@@ -349,10 +381,22 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
                 onKeyDown={handleKeyDown}
                 className={styles.input}
               />
-              <button onClick={handleCloseClick} className={styles.closeButton}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={styles.closeIcon}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
+              <button 
+                onClick={handleCloseClick} 
+                className={styles.closeButton}
+                aria-label={input.trim() ? "Clear search text" : "Close search"}
+              >
+                {input.trim() ? (
+                  // Show clear icon when there's text
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={styles.closeIcon}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  // Show close icon when no text
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={styles.closeIcon}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                  </svg>
+                )}
               </button>
             </div>
           </div>

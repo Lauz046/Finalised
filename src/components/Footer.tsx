@@ -2,23 +2,45 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { gql, useQuery } from '@apollo/client';
 import styles from './Footer.module.css';
+
+const ALL_SNEAKER_BRANDS = gql`
+  query AllSneakerBrands {
+    allSneakerBrands
+  }
+`;
+
+const ALL_PERFUME_BRANDS = gql`
+  query AllPerfumeBrands {
+    allPerfumeBrands
+  }
+`;
+
+const ALL_WATCH_BRANDS = gql`
+  query AllWatchBrands {
+    allWatchBrands
+  }
+`;
+
+const ALL_APPAREL_BRANDS = gql`
+  query AllApparelBrands {
+    allApparelBrands
+  }
+`;
 
 const Footer = () => {
   const router = useRouter();
+  const { data: sneakerBrands } = useQuery(ALL_SNEAKER_BRANDS);
+  const { data: perfumeBrands } = useQuery(ALL_PERFUME_BRANDS);
+  const { data: watchBrands } = useQuery(ALL_WATCH_BRANDS);
+  const { data: apparelBrands } = useQuery(ALL_APPAREL_BRANDS);
 
-  const mostViewedItems = [
-    'Top Picks Under Rs 10K',
-    'Rare Collabs of the month',
-    'Air Jordan',
-    'SB Dunk Low Panda',
-    'Streetwear Under 5K',
-    'Limited Sneaker Drops',
-    'College Essentials',
-    'Streetwear Icons',
-    'High Tops',
-    'Travis Scott x Jordan 1'
-  ];
+  // Get top brands for each category with fallbacks
+  const topSneakerBrands = sneakerBrands?.allSneakerBrands?.slice(0, 4) || ['Balenciaga', 'New Balance', 'Air Jordan', 'Nike'];
+  const topPerfumeBrands = perfumeBrands?.allPerfumeBrands?.slice(0, 4) || ['Dior', 'Chanel', 'Creed', 'Versace'];
+  const topWatchBrands = watchBrands?.allWatchBrands?.slice(0, 2) || ['Rolex', 'Casio'];
+  const topApparelBrands = apparelBrands?.allApparelBrands?.slice(0, 2) || ['Gucci', 'Prada'];
 
   const categories = [
     { name: 'Apparel', href: '/apparel' },
@@ -32,10 +54,14 @@ const Footer = () => {
 
   const quickLinks = [
     { name: 'Contact Us', href: '/contact' },
-    { name: 'FAQs', href: '/faqs' },
     { name: 'Terms & Conditions', href: '/terms' },
-    { name: 'Privacy Policies', href: '/privacy' },
+    { name: 'Privacy Policy', href: '/privacy' },
   ];
+
+  const getBrandUrl = (brand: string, category: string) => {
+    const normalizedBrand = brand.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    return `/${category}/brand/${normalizedBrand}`;
+  };
 
   const handleCategoryClick = (category: { name: string, href: string }) => {
     if (category.name === 'Beyond Ordinary') {
@@ -93,10 +119,31 @@ const Footer = () => {
           <div className={styles.footerColumn}>
             <h3>Most Viewed</h3>
             <ul>
-              {mostViewedItems.map((item, index) => (
-                <li key={index}>
-                  <Link href="#" className={styles.footerLink}>
-                    {item}
+              {topSneakerBrands.map((brand: string) => (
+                <li key={brand}>
+                  <Link href={getBrandUrl(brand, 'sneaker')} className={styles.footerLink}>
+                    {brand}
+                  </Link>
+                </li>
+              ))}
+              {topPerfumeBrands.map((brand: string) => (
+                <li key={brand}>
+                  <Link href={getBrandUrl(brand, 'perfume')} className={styles.footerLink}>
+                    {brand}
+                  </Link>
+                </li>
+              ))}
+              {topWatchBrands.map((brand: string) => (
+                <li key={brand}>
+                  <Link href={getBrandUrl(brand, 'watch')} className={styles.footerLink}>
+                    {brand}
+                  </Link>
+                </li>
+              ))}
+              {topApparelBrands.map((brand: string) => (
+                <li key={brand}>
+                  <Link href={getBrandUrl(brand, 'apparel')} className={styles.footerLink}>
+                    {brand}
                   </Link>
                 </li>
               ))}

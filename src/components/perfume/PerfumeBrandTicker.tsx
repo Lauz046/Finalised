@@ -30,8 +30,8 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
   // Create the 3 fixed perfume categories with updated images
   const perfumeCategories = [
     { name: 'Niche', image: '/perfumeticker/Niche perfume.png', filterType: 'niche', bgColor: '#f5f5dc' },
-    { name: 'All Perfume', image: '/perfumeticker/All perfume.png', filterType: 'all', bgColor: '#1e3a8a' },
-    { name: 'Designer', image: '/perfumeticker/Designer perfumes.png', filterType: 'designer', bgColor: '#f5f5dc' }
+    { name: 'Designer', image: '/perfumeticker/Designer perfumes.png', filterType: 'designer', bgColor: '#f5f5dc' },
+    { name: 'All Perfume', image: '/perfumeticker/All perfume.png', filterType: 'all', bgColor: '#1e3a8a' }
   ];
 
   // Use only the 3 categories for static display
@@ -109,7 +109,11 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
                   alt={category.name}
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    target.src = '/nav/plutus logo.svg';
+                    console.log(`Failed to load image: ${brandImage}`);
+                    target.src = '/perfumeticker/All perfume.png'; // Fallback to existing image
+                  }}
+                  onLoad={() => {
+                    console.log(`Successfully loaded image: ${brandImage}`);
                   }}
                   loading="lazy"
                   style={{
@@ -121,6 +125,7 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
                     boxShadow: 'none',
                     background: 'transparent',
                     imageRendering: 'auto',
+                    display: 'block', // Ensure proper display
                   }}
                 />
                 <div style={{

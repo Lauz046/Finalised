@@ -53,6 +53,12 @@ export const Recommendations: React.FC<{ products: Recommendation[]; currentBran
               <div className={styles.infoText}>
                 <div className={styles.brand}>{p.brand}</div>
                 <div className={styles.name}>{limitToSixWords(p.name)}</div>
+                {p.price && (
+                  <div className={styles.priceRow}>
+                    <span className={styles.startingFrom}>Starting from</span>
+                    <span className={styles.price}>₹{p.price.toLocaleString()}</span>
+                  </div>
+                )}
               </div>
             </div>
           </Link>

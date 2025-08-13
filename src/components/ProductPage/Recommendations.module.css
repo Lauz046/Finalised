@@ -102,8 +102,8 @@
 }
 
 .image {
-  width: 200px;
-  height: 180px;
+  width: 240px;
+  height: 220px;
   object-fit: contain;
   background: transparent;
   border-radius: 0;

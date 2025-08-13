@@ -9,6 +9,7 @@ interface HomeRecItem {
   name: string;
   brand: string;
   href: string;
+  price?: number;
 }
 
 const HomeRecommendations: React.FC = () => {
@@ -58,6 +59,7 @@ const HomeRecommendations: React.FC = () => {
           name: (item.productName || item.title || item.name || '').slice(0, 50),
           brand: item.brand,
           href: `/${item.type}/${item.id}`,
+          price: item.price || item.startingPrice,
         });
       });
     });
@@ -85,6 +87,12 @@ const HomeRecommendations: React.FC = () => {
               <div className={styles.infoText}>
                 <div className={styles.brand}>{rec.brand}</div>
                 <div className={styles.name}>{rec.name}</div>
+                {rec.price && (
+                  <div className={styles.priceRow}>
+                    <span className={styles.startingFrom}>Starting from</span>
+                    <span className={styles.price}>₹{rec.price.toLocaleString()}</span>
+                  </div>
+                )}
               </div>
             </div>
           </Link>

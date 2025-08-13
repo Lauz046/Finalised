@@ -197,8 +197,8 @@ const SneakerPage = () => {
     const brandImageMapping: { [key: string]: string } = {
       'nike': '/sneakerticker/NIKE.png',
       'air jordan': '/sneakerticker/AIR JORDAN CARD.png',
-      'adidas': '/sneakerticker/AF1.png', // Using AF1 as fallback since SAMBA CARDS.png is missing
-      'yeezy': '/sneakerticker/AF1.png', // Using AF1 as fallback since SAMBA CARDS.png is missing
+      'adidas': '/sneakerticker/Adidas.png', // Using Adidas image
+      'yeezy': '/sneakerticker/Adidas.png', // Using Adidas image for Yeezy too
       'new balance': '/sneakerticker/NEW BALANCE.png',
       'on': '/sneakerticker/ON CLOUD CARD.png',
       'dunks': '/sneakerticker/Dunks card.png',

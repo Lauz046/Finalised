@@ -30,7 +30,7 @@ const PerfumeBrandTicker: React.FC<PerfumeBrandTickerProps> = ({ brands, onBrand
   // Create the 3 fixed perfume categories with updated images
   const perfumeCategories = [
     { name: 'Niche', image: '/perfumeticker/Niche perfume.png', filterType: 'niche', bgColor: '#f5f5dc' },
-    { name: 'All Perfume', image: '/perfumeticker/All perfume.png', filterType: 'all', bgColor: '#1e3a8a' },
+    { name: 'All Perfume', image: '/perfumeticker/all_perfume.png', filterType: 'all', bgColor: '#1e3a8a' },
     { name: 'Designer', image: '/perfumeticker/Designer perfumes.png', filterType: 'designer', bgColor: '#f5f5dc' }
   ];
 

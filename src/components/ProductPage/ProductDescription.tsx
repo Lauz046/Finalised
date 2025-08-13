@@ -55,7 +55,7 @@ export const ProductDescription: React.FC<ProductDescriptionProps> = ({
     const displayText = showFull ? dynamicDescription : truncateDescription(dynamicDescription, maxLength);
 
     return (
-      <div className={styles.container}>
+      <div className={`${styles.container} product-description`}>
         <div className={styles.header}>Product Description</div>
         {productName && (
           <div className={styles.productName}>{productName}</div>
@@ -80,7 +80,7 @@ export const ProductDescription: React.FC<ProductDescriptionProps> = ({
   const displayText = showFull ? formattedDescription : truncateDescription(formattedDescription, maxLength);
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} product-description`}>
       <div className={styles.header}>Product Description</div>
       {productName && (
         <div className={styles.productName}>{productName}</div>

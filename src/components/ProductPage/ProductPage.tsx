@@ -287,7 +287,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
       if (!product) return;
 
       if (product.images.length === 1) {
-        // Single image: pin right column until View Price History section comes into view
+        // Single image: pin right column until product description comes into view, then move both together
         const rightPin = (ScrollTrigger as any).create({
           trigger: container,
           start: 'top 120px',
@@ -309,8 +309,26 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
             rightCol?.classList.remove('rightSticky');
           },
         });
+
+        // Create a trigger for when product description comes into view
+        const productDescTrigger = (ScrollTrigger as any).create({
+          trigger: '.product-description', // Target product description section
+          start: 'top 80%', // When product description is 80% up the viewport
+          end: 'bottom 20%',
+          onEnter: () => {
+            // When product description comes into view, unpin and let both sections scroll together
+            if (rightPin) rightPin.kill();
+            rightCol?.classList.remove('rightSticky');
+          },
+          onLeave: () => {
+            // Re-pin when product description leaves view
+            rightCol?.classList.add('rightSticky');
+          },
+        });
+
         return () => {
           if (rightPin) rightPin.kill();
+          if (productDescTrigger) productDescTrigger.kill();
         };
       } else {
         // Original logic for multiple images

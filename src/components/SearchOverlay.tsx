@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, forwardRef, useImperativeHandle } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { FixedSizeList as List } from 'react-window';
@@ -8,6 +8,11 @@ import styles from './SearchOverlay.module.css';
 interface SearchOverlayProps {
   isOpen: boolean;
   onClose: () => void;
+  onMenuOrAccountClick?: () => void;
+}
+
+export interface SearchOverlayRef {
+  close: () => void;
 }
 
 interface Product {
@@ -33,7 +38,7 @@ const CATEGORIES = [
   { key: 'watches', label: 'Watches' },
 ];
 
-const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
+const SearchOverlay = forwardRef<SearchOverlayRef, SearchOverlayProps>(({ isOpen, onClose }, ref) => {
 
   const router = useRouter();
   const [input, setInput] = useState('');
@@ -53,6 +58,18 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
   const [displayedResults, setDisplayedResults] = useState<Product[]>([]);
   const ITEMS_PER_PAGE = 50;
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  // Expose close method via ref
+  useImperativeHandle(ref, () => ({
+    close: () => {
+      onClose();
+      setInput('');
+      setDisplayedResults([]);
+      setAllResults([]);
+      setCurrentPage(1);
+      initializedRef.current = false;
+    }
+  }), [onClose]);
 
   // Close overlay when route changes
   useEffect(() => {
@@ -495,6 +512,6 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
       </div>
     </>
   );
-};
+});
 
 export default SearchOverlay; 

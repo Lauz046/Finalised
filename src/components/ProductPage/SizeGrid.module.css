@@ -166,20 +166,24 @@
 
 .mobileSizeSelector {
   width: 100%;
-  max-width: 100%;
-  padding: 10px 12px;
+  padding: 16px;
   background: #fff;
-  color: #051F2D;
   border: 1px solid #464646;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.85rem;
+  color: #051F2D;
+  font-size: 1rem;
   font-weight: 500;
-  text-align: left;
   cursor: pointer;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Montserrat', sans-serif;
   border-radius: 0;
-  box-sizing: border-box;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+  transition: border-color 0.2s;
+}
+
+.mobileSizeSelector:hover {
+  border-color: #051F2D;
 }
 
 @media (max-width: 900px) {

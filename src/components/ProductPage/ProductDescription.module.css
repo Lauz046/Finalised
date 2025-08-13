@@ -3,8 +3,8 @@
   border-radius: 0;
   padding: 24px;
   margin: 20px 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
+  box-shadow: none;
+  border: none;
 }
 
 .header {
@@ -26,7 +26,7 @@
 }
 
 .text {
-  font-size: 20px; /* Changed from 16px to 20px for desktop */
+  font-size: 12px; /* Changed to 12px as requested */
   line-height: 1.7;
   color: #374151;
   margin: 0;
@@ -43,21 +43,7 @@
 }
 
 .readMore {
-  background: none;
-  border: none;
-  color: #051F2D;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 12px 0;
-  margin-top: 16px;
-  text-decoration: underline;
-  transition: color 0.2s ease;
-  font-family: 'Montserrat', sans-serif;
-}
-
-.readMore:hover {
-  color: #C7A77B;
+  display: none; /* Hide read more button */
 }
 
 .skeleton {
@@ -108,12 +94,12 @@
   }
   
   .productName {
-    font-size: 24px; /* Changed from 22px to 24px */
+    font-size: 24px;
     margin-bottom: 16px;
   }
   
   .text {
-    font-size: 16px; /* Changed from 14px to 16px for mobile */
+    font-size: 12px; /* Keep 12px on mobile too */
     line-height: 1.6;
   }
 }
@@ -130,7 +116,7 @@
   }
   
   .text {
-    font-size: 13px;
+    font-size: 12px; /* Keep 12px on mobile too */
     line-height: 1.5;
   }
 } 

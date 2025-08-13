@@ -3,8 +3,8 @@ import Footer from '@/components/Footer';
 import type { AppProps } from 'next/app';
 import { ApolloProvider } from '@apollo/client';
 import { Montserrat } from 'next/font/google';
-import SearchOverlay from '../components/SearchOverlay';
-import React, { useState, useEffect } from 'react';
+import SearchOverlay, { SearchOverlayRef } from '../components/SearchOverlay';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApollo } from '../lib/apolloClient';
 import { StashProvider } from '../components/StashContext';
 import StashPrompt from '../components/StashPrompt';
@@ -27,6 +27,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [isLoading, setIsLoading] = useState(true);
   const apolloClient = useApollo(pageProps.initialApolloState);
   const router = useRouter();
+  const searchOverlayRef = useRef<SearchOverlayRef>(null);
   
   // Check if current page is stash to conditionally render footer
   const isStashPage = router.pathname === '/stash';
@@ -72,8 +73,8 @@ function MyApp({ Component, pageProps }: AppProps) {
                 ) : (
                   <>
                     <main className={montserrat.className}>
-                      {!isAuthPage && <Navbar onSearchClick={() => setIsSearchOpen(true)} />}
-                      {!isAuthPage && <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />}
+                      {!isAuthPage && <Navbar onSearchClick={() => setIsSearchOpen(true)} onMenuOrAccountClick={() => searchOverlayRef.current?.close()} />}
+                      {!isAuthPage && <SearchOverlay ref={searchOverlayRef} isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />}
                       <Component {...pageProps} />
                       {!isStashPage && !isAuthPage && <Footer />}
                     </main>

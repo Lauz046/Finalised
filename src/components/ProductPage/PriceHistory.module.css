@@ -1,6 +1,6 @@
 .container {
   background: linear-gradient(135deg, #c7a77b 0%, #d4b88a 50%, #e5c99a 100%);
-  border: 1px solid #e0e6ed;
+  border: none;
   margin: 24px 0;
   padding: 20px;
   display: flex;

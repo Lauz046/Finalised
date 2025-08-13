@@ -19,7 +19,6 @@
   background: transparent;
   border: none;
   border-bottom: none;
-  cursor: pointer;
   outline: none;
   font-family: 'Montserrat', sans-serif;
   font-size: 1.25rem;
@@ -62,12 +61,7 @@
   justify-content: space-between;
   font-weight: 600;
   padding: 8px 0;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.summary:hover {
-  color: #C7A77B;
+  color: #051F2D;
 }
 
 .answer {
@@ -77,53 +71,11 @@
   margin-top: 8px;
 }
 
-.arrow {
-  margin-left: 8px;
-  width: 20px;
-  height: 20px;
-  transition: transform 0.2s;
-}
-
-.open .arrow {
-  transform: rotate(0deg);
-}
-
-.closed .arrow {
-  transform: rotate(-90deg);
-}
-
-.arrowOpen, .arrowClosed {
-  margin-top: 3px;
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.arrowSvg {
-  width: 22px;
-  height: 22px;
-  transition: transform 0.2s;
-  color: #22304a;
-}
-
-.arrowOpen .arrowSvg {
-  transform: rotate(0deg);
-}
-
-.arrowClosed .arrowSvg {
-  transform: rotate(-90deg);
-}
-
-/* Mobile responsive fixes for FAQ arrows */
+/* Mobile responsive fixes for FAQ */
 @media (max-width: 768px) {
   .container {
     margin: 32px 0;
     min-height: 160px;
-  }
-  
-  .arrowOpen, .arrowClosed {
-    margin-left: auto;
   }
   
   .header {

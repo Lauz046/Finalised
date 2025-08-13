@@ -11,10 +11,11 @@ import UserMenu from '../auth/UserMenu';
 
 interface NavbarProps {
   onSearchClick: () => void;
+  onMenuOrAccountClick?: () => void;
   blueIcons?: boolean;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onSearchClick, blueIcons }) => {
+const Navbar: React.FC<NavbarProps> = ({ onSearchClick, onMenuOrAccountClick, blueIcons }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [bg, setBg] = useState('#fff');
@@ -110,6 +111,7 @@ const Navbar: React.FC<NavbarProps> = ({ onSearchClick, blueIcons }) => {
             className={styles.iconBtn} 
             aria-label="Account"
             onClick={() => {
+              onMenuOrAccountClick?.();
               if (isAuthenticated) {
                 setIsUserMenuOpen(!isUserMenuOpen);
               } else {
@@ -130,7 +132,10 @@ const Navbar: React.FC<NavbarProps> = ({ onSearchClick, blueIcons }) => {
               <span style={{fontSize: 32, color: isHome ? '#fff' : (isBlueIcons ? '#22304a' : '#fff'), lineHeight: 1, fontWeight: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32}}>×</span>
             </button>
           ) : (
-            <button className={styles.iconBtn} aria-label="Menu" onClick={() => setIsMenuOpen(true)}>
+            <button className={styles.iconBtn} aria-label="Menu" onClick={() => {
+              onMenuOrAccountClick?.();
+              setIsMenuOpen(true);
+            }}>
               <Image src={isHome ? "/nav/Menu.svg" : (isBlueIcons ? "/blue_nav_icons/Blue menu icon.svg" : "/nav/Menu.svg")} alt="Menu" width={32} height={32} />
               {!isPreloaded && loading && (
                 <div style={{

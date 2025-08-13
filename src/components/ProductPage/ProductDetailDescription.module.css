@@ -1,10 +1,10 @@
 .container {
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: 0;
   padding: 32px;
   margin: 24px 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e5e7eb;
+  box-shadow: none;
+  border: none;
 }
 
 .section {
@@ -40,7 +40,7 @@
 }
 
 .descriptionText {
-  font-size: 20px; /* Changed from 15px to 20px for desktop */
+  font-size: 20px;
   line-height: 1.7;
   color: #374151;
   margin: 0;
@@ -48,20 +48,7 @@
 }
 
 .readMoreButton {
-  background: none;
-  border: none;
-  color: #3b82f6;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 8px 0;
-  margin-top: 12px;
-  text-decoration: underline;
-  transition: color 0.2s ease;
-}
-
-.readMoreButton:hover {
-  color: #2563eb;
+  display: none; /* Hide read more button */
 }
 
 .fallbackDescription {
@@ -104,7 +91,7 @@
 }
 
 .brandDescription {
-  font-size: 15px;
+  font-size: 12px; /* Changed to 12px as requested */
   line-height: 1.7;
   color: #374151;
   margin: 0;
@@ -139,7 +126,7 @@
   .container {
     padding: 20px;
     margin: 16px 0;
-    border-radius: 12px;
+    border-radius: 0;
   }
 
   .section {
@@ -151,9 +138,13 @@
     margin-bottom: 12px;
   }
 
-  .descriptionText,
+  .descriptionText {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
   .brandDescription {
-    font-size: 16px; /* Changed from 14px to 16px for mobile */
+    font-size: 12px; /* Keep 12px on mobile too */
     line-height: 1.6;
   }
 
@@ -163,7 +154,7 @@
   }
 
   .readMoreButton {
-    font-size: 13px;
+    display: none;
   }
 }
 
@@ -176,8 +167,11 @@
     font-size: 16px;
   }
 
-  .descriptionText,
-  .brandDescription {
+  .descriptionText {
     font-size: 13px;
+  }
+
+  .brandDescription {
+    font-size: 12px; /* Keep 12px on mobile too */
   }
 } 

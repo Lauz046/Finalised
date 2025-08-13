@@ -30,7 +30,7 @@
 /* Add consistent spacing for all FAQ items */
 .item {
   margin-bottom: 24px;
-  margin-left: 10px;
+  margin-left: 0;
   padding: 12px 0;
   border-bottom: 1px solid #f0f0f0;
 }
@@ -52,7 +52,7 @@
 .header {
   font-size: 1.25rem;
   font-weight: 900;
-  margin-left: 16px;
+  margin-left: 0;
 }
 
 .summary {
@@ -80,11 +80,11 @@
   
   .header {
     font-size: 1.1rem;
-    margin-left: 12px;
+    margin-left: 0;
   }
   
   .item {
-    margin-left: 8px;
+    margin-left: 0;
     margin-bottom: 20px;
     padding: 10px 0;
   }

@@ -287,11 +287,11 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
       if (!product) return;
 
       if (product.images.length === 1) {
-        // Single image: pin right column until left column is scrolled
+        // Single image: pin right column until View Price History section comes into view
         const rightPin = (ScrollTrigger as any).create({
           trigger: container,
           start: 'top 120px',
-          end: () => `+=${(leftCol as HTMLElement).offsetHeight - window.innerHeight + 200}`,
+          end: 'bottom 200px', // End when container bottom reaches viewport
           pin: rightCol,
           pinSpacing: true,
           anticipatePin: 1,

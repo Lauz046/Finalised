@@ -7,6 +7,7 @@
   font-family: 'Montserrat', sans-serif;
   min-height: 180px;
   border-radius: 0;
+  position: relative;
 }
 
 .section {
@@ -23,7 +24,7 @@
   color: #051F2D;
   margin-bottom: 16px;
   font-family: 'Montserrat', sans-serif;
-  margin-left: 16px;
+  margin-left: 0;
 }
 
 .descriptionContent {
@@ -31,13 +32,13 @@
 }
 
 .descriptionText {
-  font-size: 14px; /* Changed from 20px to 14px to match FAQ answers */
+  font-size: 16px; /* Increased from 14px to 16px */
   line-height: 1.6;
   color: #374151;
   margin: 0;
   text-align: left;
   font-family: 'Montserrat', sans-serif;
-  margin-left: 10px;
+  margin-left: 0;
   padding: 12px 0 8px 0;
   margin-top: 8px;
 }
@@ -47,19 +48,19 @@
 }
 
 .fallbackDescription {
-  font-size: 14px; /* Changed from 15px to 14px */
+  font-size: 16px; /* Increased from 14px to 16px */
   line-height: 1.6;
   color: #6b7280;
   font-style: italic;
   margin: 0;
   font-family: 'Montserrat', sans-serif;
-  margin-left: 10px;
+  margin-left: 0;
   padding: 12px 0 8px 0;
   margin-top: 8px;
 }
 
 .errorMessage {
-  font-size: 14px;
+  font-size: 16px;
   color: #ef4444;
   font-style: italic;
   margin: 0;
@@ -76,11 +77,11 @@
   display: flex;
   align-items: flex-start;
   margin-bottom: 12px;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.6;
   color: #374151;
   font-family: 'Montserrat', sans-serif;
-  margin-left: 10px;
+  margin-left: 0;
 }
 
 .featureIcon {
@@ -93,13 +94,13 @@
 }
 
 .brandDescription {
-  font-size: 14px; /* Changed from 12px to 14px to match FAQ answers */
+  font-size: 16px; /* Increased from 14px to 16px */
   line-height: 1.6;
   color: #374151;
   margin: 0;
   text-align: left;
   font-family: 'Montserrat', sans-serif;
-  margin-left: 10px;
+  margin-left: 0;
   padding: 12px 0 8px 0;
   margin-top: 8px;
 }
@@ -141,25 +142,25 @@
   .sectionTitle {
     font-size: 1.1rem;
     margin-bottom: 12px;
-    margin-left: 12px;
+    margin-left: 0;
   }
 
   .descriptionText {
-    font-size: 14px; /* Keep 14px on mobile too */
+    font-size: 16px; /* Keep 16px on mobile too */
     line-height: 1.6;
-    margin-left: 8px;
+    margin-left: 0;
   }
 
   .brandDescription {
-    font-size: 14px; /* Keep 14px on mobile too */
+    font-size: 16px; /* Keep 16px on mobile too */
     line-height: 1.6;
-    margin-left: 8px;
+    margin-left: 0;
   }
 
   .featureItem {
-    font-size: 14px;
+    font-size: 16px;
     margin-bottom: 10px;
-    margin-left: 8px;
+    margin-left: 0;
   }
 
   .readMoreButton {
@@ -174,16 +175,16 @@
 
   .sectionTitle {
     font-size: 1.1rem;
-    margin-left: 8px;
+    margin-left: 0;
   }
 
   .descriptionText {
-    font-size: 14px; /* Keep 14px on mobile too */
-    margin-left: 8px;
+    font-size: 16px; /* Keep 16px on mobile too */
+    margin-left: 0;
   }
 
   .brandDescription {
-    font-size: 14px; /* Keep 14px on mobile too */
-    margin-left: 8px;
+    font-size: 16px; /* Keep 16px on mobile too */
+    margin-left: 0;
   }
 } 

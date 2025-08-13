@@ -1,10 +1,12 @@
 .container {
-  background: #ffffff;
-  border-radius: 0;
-  padding: 32px;
-  margin: 24px 0;
-  box-shadow: none;
+  background: #fff;
   border: none;
+  padding: 0;
+  margin: 40px 0 40px 0;
+  color: #051F2D;
+  font-family: 'Montserrat', sans-serif;
+  min-height: 180px;
+  border-radius: 0;
 }
 
 .section {
@@ -16,23 +18,12 @@
 }
 
 .sectionTitle {
-  font-size: 20px;
-  font-weight: 600;
-  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #051F2D;
   margin-bottom: 16px;
-  border-bottom: 2px solid #3b82f6;
-  padding-bottom: 8px;
-  position: relative;
-}
-
-.sectionTitle::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 40px;
-  height: 2px;
-  background: #3b82f6;
+  font-family: 'Montserrat', sans-serif;
+  margin-left: 16px;
 }
 
 .descriptionContent {
@@ -40,11 +31,15 @@
 }
 
 .descriptionText {
-  font-size: 20px;
-  line-height: 1.7;
+  font-size: 14px; /* Changed from 20px to 14px to match FAQ answers */
+  line-height: 1.6;
   color: #374151;
   margin: 0;
-  text-align: justify;
+  text-align: left;
+  font-family: 'Montserrat', sans-serif;
+  margin-left: 10px;
+  padding: 12px 0 8px 0;
+  margin-top: 8px;
 }
 
 .readMoreButton {
@@ -52,11 +47,15 @@
 }
 
 .fallbackDescription {
-  font-size: 15px;
-  line-height: 1.7;
+  font-size: 14px; /* Changed from 15px to 14px */
+  line-height: 1.6;
   color: #6b7280;
   font-style: italic;
   margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  margin-left: 10px;
+  padding: 12px 0 8px 0;
+  margin-top: 8px;
 }
 
 .errorMessage {
@@ -64,6 +63,7 @@
   color: #ef4444;
   font-style: italic;
   margin: 0;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .featuresList {
@@ -79,6 +79,8 @@
   font-size: 14px;
   line-height: 1.6;
   color: #374151;
+  font-family: 'Montserrat', sans-serif;
+  margin-left: 10px;
 }
 
 .featureIcon {
@@ -91,11 +93,15 @@
 }
 
 .brandDescription {
-  font-size: 12px; /* Changed to 12px as requested */
-  line-height: 1.7;
+  font-size: 14px; /* Changed from 12px to 14px to match FAQ answers */
+  line-height: 1.6;
   color: #374151;
   margin: 0;
-  text-align: justify;
+  text-align: left;
+  font-family: 'Montserrat', sans-serif;
+  margin-left: 10px;
+  padding: 12px 0 8px 0;
+  margin-top: 8px;
 }
 
 .skeleton {
@@ -121,12 +127,11 @@
   }
 }
 
-/* Responsive design */
+/* Mobile responsive fixes */
 @media (max-width: 768px) {
   .container {
-    padding: 20px;
-    margin: 16px 0;
-    border-radius: 0;
+    margin: 32px 0;
+    min-height: 160px;
   }
 
   .section {
@@ -134,23 +139,27 @@
   }
 
   .sectionTitle {
-    font-size: 18px;
+    font-size: 1.1rem;
     margin-bottom: 12px;
+    margin-left: 12px;
   }
 
   .descriptionText {
-    font-size: 16px;
+    font-size: 14px; /* Keep 14px on mobile too */
     line-height: 1.6;
+    margin-left: 8px;
   }
 
   .brandDescription {
-    font-size: 12px; /* Keep 12px on mobile too */
+    font-size: 14px; /* Keep 14px on mobile too */
     line-height: 1.6;
+    margin-left: 8px;
   }
 
   .featureItem {
-    font-size: 13px;
+    font-size: 14px;
     margin-bottom: 10px;
+    margin-left: 8px;
   }
 
   .readMoreButton {
@@ -160,18 +169,21 @@
 
 @media (max-width: 480px) {
   .container {
-    padding: 16px;
+    padding: 0;
   }
 
   .sectionTitle {
-    font-size: 16px;
+    font-size: 1.1rem;
+    margin-left: 8px;
   }
 
   .descriptionText {
-    font-size: 13px;
+    font-size: 14px; /* Keep 14px on mobile too */
+    margin-left: 8px;
   }
 
   .brandDescription {
-    font-size: 12px; /* Keep 12px on mobile too */
+    font-size: 14px; /* Keep 14px on mobile too */
+    margin-left: 8px;
   }
 } 

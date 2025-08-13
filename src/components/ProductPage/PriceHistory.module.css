@@ -10,7 +10,7 @@
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  border-radius: 8px;
+  border-radius: 0;
   box-shadow: 0 4px 12px rgba(199, 167, 123, 0.15);
 }
 

@@ -11,10 +11,10 @@ export interface Recommendation {
   price?: number;
 }
 
-// Helper function to limit text to 6 words
-const limitToSixWords = (text: string): string => {
-  const words = text.split(' ');
-  return words.slice(0, 6).join(' ');
+// Helper function to limit text to 4-5 letters for consistent info section
+const limitProductName = (text: string): string => {
+  if (text.length <= 5) return text;
+  return text.slice(0, 5) + '...';
 };
 
 export const Recommendations: React.FC<{ products: Recommendation[]; currentBrand: string; productType: string }> = ({ products, currentBrand, productType }) => {
@@ -52,7 +52,7 @@ export const Recommendations: React.FC<{ products: Recommendation[]; currentBran
             <div className={styles.info}>
               <div className={styles.infoText}>
                 <div className={styles.brand}>{p.brand}</div>
-                <div className={styles.name}>{limitToSixWords(p.name)}</div>
+                <div className={styles.name}>{limitProductName(p.name)}</div>
                 {p.price && (
                   <div className={styles.priceRow}>
                     <span className={styles.startingFrom}>Starting from</span>

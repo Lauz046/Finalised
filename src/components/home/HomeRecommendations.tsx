@@ -9,8 +9,13 @@ interface HomeRecItem {
   name: string;
   brand: string;
   href: string;
-  price?: number;
 }
+
+// Helper function to limit text to 4-5 letters for consistent info section
+const limitProductName = (text: string): string => {
+  if (text.length <= 5) return text;
+  return text.slice(0, 5) + '...';
+};
 
 const HomeRecommendations: React.FC = () => {
   const { allProducts } = useProductContext();
@@ -59,7 +64,6 @@ const HomeRecommendations: React.FC = () => {
           name: (item.productName || item.title || item.name || '').slice(0, 50),
           brand: item.brand,
           href: `/${item.type}/${item.id}`,
-          price: item.price || item.startingPrice,
         });
       });
     });
@@ -86,13 +90,7 @@ const HomeRecommendations: React.FC = () => {
             <div className={styles.info}>
               <div className={styles.infoText}>
                 <div className={styles.brand}>{rec.brand}</div>
-                <div className={styles.name}>{rec.name}</div>
-                {rec.price && (
-                  <div className={styles.priceRow}>
-                    <span className={styles.startingFrom}>Starting from</span>
-                    <span className={styles.price}>₹{rec.price.toLocaleString()}</span>
-                  </div>
-                )}
+                <div className={styles.name}>{limitProductName(rec.name)}</div>
               </div>
             </div>
           </Link>

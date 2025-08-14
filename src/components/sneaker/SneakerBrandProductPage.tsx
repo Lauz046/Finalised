@@ -243,19 +243,19 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
     const nameLength = brandName.length;
     
     if (isMobileView) {
-      // Mobile responsive text sizing
+      // Mobile responsive text sizing - positioned at 62%
       let fontSize = '3.2rem';
-      let transformY = '5%';
+      let transformY = '-38%'; // Position at 62% (moved down from center)
       
       if (nameLength > 15) {
         fontSize = '2.2rem';
-        transformY = '0%';
+        transformY = '-38%'; // Keep at 62% position
       } else if (nameLength > 10) {
         fontSize = '2.6rem';
-        transformY = '2%';
+        transformY = '-38%'; // Keep at 62% position
       } else if (nameLength > 6) {
         fontSize = '2.8rem';
-        transformY = '3%';
+        transformY = '-38%'; // Keep at 62% position
       }
       
       return {
@@ -263,19 +263,19 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
         transform: `translate(-50%, ${transformY})`
       };
     } else {
-      // Desktop responsive text sizing
+      // Desktop responsive text sizing - positioned at 62%
       let fontSize = '5rem';
-      let transformY = '-10%';
+      let transformY = '-38%'; // Position at 62% (moved down from center)
       
       if (nameLength > 20) {
         fontSize = '3.5rem';
-        transformY = '-5%';
+        transformY = '-38%'; // Keep at 62% position
       } else if (nameLength > 15) {
         fontSize = '4rem';
-        transformY = '-8%';
+        transformY = '-38%'; // Keep at 62% position
       } else if (nameLength > 10) {
         fontSize = '4.5rem';
-        transformY = '-9%';
+        transformY = '-38%'; // Keep at 62% position
       }
       
       return {
@@ -380,7 +380,7 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
             <img src="/static.jpg" alt="Brand Banner" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', marginTop: '40px' }} />
             <div style={{
               position: 'absolute',
-              top: '50%',
+              top: '62%',
               left: '50%',
               transform: getBrandTextStyle(brand, true).transform,
               color: '#ffffff',
@@ -629,7 +629,7 @@ export default function SneakerBrandProductPage({ brand, initialSneakerData, apo
         />
         <div style={{
           position: 'absolute',
-          top: '50%',
+          top: '62%',
           left: '50%',
           transform: getBrandTextStyle(brand, false).transform,
           color: '#ffffff',

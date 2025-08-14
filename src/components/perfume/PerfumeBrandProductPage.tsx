@@ -77,26 +77,26 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
     const nameLength = brandName.length;
     
     if (isMobileView) {
-      // Mobile responsive text sizing - smaller and better positioned
+      // Mobile responsive text sizing - positioned at 62%
       let fontSize = '2.2rem';
-      let transformY = '-5%';
+      let transformY = '-38%'; // Position at 62% (moved down from center)
       let lineHeight = '1.2';
       
       if (nameLength > 20) {
         fontSize = '1.4rem';
-        transformY = '0%';
+        transformY = '-38%'; // Keep at 62% position
         lineHeight = '1.1';
       } else if (nameLength > 15) {
         fontSize = '1.6rem';
-        transformY = '-2%';
+        transformY = '-38%'; // Keep at 62% position
         lineHeight = '1.15';
       } else if (nameLength > 10) {
         fontSize = '1.8rem';
-        transformY = '-4%';
+        transformY = '-38%'; // Keep at 62% position
         lineHeight = '1.2';
       } else if (nameLength > 6) {
         fontSize = '2rem';
-        transformY = '-6%';
+        transformY = '-38%'; // Keep at 62% position
         lineHeight = '1.2';
       }
       
@@ -106,19 +106,19 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
         lineHeight
       };
     } else {
-      // Desktop responsive text sizing
+      // Desktop responsive text sizing - positioned at 62%
       let fontSize = '5rem';
-      let transformY = '-10%';
+      let transformY = '-38%'; // Position at 62% (moved down from center)
       
       if (nameLength > 20) {
         fontSize = '3.5rem';
-        transformY = '-5%';
+        transformY = '-38%'; // Keep at 62% position
       } else if (nameLength > 15) {
         fontSize = '4rem';
-        transformY = '-8%';
+        transformY = '-38%'; // Keep at 62% position
       } else if (nameLength > 10) {
         fontSize = '4.5rem';
-        transformY = '-9%';
+        transformY = '-38%'; // Keep at 62% position
       }
       
       return {
@@ -335,7 +335,7 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
             <img src="/static.jpg" alt="Brand Banner" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', marginTop: '40px' }} />
             <div style={{
               position: 'absolute',
-              top: '50%',
+              top: '62%',
               left: '50%',
               transform: getBrandTextStyle(brand, true).transform,
               color: '#ffffff',
@@ -584,7 +584,7 @@ export default function PerfumeBrandProductPage({ brand, initialPerfumeData, apo
             <img src="/static.jpg" alt="Brand Banner" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', marginTop: '20px' }} />
             <div style={{
               position: 'absolute',
-              top: '50%',
+              top: '62%',
               left: '50%',
               transform: getBrandTextStyle(brand, false).transform,
               color: 'rgba(255, 255, 255, 0.85)',

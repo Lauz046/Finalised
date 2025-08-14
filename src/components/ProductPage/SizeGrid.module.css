@@ -1,6 +1,6 @@
 .section {
   background: #fff;
-  border: 1px solid #464646;
+  border: 2px solid #464646;
   margin: 24px 0;
   color: #051F2D;
   width: 100%;
@@ -115,7 +115,7 @@
 .price {
   font-size: 0.8rem;
   color: #464646;
-  font-weight: 400;
+  font-weight: 500;
   margin-top: 2px;
 }
 

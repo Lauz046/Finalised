@@ -102,13 +102,13 @@ const Footer = () => {
             
             <div className={styles.socialMedia}>
               <a href="#" className={styles.socialIcon}>
-                <Image src="/restof/Footer insta icon.svg" alt="Instagram" width={24} height={24} />
+                <Image src="/restof/Instagram.svg" alt="Instagram" width={32} height={32} />
               </a>
               <a href="#" className={styles.socialIcon}>
-                <Image src="/restof/Footer FB icon.svg" alt="Facebook" width={24} height={24} />
+                <Image src="/restof/Facebook.svg" alt="Facebook" width={32} height={32} />
               </a>
               <a href="#" className={styles.socialIcon}>
-                <Image src="/restof/Footer Gmail icon.svg" alt="Email" width={24} height={24} />
+                <Image src="/restof/Mail.svg" alt="Email" width={32} height={32} />
               </a>
             </div>
             

@@ -255,18 +255,19 @@
     backdrop-filter: blur(10px);
   }
   .ctaMain {
-    margin-top: 30px;
-    font-size: 0.9rem;
-    padding: 12px 24px;
-    border-radius: 0;
-    min-width: 180px;
-    text-align: center;
-    z-index: 3;
-    position: relative;
-    background: #c7a77b;
-    color: #23313a;
-    font-weight: 700;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  }
+  margin-top: 30px;
+  font-size: 0.9rem;
+  padding: 12px 24px;
+  border-radius: 0;
+  min-width: 180px;
+  text-align: center;
+  z-index: 3;
+  position: relative;
+  background: #c7a77b;
+  color: #23313a;
+  font-weight: 700;
+  font-family: 'Montserrat', Arial, sans-serif;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
 }
 

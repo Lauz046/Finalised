@@ -54,11 +54,23 @@ const formatPrice = (price: number) => {
   }).format(price)}`;
 };
 
-// Limit product name - 4 words for both desktop and mobile (no ellipsis)
-const truncateProductName = (name: string) => {
+// Helper function to truncate product names and remove brand name from beginning
+const truncateProductName = (name: string, brand?: string): string => {
   if (!name) return '';
-  const words = name.split(' ');
-  return words.slice(0, 4).join(' ');
+  
+  // Remove brand name from the beginning of product name
+  let cleanName = name;
+  if (brand && name.toLowerCase().startsWith(brand.toLowerCase())) {
+    cleanName = name.substring(brand.length).trim();
+    // Remove any leading punctuation or spaces
+    cleanName = cleanName.replace(/^[\s\-_.,]+/, '');
+  }
+  
+  // Limit to 5 words (desktop default)
+  const words = cleanName.split(' ');
+  const maxWords = 5;
+  if (words.length <= maxWords) return cleanName;
+  return words.slice(0, maxWords).join(' ');
 };
 
 const WatchProductGrid: React.FC<WatchProductGridProps> = ({ products, loading = false, mobile = false }) => {
@@ -111,7 +123,7 @@ const WatchProductGrid: React.FC<WatchProductGridProps> = ({ products, loading =
             <div className={styles.content}>
               <div className={styles.brand}>{product.brand}</div>
               <div className={styles.name} title={product.name}>
-                {truncateProductName(product.name)}
+                {truncateProductName(product.name, product.brand)}
               </div>
               <div className={styles.priceRow}>
                 <span className={styles.startingFrom}>Starting from</span>

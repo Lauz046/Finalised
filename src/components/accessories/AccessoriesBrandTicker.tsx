@@ -40,8 +40,12 @@ const AccessoriesBrandTicker: React.FC<AccessoriesBrandTickerProps> = ({ onBrand
 
   // Create endless scrolling by duplicating the 6 subcategories multiple times
   const displaySubcategories = useMemo(() => {
-    // Duplicate the subcategories 6 times for seamless endless scrolling
-    return [...accessoriesSubcategories, ...accessoriesSubcategories, ...accessoriesSubcategories, ...accessoriesSubcategories, ...accessoriesSubcategories, ...accessoriesSubcategories];
+    // Duplicate the subcategories 8 times for seamless endless scrolling
+    const duplicated = [];
+    for (let i = 0; i < 8; i++) {
+      duplicated.push(...accessoriesSubcategories);
+    }
+    return duplicated;
   }, [accessoriesSubcategories]);
 
   // Auto-scroll effect (infinite loop)
@@ -61,8 +65,8 @@ const AccessoriesBrandTicker: React.FC<AccessoriesBrandTickerProps> = ({ onBrand
       if (!ticker) return;
       translateX -= speed;
       
-      // Reset position when we've moved the width of one set of brands
-      const singleSetWidth = ticker.scrollWidth / 6; // Since we have 6 sets
+      // Reset position when we've moved the width of one complete set of brands
+      const singleSetWidth = ticker.scrollWidth / 8; // Since we have 8 sets now
       if (Math.abs(translateX) >= singleSetWidth) {
         translateX = 0;
       }

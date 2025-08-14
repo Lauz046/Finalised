@@ -11,10 +11,21 @@ interface HomeRecItem {
   href: string;
 }
 
-// Helper function to limit text to 4-5 letters for consistent info section
-const limitProductName = (text: string): string => {
-  if (text.length <= 5) return text;
-  return text.slice(0, 5) + '...';
+// Helper function to limit text to 4 words for consistent info section and remove brand name
+const limitProductName = (text: string, brand?: string): string => {
+  if (!text) return '';
+  
+  // Remove brand name from the beginning of product name
+  let cleanName = text;
+  if (brand && text.toLowerCase().startsWith(brand.toLowerCase())) {
+    cleanName = text.substring(brand.length).trim();
+    // Remove any leading punctuation or spaces
+    cleanName = cleanName.replace(/^[\s\-_.,]+/, '');
+  }
+  
+  const words = cleanName.split(' ');
+  if (words.length <= 4) return cleanName;
+  return words.slice(0, 4).join(' ');
 };
 
 const HomeRecommendations: React.FC = () => {
@@ -90,7 +101,7 @@ const HomeRecommendations: React.FC = () => {
             <div className={styles.info}>
               <div className={styles.infoText}>
                 <div className={styles.brand}>{rec.brand}</div>
-                <div className={styles.name}>{limitProductName(rec.name)}</div>
+                <div className={styles.name}>{limitProductName(rec.name, rec.brand)}</div>
               </div>
             </div>
           </Link>

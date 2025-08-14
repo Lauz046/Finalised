@@ -122,7 +122,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-start;
+  justify-content: space-between;
   position: relative;
   z-index: 1;
   flex-shrink: 0;
@@ -136,6 +136,7 @@
   max-width: 100%;
   justify-content: flex-start;
   height: auto;
+  flex: 1;
 }
 
 .brand {
@@ -159,7 +160,7 @@
   font-size: 0.75rem;
   color: #fff;
   font-weight: 400;
-  margin-bottom: 8px;
+  margin-bottom: 0;
   white-space: normal;
   overflow: visible;
   line-height: 1.2;
@@ -172,18 +173,21 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 6px;
-  margin-top: 8px;
   justify-content: space-between;
   width: 100%;
+  margin-top: auto;
+  flex-shrink: 0;
+  min-height: 20px;
 }
 
 .startingFrom {
-  font-size: 0.9rem;
+  font-size: 0.65rem;
   color: #b0b8c9;
   font-family: 'Montserrat';
   font-weight: 400;
   margin-bottom: 0;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .price {
@@ -192,7 +196,9 @@
   font-weight: 500;
   font-family: 'Montserrat';
   margin-bottom: 0;
-  align-self: flex-start;
+  text-align: right;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 /* Mobile styles */
@@ -280,7 +286,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: flex-start;
+    justify-content: space-between;
     position: relative;
     z-index: 1;
     flex-shrink: 0;
@@ -298,19 +304,31 @@
   .name {
     font-size: 0.75rem;
     line-height: 1.2;
-    margin-bottom: 8px;
+    margin-bottom: 0;
     white-space: normal;
     overflow: visible;
     word-wrap: break-word;
   }
   
+  .priceRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: auto;
+    flex-shrink: 0;
+    min-height: 18px;
+  }
+  
   .price {
     font-size: 0.75rem;
-    margin-top: auto;
+    white-space: nowrap;
   }
   
   .startingFrom {
     font-size: 0.65rem;
+    white-space: nowrap;
   }
 }
 
@@ -352,7 +370,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: flex-start;
+    justify-content: space-between;
     position: relative;
     z-index: 1;
     flex-shrink: 0;
@@ -368,16 +386,25 @@
   .name {
     font-size: 0.75rem;
     line-height: 1.2;
-    margin-bottom: 8px;
+    margin-bottom: 0;
     white-space: normal;
     overflow: visible;
     word-wrap: break-word;
   }
   .price {
     font-size: 0.75rem;
-    margin-top: auto;
   }
   .startingFrom {
     font-size: 0.65rem;
+  }
+  .priceRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: auto;
+    flex-shrink: 0;
+    min-height: 18px;
   }
 } 

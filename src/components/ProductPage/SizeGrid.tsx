@@ -73,13 +73,9 @@ export const SizeGrid: React.FC<{
             <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
           </svg>
         </span>
-        {open ? (
+        {selectedSize && (
           <div className={styles.all}>
-            {selectedSize ? selectedSize.size : 'All'}
-          </div>
-        ) : (
-          <div className={styles.all}>
-            {selectedSize ? selectedSize.size : 'All'}
+            {selectedSize.size}
           </div>
         )}
       </button>

@@ -27,9 +27,21 @@ interface UniversalProductGridProps {
 }
 
 // Utility function to limit product names - 5 words for desktop, 4 for mobile/tablet (no ellipsis)
-const truncateProductName = (name: string, isMobile: boolean = false, isTablet: boolean = false): string => {
-  const words = name.split(' ');
+const truncateProductName = (name: string, isMobile: boolean = false, isTablet: boolean = false, brand?: string): string => {
+  if (!name) return '';
+  
+  // Remove brand name from the beginning of product name
+  let cleanName = name;
+  if (brand && name.toLowerCase().startsWith(brand.toLowerCase())) {
+    cleanName = name.substring(brand.length).trim();
+    // Remove any leading punctuation or spaces
+    cleanName = cleanName.replace(/^[\s\-_.,]+/, '');
+  }
+  
+  // Limit to 5 words on desktop, 4 words on mobile
+  const words = cleanName.split(' ');
   const maxWords = (isMobile || isTablet) ? 4 : 5;
+  if (words.length <= maxWords) return cleanName;
   return words.slice(0, maxWords).join(' ');
 };
 
@@ -96,18 +108,7 @@ const UniversalProductGrid: React.FC<UniversalProductGridProps> = ({
   const getProductLink = (product: Product): string => {
     // For search page, use the product type to determine the correct category path
     if (category === 'search' && product.type) {
-      // Map product types to correct URL paths (plural to singular)
-      const typeMap: { [key: string]: string } = {
-        'sneakers': 'sneaker',
-        'apparel': 'apparel',
-        'accessories': 'accessories',
-        'perfumes': 'perfume',
-        'watches': 'watch'
-      };
-      
-      const urlPath = typeMap[product.type] || product.type.toLowerCase();
-      console.log(`🔗 Product navigation: ${product.type} -> ${urlPath} (ID: ${product.id})`);
-      return `/${urlPath}/${product.id}`;
+      return `/${product.type.toLowerCase()}/${product.id}`;
     }
     // Always use our internal product pages, not external URLs
     return `/${category || 'sneaker'}/${product.id}`;
@@ -160,7 +161,7 @@ const UniversalProductGrid: React.FC<UniversalProductGridProps> = ({
             <div className={styles.content}>
               <div className={styles.brand}>{product.brand}</div>
               <div className={styles.name} title={productName}>
-                {truncateProductName(productName, isMobile, isTablet)}
+                {truncateProductName(productName, isMobile, isTablet, product.brand)}
               </div>
               <div className={styles.price}>
                 {productPrice > 0 ? formatPrice(productPrice) : 'Price on request'}

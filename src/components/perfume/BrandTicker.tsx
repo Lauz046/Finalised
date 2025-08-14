@@ -41,26 +41,38 @@ const BrandTicker: React.FC<BrandTickerProps> = ({ brands, onBrandClick }) => {
     if (paused) return;
     const ticker = tickerRef.current;
     if (!ticker) return;
+    
     let animationFrame: number;
-    const scrollAmount = ticker.scrollLeft || 0;
+    let translateX = 0;
     const speed = 0.5; // px per frame
+    
     function animate() {
       if (!ticker) return;
-      scrollAmount += speed;
-      if (ticker.scrollLeft >= ticker.scrollWidth / 2) {
-        ticker.scrollLeft = 0;
-        scrollAmount = 0;
-      } else {
-        ticker.scrollLeft = scrollAmount;
+      translateX -= speed;
+      
+      // Reset position when we've moved the width of one complete set of brands
+      const singleSetWidth = ticker.scrollWidth / 2; // Since we have 2 sets
+      if (Math.abs(translateX) >= singleSetWidth) {
+        translateX = 0;
       }
+      
+      ticker.style.transform = `translateX(${translateX}px)`;
       animationFrame = requestAnimationFrame(animate);
     }
+    
     animate();
     return () => cancelAnimationFrame(animationFrame);
   }, [limitedBrands, paused]);
 
   // Duplicate brands for infinite scrolling effect
-  const displayBrands = [...limitedBrands, ...limitedBrands];
+  const displayBrands = useMemo(() => {
+    // Duplicate the brands 4 times for seamless endless scrolling
+    const duplicated = [];
+    for (let i = 0; i < 4; i++) {
+      duplicated.push(...limitedBrands);
+    }
+    return duplicated;
+  }, [limitedBrands]);
 
   return (
     <div style={{ fontFamily: 'Montserrat, Inter, Segoe UI, Arial, sans-serif' }}>

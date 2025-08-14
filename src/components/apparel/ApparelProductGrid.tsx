@@ -29,10 +29,22 @@ const ApparelProductGrid: React.FC<ApparelProductGridProps> = ({ products, onPro
     }).format(price)}`;
   };
 
-  // Limit product name - 5 words for desktop, 4 for mobile (no ellipsis)
-  const truncateProductName = (name: string, isMobile: boolean = false) => {
-    const words = name.split(' ');
+  // Helper function to truncate product names and remove brand name from beginning
+  const truncateProductName = (name: string, isMobile: boolean = false, brand?: string): string => {
+    if (!name) return '';
+    
+    // Remove brand name from the beginning of product name
+    let cleanName = name;
+    if (brand && name.toLowerCase().startsWith(brand.toLowerCase())) {
+      cleanName = name.substring(brand.length).trim();
+      // Remove any leading punctuation or spaces
+      cleanName = cleanName.replace(/^[\s\-_.,]+/, '');
+    }
+    
+    // Limit to 5 words on desktop, 4 words on mobile
+    const words = cleanName.split(' ');
     const maxWords = isMobile ? 4 : 5;
+    if (words.length <= maxWords) return cleanName;
     return words.slice(0, maxWords).join(' ');
   };
 
@@ -72,7 +84,7 @@ const ApparelProductGrid: React.FC<ApparelProductGridProps> = ({ products, onPro
           <div className={styles.content}>
             <div className={styles.brand}>{product.brand}</div>
             <div className={styles.name} title={product.productName}>
-              {truncateProductName(product.productName, mobile)}
+              {truncateProductName(product.productName, mobile, product.brand)}
             </div>
             {product.productLink && (
               <ProductDescriptionPreview

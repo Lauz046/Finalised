@@ -18,10 +18,22 @@ interface PerfumeProductGridProps {
   loading?: boolean;
 }
 
-// Utility function to limit product names - 5 words for desktop, 4 for mobile (no ellipsis)
-const truncateProductName = (name: string, isMobile: boolean = false): string => {
-  const words = name.split(' ');
+// Helper function to truncate product names and remove brand name from beginning
+const truncateProductName = (name: string, isMobile: boolean = false, brand?: string): string => {
+  if (!name) return '';
+  
+  // Remove brand name from the beginning of product name
+  let cleanName = name;
+  if (brand && name.toLowerCase().startsWith(brand.toLowerCase())) {
+    cleanName = name.substring(brand.length).trim();
+    // Remove any leading punctuation or spaces
+    cleanName = cleanName.replace(/^[\s\-_.,]+/, '');
+  }
+  
+  // Limit to 5 words on desktop, 4 words on mobile
+  const words = cleanName.split(' ');
   const maxWords = isMobile ? 4 : 5;
+  if (words.length <= maxWords) return cleanName;
   return words.slice(0, maxWords).join(' ');
 };
 
@@ -80,7 +92,7 @@ const PerfumeProductGrid: React.FC<PerfumeProductGridProps> = ({ products, onPro
             <div className={styles.content}>
               <div className={styles.brand}>{product.brand}</div>
               <div className={styles.name} title={product.title}>
-                {truncateProductName(product.title || '', mobile)}
+                {truncateProductName(product.title || '', mobile, product.brand)}
               </div>
               <div className={styles.priceRow}>
                 <span className={styles.startingFrom}>Starting from</span>

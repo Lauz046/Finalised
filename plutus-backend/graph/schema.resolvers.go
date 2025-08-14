@@ -58,11 +58,42 @@ func (r *queryResolver) Sneakers(ctx context.Context, brand *string, size *strin
 		WHERE 1=1
 	`
 	if brand != nil && *brand != "" {
-		// Use case-insensitive brand comparison with accent normalization
-		normalizedBrand := normalizeAccents(strings.ToLower(strings.TrimSpace(*brand)))
-		// Use multiple conditions to handle both with and without accents
-		query += fmt.Sprintf(" AND (LOWER(TRIM(brand)) = '%s' OR LOWER(TRIM(brand)) = '%s')",
-			strings.ToLower(strings.TrimSpace(*brand)), normalizedBrand)
+		// Enhanced brand comparison with multiple fallback strategies
+		normalizedBrand := strings.ToLower(strings.TrimSpace(*brand))
+
+		// Strategy 1: Exact case-insensitive match
+		query += fmt.Sprintf(" AND (LOWER(TRIM(brand)) = '%s'", normalizedBrand)
+
+		// Strategy 2: Handle ampersand variations
+		if strings.Contains(normalizedBrand, "&") {
+			// Try with "and" instead of "&"
+			andVersion := strings.ReplaceAll(normalizedBrand, "&", "and")
+			query += fmt.Sprintf(" OR LOWER(TRIM(brand)) = '%s'", andVersion)
+		} else if strings.Contains(normalizedBrand, "and") {
+			// Try with "&" instead of "and"
+			ampersandVersion := strings.ReplaceAll(normalizedBrand, "and", "&")
+			query += fmt.Sprintf(" OR LOWER(TRIM(brand)) = '%s'", ampersandVersion)
+		}
+
+		// Strategy 3: Handle period variations (e.g., "A. LANGE" vs "A LANGE")
+		if strings.Contains(normalizedBrand, ".") {
+			noPeriodVersion := strings.ReplaceAll(normalizedBrand, ".", "")
+			query += fmt.Sprintf(" OR LOWER(TRIM(brand)) = '%s'", noPeriodVersion)
+		} else {
+			// Try adding periods for common patterns
+			withPeriodVersion := strings.ReplaceAll(normalizedBrand, "a lange", "a. lange")
+			if withPeriodVersion != normalizedBrand {
+				query += fmt.Sprintf(" OR LOWER(TRIM(brand)) = '%s'", withPeriodVersion)
+			}
+		}
+
+		// Strategy 4: Handle accent normalization
+		accentNormalized := normalizeAccents(normalizedBrand)
+		if accentNormalized != normalizedBrand {
+			query += fmt.Sprintf(" OR LOWER(TRIM(brand)) = '%s'", accentNormalized)
+		}
+
+		query += ")"
 	}
 	if size != nil && *size != "" {
 		query += fmt.Sprintf(" AND size_prices::text ILIKE '%%%s%%'", *size)
@@ -253,9 +284,36 @@ func (r *queryResolver) Perfumes(ctx context.Context, brand *string, fragranceFa
 		WHERE 1=1
 	`
 	if brand != nil && *brand != "" {
-		// Use case-insensitive brand comparison with normalization
+		// Enhanced brand comparison with multiple fallback strategies
 		normalizedBrand := strings.ToLower(strings.TrimSpace(*brand))
-		query += fmt.Sprintf(" AND LOWER(TRIM(brand)) = '%s'", normalizedBrand)
+
+		// Strategy 1: Exact case-insensitive match
+		query += fmt.Sprintf(" AND (LOWER(TRIM(brand)) = '%s'", normalizedBrand)
+
+		// Strategy 2: Handle ampersand variations
+		if strings.Contains(normalizedBrand, "&") {
+			// Try with "and" instead of "&"
+			andVersion := strings.ReplaceAll(normalizedBrand, "&", "and")
+			query += fmt.Sprintf(" OR LOWER(TRIM(brand)) = '%s'", andVersion)
+		} else if strings.Contains(normalizedBrand, "and") {
+			// Try with "&" instead of "and"
+			ampersandVersion := strings.ReplaceAll(normalizedBrand, "and", "&")
+			query += fmt.Sprintf(" OR LOWER(TRIM(brand)) = '%s'", ampersandVersion)
+		}
+
+		// Strategy 3: Handle period variations
+		if strings.Contains(normalizedBrand, ".") {
+			noPeriodVersion := strings.ReplaceAll(normalizedBrand, ".", "")
+			query += fmt.Sprintf(" OR LOWER(TRIM(brand)) = '%s'", noPeriodVersion)
+		}
+
+		// Strategy 4: Handle accent normalization
+		accentNormalized := normalizeAccents(normalizedBrand)
+		if accentNormalized != normalizedBrand {
+			query += fmt.Sprintf(" OR LOWER(TRIM(brand)) = '%s'", accentNormalized)
+		}
+
+		query += ")"
 	}
 	if fragranceFamily != nil && *fragranceFamily != "" {
 		query += fmt.Sprintf(" AND fragrance_family ILIKE '%%%s%%'", *fragranceFamily)

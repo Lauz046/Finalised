@@ -40,8 +40,12 @@ const BrandTicker: React.FC<BrandTickerProps> = ({ brands, onBrandClick }) => {
 
   // Create endless scrolling by duplicating the 5 categories multiple times
   const displayBrands = useMemo(() => {
-    // Duplicate the categories 6 times for seamless endless scrolling (more for mobile)
-    return [...sneakerCategories, ...sneakerCategories, ...sneakerCategories, ...sneakerCategories, ...sneakerCategories, ...sneakerCategories];
+    // Duplicate the categories 8 times for seamless endless scrolling
+    const duplicated = [];
+    for (let i = 0; i < 8; i++) {
+      duplicated.push(...sneakerCategories);
+    }
+    return duplicated;
   }, [sneakerCategories]);
 
   // Transform-based animation for smooth endless movement
@@ -60,8 +64,8 @@ const BrandTicker: React.FC<BrandTickerProps> = ({ brands, onBrandClick }) => {
       if (!ticker) return;
       translateX -= speed;
       
-      // Reset position when we've moved the width of one set of brands
-      const singleSetWidth = ticker.scrollWidth / 6; // Since we have 6 sets
+      // Reset position when we've moved the width of one complete set of brands
+      const singleSetWidth = ticker.scrollWidth / 8; // Since we have 8 sets now
       if (Math.abs(translateX) >= singleSetWidth) {
         translateX = 0;
       }

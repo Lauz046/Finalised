@@ -300,7 +300,7 @@ const Showcase = () => {
       <div style={{ marginTop: '2rem' }} />
       <h1 className={styles.title}>BEYOND ORDINARY</h1>
       <div className={styles.subtitle}>
-        Curated for those who crave the exceptional,<br />
+        Curated for those who crave the exceptional,{'\n'}
         not the expected.
       </div>
       

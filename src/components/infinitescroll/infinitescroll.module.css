@@ -23,7 +23,7 @@
 
 .sectionTitle {
   color: #fff;
-  font-family: 'Montserrat', Arial, sans-serif;
+  font-family: 'Times New Normal', Times, serif;
   font-size: 4rem;
   font-weight: 400;
   text-align: center;
@@ -125,7 +125,7 @@
   padding: 12px 28px;
   border-radius: 0;
   font-size: 1.1rem;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', Arial, sans-serif;
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(0,0,0,0.10);
   z-index: 2;
@@ -140,7 +140,7 @@
   padding: 16px 38px;
   border-radius: 0;
   font-size: 1.2rem;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', Arial, sans-serif;
   font-weight: 700;
   box-shadow: 0 2px 8px rgba(0,0,0,0.10);
   cursor: pointer;
@@ -180,7 +180,7 @@
     color: #fff;
     font-weight: 400;
     line-height: 1.2;
-    font-family: 'Montserrat', Arial, sans-serif;
+    font-family: 'Times New Normal', Times, serif;
   }
   .cardsRow {
     flex-direction: column;

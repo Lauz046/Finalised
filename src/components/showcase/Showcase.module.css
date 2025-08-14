@@ -113,7 +113,7 @@
 }
 
 .title {
-  font-family: 'Miracle History' !important;
+  font-family: 'Wasted Vindey', 'Times New Normal', Times, serif !important;
   font-size: 4rem;
   font-weight: 400;
   letter-spacing: 0.02em;
@@ -139,17 +139,22 @@
   z-index: 1;
   line-height: 1.4;
   margin-bottom: 2rem;
+  white-space: pre-line;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Desktop specific adjustments */
 @media (min-width: 701px) {
   .title {
     margin-top: -1rem;
-    font-family: 'Miracle History' !important;
+    font-family: 'Wasted Vindey', 'Times New Normal', Times, serif !important;
   }
   
   .subtitle {
     margin-bottom: 3rem;
+    font-size: 1.4rem;
   }
   
   .carouselContainer {
@@ -175,7 +180,7 @@
     padding: 0;
     font-size: 2.8rem;
     margin-bottom: 0.5rem;
-    font-family: 'Miracle History' !important;
+    font-family: 'Wasted Vindey', 'Times New Normal', Times, serif !important;
   }
   
   .subtitle {
@@ -183,6 +188,8 @@
     padding: 0;
     font-size: 1.1rem;
     margin-bottom: 1.5rem;
+    white-space: pre-line;
+    line-height: 1.5;
   }
   
   .carouselContainer {
@@ -240,11 +247,14 @@
     margin-top: 1rem;
     margin-bottom: 0.5rem;
     font-size: 3rem;
+    font-family: 'Wasted Vindey', 'Times New Normal', Times, serif !important;
   }
   
   .subtitle {
     margin-bottom: 1.5rem;
     font-size: 1.1rem;
+    white-space: pre-line;
+    line-height: 1.5;
   }
   
   .carouselContainer {
@@ -271,11 +281,14 @@
     margin-top: 0.5rem;
     margin-bottom: 0.3rem;
     font-size: 2.5rem;
+    font-family: 'Wasted Vindey', 'Times New Normal', Times, serif !important;
   }
   
   .subtitle {
     margin-bottom: 1rem;
     font-size: 1rem;
+    white-space: pre-line;
+    line-height: 1.5;
   }
   
   .carouselContainer {
@@ -304,8 +317,10 @@
   font-size: 1.4rem;
   text-align: center;
   margin-bottom: 3rem;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', Arial, sans-serif;
   z-index: 1;
+  white-space: pre-line;
+  line-height: 1.4;
 }
 
 .carouselContainer {
@@ -427,7 +442,7 @@
     margin-bottom: 1rem;
     font-size: 2.5rem;
     text-align: center;
-    font-family: 'Miracle History' !important;
+    font-family: 'Wasted Vindey', 'Times New Normal', Times, serif !important;
   }
   
   .subtitle {
@@ -438,6 +453,9 @@
     font-family: 'Montserrat', Arial, sans-serif;
     z-index: 1;
     line-height: 1.4;
+    white-space: pre-line;
+    padding: 0 20px;
+    max-width: 90%;
   }
   
   .carouselContainer {
@@ -586,12 +604,14 @@
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
     font-size: 2.2rem;
-    font-family: 'Miracle History' !important;
+    font-family: 'Wasted Vindey', 'Times New Normal', Times, serif !important;
   }
   
   .subtitle {
     margin-bottom: 4rem;
     font-size: 0.9rem;
+    white-space: pre-line;
+    line-height: 1.5;
   }
   
   .carouselContainer {
@@ -625,10 +645,13 @@
     font-size: 2.2rem;
     margin-top: 1rem;
     margin-bottom: 2rem;
+    font-family: 'Wasted Vindey', 'Times New Normal', Times, serif !important;
   }
   
   .subtitle {
     font-size: 1rem;
+    white-space: pre-line;
+    line-height: 1.5;
     margin-bottom: 4rem;
     line-height: 1.3;
   }

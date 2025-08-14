@@ -28,7 +28,7 @@
 .home__productsTitleInner {
   font-size: 3.2rem;
   color: #0e0e0e;
-  font-family: "Times New Roman";
+  font-family: "Times New Normal", Times, serif;
   text-transform: uppercase;
   position: relative;
   z-index: 3;

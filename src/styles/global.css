@@ -3,7 +3,7 @@
 :root {
   --bento-gap: 16px;
   --bento-padding: 40px;
-  --label-font: 'Times New Roman', Times, serif;
+  --label-font: 'Times New Normal', Times, serif;
 }
 
 /* Additional global styles for components */

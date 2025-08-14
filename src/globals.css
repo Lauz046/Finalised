@@ -3,6 +3,9 @@
 /* Import Gwendolyn Font from Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Gwendolyn:wght@400;700&display=swap');
 
+/* Import Times New Normal font family */
+@import url('https://fonts.googleapis.com/css2?family=Times+New+Normal:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 /* Custom Font Face for Wasted Vindey - Using elegant serif fallbacks */
 @font-face {
   font-family: 'Wasted Vindey';

@@ -42,8 +42,6 @@ const HomePage = () => {
   return (
     <>
       <Head>
-        <title>Premium Brand Experience</title>
-        <meta name="description" content="A premium brand experience inspired by Cartier" />
         {/* Preload critical resources */}
         <link rel="preload" href="/image1.jpeg" as="image" />
         <link rel="preload" href="/image2.jpeg" as="image" />

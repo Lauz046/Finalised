@@ -53,6 +53,7 @@ export default function Document() {
         <meta name="robots" content="index, follow" />
         <meta name="googlebot" content="index, follow" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="sitemap" href="/sitemap.xml" />
         
         {/* Structured Data for Rich Snippets */}
         <script

@@ -54,8 +54,8 @@ const CategoriesPage = () => {
   return (
     <>
       <Head>
-        <title>Categories - Premium Brand Experience</title>
-        <meta name="description" content="Browse all product categories" />
+        <title>Categories | House of Plutus</title>
+        <meta name="description" content="Browse all luxury product categories - sneakers, watches, perfumes, apparel & accessories at House of Plutus" />
       </Head>
 
       <div style={{ 

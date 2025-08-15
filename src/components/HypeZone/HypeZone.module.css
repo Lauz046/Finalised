@@ -57,6 +57,8 @@
   text-decoration: underline;
   font-weight: 500;
   transition: opacity 0.2s ease;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 .joinLink:hover {
@@ -585,12 +587,12 @@
   }
   
   .post {
-    width: 100vw;
+    width: calc(100vw - 32px);
     height: 600px;
     scroll-snap-align: center;
-    margin: 0;
+    margin: 0 16px;
     flex-shrink: 0;
-    border-radius: 0;
+    border-radius: 12px;
   }
   
   .imageContainer {
@@ -600,7 +602,7 @@
   }
   
   .feedContainer {
-    padding: 0;
+    padding: 0 16px;
     scroll-snap-type: x mandatory;
     overflow-x: auto;
     overflow-y: hidden;
@@ -629,12 +631,12 @@
   }
   
   .post {
-    width: 100vw;
+    width: calc(100vw - 32px);
     height: 560px;
     scroll-snap-align: center;
-    margin: 0;
+    margin: 0 16px;
     flex-shrink: 0;
-    border-radius: 0;
+    border-radius: 12px;
   }
   
   .imageContainer {
@@ -644,7 +646,7 @@
   }
   
   .feedContainer {
-    padding: 0;
+    padding: 0 16px;
     scroll-snap-type: x mandatory;
     overflow-x: auto;
     overflow-y: hidden;

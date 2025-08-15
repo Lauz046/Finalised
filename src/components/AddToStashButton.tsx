@@ -58,10 +58,10 @@ const AddToStashButton: React.FC<AddToStashButtonProps> = ({
       aria-label={isStashed ? 'Remove from stash' : 'Add to stash'}
     >
       <Image 
-        src="/nav/STASH.svg" 
+        src="/DON/Stash White icon.svg" 
         alt="Stash" 
-        width={20} 
-        height={20} 
+        width={24} 
+        height={24} 
         style={{ marginRight: 8, verticalAlign: 'middle' }} 
       />
       {isStashed ? 'IN STASH' : 'ADD TO STASH'}

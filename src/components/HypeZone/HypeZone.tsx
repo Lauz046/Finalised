@@ -312,7 +312,7 @@ const HypeZone: React.FC = () => {
                 <div className={styles.profileInfo}>
                   <div className={styles.profileIconContainer}>
                     <Image
-                      src="/LOGO.svg"
+                      src="/DON/horn svg.png"
                       alt="PLUTUS"
                       width={24}
                       height={24}
@@ -408,7 +408,7 @@ const HypeZone: React.FC = () => {
               <div className={styles.modalProfileInfo}>
                 <div className={styles.modalProfileIconContainer}>
                   <Image
-                    src="/LOGO.svg"
+                    src="/DON/horn svg.png"
                     alt="PLUTUS"
                     width={24}
                     height={24}

@@ -39,8 +39,8 @@
 
 @media (max-width: 768px) {
   .button {
-    font-size: 0.85rem;
-    padding: 12px 16px;
+    font-size: 0.9rem;
+    padding: 14px 16px;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;

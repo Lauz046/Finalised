@@ -31,6 +31,7 @@ const OptimizedHeroCarousel = () => {
   const [currentVideos, setCurrentVideos] = useState<string[]>([])
   const [userInteracted, setUserInteracted] = useState(false)
   const [loadedVideoCount, setLoadedVideoCount] = useState(0)
+  const [videoPlaying, setVideoPlaying] = useState(false)
   
   const progressInterval = useRef<NodeJS.Timeout | null>(null)
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
@@ -319,6 +320,7 @@ const OptimizedHeroCarousel = () => {
                 console.log('📱 iOS user interaction detected - starting video')
                 currentVideo.play().then(() => {
                   console.log('✅ iOS video started after interaction')
+                  setVideoPlaying(true)
                 }).catch((error) => {
                   console.warn('iOS video play failed after interaction:', error)
                 })
@@ -336,6 +338,7 @@ const OptimizedHeroCarousel = () => {
           if (playPromise !== undefined) {
             await playPromise
             console.log('✅ Current video playing')
+            setVideoPlaying(true)
           }
         } catch (error) {
           console.warn('Video play failed:', error)
@@ -373,12 +376,44 @@ const OptimizedHeroCarousel = () => {
       if (currentVideo) {
         currentVideo.play().then(() => {
           console.log('✅ Video started after user interaction')
+          setVideoPlaying(true)
         }).catch((error) => {
           console.warn('Play failed after interaction:', error)
         })
       }
     }
   }, [userInteracted, activeIndex, currentVideos, getValidVideoIndex])
+
+  // Add video event listeners to detect when video starts playing
+  useEffect(() => {
+    const currentVideo = videoRefs.current[activeIndex]
+    if (currentVideo) {
+      const handlePlay = () => {
+        console.log('🎬 Video started playing')
+        setVideoPlaying(true)
+      }
+      
+      const handlePause = () => {
+        console.log('⏸️ Video paused')
+        setVideoPlaying(false)
+      }
+      
+      const handleEnded = () => {
+        console.log('🔚 Video ended')
+        setVideoPlaying(false)
+      }
+      
+      currentVideo.addEventListener('play', handlePlay)
+      currentVideo.addEventListener('pause', handlePause)
+      currentVideo.addEventListener('ended', handleEnded)
+      
+      return () => {
+        currentVideo.removeEventListener('play', handlePlay)
+        currentVideo.removeEventListener('pause', handlePause)
+        currentVideo.removeEventListener('ended', handleEnded)
+      }
+    }
+  }, [activeIndex])
 
   // Memory cleanup
   useEffect(() => {
@@ -466,6 +501,26 @@ const OptimizedHeroCarousel = () => {
             </div>
           ))}
         </div>
+
+        {/* Video Placeholder - shows until video starts playing */}
+        {!videoPlaying && !isLoading && (
+          <div className={styles.videoPlaceholder}>
+            <img 
+              src={deviceInfo.isMobile ? "/hero-placeholder-mobile.png" : "/hero-placeholder.png"}
+              alt="House of Plutus - Loading Premium Experience"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: 'center'
+              }}
+            />
+            <div className={styles.placeholderOverlay}>
+              <div className={styles.loadingSpinner}></div>
+              <p>Loading premium experience...</p>
+            </div>
+          </div>
+        )}
 
         {/* Foreground Videos */}
         <div className={styles.fgCarousel}>

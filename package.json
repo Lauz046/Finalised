@@ -27,7 +27,8 @@
     "optimize:production": "node scripts/optimize-production.js",
     "deploy:ready": "npm run optimize:production && npm run build:production",
     "test:graphql": "node scripts/test-graphql-connection.js",
-    "generate-favicons": "node scripts/generate-favicons.js"
+    "generate-favicons": "node scripts/generate-favicons.js",
+    "create-placeholder": "node scripts/create-hero-placeholder.js"
   },
   "dependencies": {
     "@apollo/client": "^3.8.0",

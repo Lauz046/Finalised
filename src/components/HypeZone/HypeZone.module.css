@@ -587,10 +587,10 @@
   }
   
   .post {
-    width: calc(100vw - 32px);
+    width: 100vw;
     height: 600px;
     scroll-snap-align: center;
-    margin: 0 16px;
+    margin: 0;
     flex-shrink: 0;
     border-radius: 0;
   }
@@ -602,7 +602,7 @@
   }
   
   .feedContainer {
-    padding: 0 16px;
+    padding: 0;
     scroll-snap-type: x mandatory;
     overflow-x: auto;
     overflow-y: hidden;
@@ -631,10 +631,10 @@
   }
   
   .post {
-    width: calc(100vw - 32px);
+    width: 100vw;
     height: 560px;
     scroll-snap-align: center;
-    margin: 0 16px;
+    margin: 0;
     flex-shrink: 0;
     border-radius: 0;
   }
@@ -646,7 +646,7 @@
   }
   
   .feedContainer {
-    padding: 0 16px;
+    padding: 0;
     scroll-snap-type: x mandatory;
     overflow-x: auto;
     overflow-y: hidden;

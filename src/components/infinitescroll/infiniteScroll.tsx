@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./infinitescroll.module.css";
 
 const InfiniteCardSection: React.FC = () => {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <section className={styles.sectionCustom}>
       <h2 className={styles.sectionTitle}>
@@ -16,8 +18,17 @@ const InfiniteCardSection: React.FC = () => {
           <div className={styles.cardCta}>Designer Perfumes</div>
         </Link>
         {/* Desktop: Middle Card (Perfume Image) */}
-        <div className={styles.cardCenter}>
-          <Image src="/PERFUMES_FRAGRANCE_WOF__ANIMATION.png" alt="Perfume Collection" fill className={styles.cardImageStatic} />
+        <div 
+          className={styles.cardCenter}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <Image 
+            src={isHovered ? "/hoverperfume-optimized.webp" : "/PERFUMES_FRAGRANCE_WOF__ANIMATION.png"} 
+            alt="Perfume Collection" 
+            fill 
+            className={styles.cardImageStatic} 
+          />
         </div>
         {/* Desktop: Right Card */}
         <Link href="/perfume?filter=niche" className={styles.cardTiltRight}>

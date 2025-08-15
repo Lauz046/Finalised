@@ -9,6 +9,7 @@ import ShowcaseMoodSection from '@/components/moodmatch/ShowcaseMoodSection';
 import BentoGrid from '@/components/BentoGrid/BentoGrid';
 import PremiumScrollRow from '@/components/scrollrow/PremiumScrollRow';
 import PremiumIconRow from '@/components/scrollrow/PremiumIconRow';
+import HypeZone from '@/components/HypeZone';
 
 
 // CSS-based progressive loading component
@@ -77,6 +78,11 @@ const HomePage = () => {
       {/* Final components - fade in after 400ms */}
       <ProgressiveLoader delay={400}>
         <HeroShowcase/> 
+      </ProgressiveLoader>
+      
+      {/* HypeZone component - fade in after 500ms */}
+      <ProgressiveLoader delay={500}>
+        <HypeZone/>
       </ProgressiveLoader>
       
 

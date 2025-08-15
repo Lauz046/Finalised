@@ -298,7 +298,7 @@ func rateLimitMiddleware(next http.HandlerFunc) http.HandlerFunc {
 
 func corsHandlerFunc(h http.HandlerFunc) http.Handler {
 	return cors.New(cors.Options{
-		AllowedOrigins:   []string{os.Getenv("CORS_ORIGIN"), "http://localhost:3000", "https://localhost:3000"},
+		AllowedOrigins:   []string{os.Getenv("CORS_ORIGIN"), "http://localhost:3000", "https://localhost:3000", "https://houseofplutus.com", "https://www.houseofplutus.com", "http://houseofplutus.com", "http://www.houseofplutus.com", "https://houseofplutus.in", "https://www.houseofplutus.in", "http://houseofplutus.in", "http://www.houseofplutus.in"},
 		AllowCredentials: true,
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
 		AllowedHeaders:   []string{"Content-Type", "Authorization", "X-Requested-With"},
@@ -386,6 +386,14 @@ func main() {
 		"https://plutus-frontend.vercel.app",
 		"https://plutus-frontend-git-main-lauz046.vercel.app",
 		"https://plutus-frontend-git-develop-lauz046.vercel.app",
+		"https://houseofplutus.com",
+		"https://www.houseofplutus.com",
+		"http://houseofplutus.com",
+		"http://www.houseofplutus.com",
+		"https://houseofplutus.in",
+		"https://www.houseofplutus.in",
+		"http://houseofplutus.in",
+		"http://www.houseofplutus.in",
 	}
 
 	// Add custom origin if provided

@@ -6,9 +6,6 @@ export default function Document() {
       <Head>
         {/* Fonts */}
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
-        
-        {/* Title Tag */}
-        <title>House of Plutus | India's Trusted Luxury Platform</title>
 
         {/* ✅ SEO Meta Tags - Updated for better visibility */}
         <meta name="description" content="House of Plutus - India's premier luxury marketplace. Buy 100% authentic luxury sneakers, watches & designer apparel with expert verification. Shop with confidence." />
@@ -31,11 +28,8 @@ export default function Document() {
         <meta name="twitter:description" content="India's trusted platform for 100% authentic luxury sneakers, watches & apparel. Expert verification. No fakes. No compromises." />
         <meta name="twitter:image" content="https://www.houseofplutus.com/DON/horn%20svg.png" />
 
-        {/* Canonical & hreflang for multi-domain consistency */}
+        {/* Canonical URL */}
         <link rel="canonical" href="https://www.houseofplutus.com" />
-        <link rel="alternate" hrefLang="en-in" href="https://www.houseofplutus.in" />
-        <link rel="alternate" hrefLang="en" href="https://www.houseofplutus.com" />
-        <link rel="alternate" hrefLang="x-default" href="https://www.houseofplutus.com" />
 
         {/* Favicon Links */}
         <link rel="icon" href="/favicon.ico" sizes="any" />

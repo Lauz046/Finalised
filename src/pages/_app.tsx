@@ -3,6 +3,7 @@ import Footer from '@/components/Footer';
 import type { AppProps } from 'next/app';
 import { ApolloProvider } from '@apollo/client';
 import { Montserrat } from 'next/font/google';
+import Head from 'next/head';
 import SearchOverlay, { SearchOverlayRef } from '../components/SearchOverlay';
 import React, { useState, useEffect, useRef } from 'react';
 import { useApollo } from '../lib/apolloClient';
@@ -58,6 +59,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ApolloProvider client={apolloClient}>
+      <Head>
+        <title>House of Plutus | India's Trusted Luxury Platform</title>
+        <meta name="description" content="House of Plutus - India's premier luxury marketplace. Buy 100% authentic luxury sneakers, watches & designer apparel with expert verification. Shop with confidence." />
+      </Head>
       <ProductProvider>
         <StashProvider>
           <AuthProvider>

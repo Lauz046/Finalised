@@ -153,18 +153,18 @@
 .profileIconContainer {
   width: 32px;
   height: 32px;
-  background: #051F2D;
+  background: transparent;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: 0;
 }
 
 .profileIcon {
-  width: 20px;
-  height: 20px;
-  filter: brightness(0) invert(1);
+  width: 24px;
+  height: 24px;
+  filter: none;
 }
 
 .profileNameContainer {
@@ -360,18 +360,18 @@
 .modalProfileIconContainer {
   width: 32px;
   height: 32px;
-  background: #051F2D;
+  background: transparent;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: 0;
 }
 
 .modalProfileIcon {
-  width: 20px;
-  height: 20px;
-  filter: brightness(0) invert(1);
+  width: 24px;
+  height: 24px;
+  filter: none;
 }
 
 .modalProfileNameContainer {

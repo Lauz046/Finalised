@@ -337,8 +337,8 @@
 
 @media (max-width: 900px) {
   .card {
-    min-width: 160px;
-    max-width: 160px;
+    min-width: 184px;
+    max-width: 184px;
     height: 260px;
     min-height: 260px;
     border-radius: 0;

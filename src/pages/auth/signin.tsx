@@ -52,7 +52,14 @@ const SigninPage = () => {
 
       if (result.success) {
         setTimeout(() => {
-          navigateWithScrollPreservation('/');
+          // Check if there's a redirect URL stored
+          const redirectUrl = localStorage.getItem('redirectAfterLogin');
+          if (redirectUrl) {
+            localStorage.removeItem('redirectAfterLogin'); // Clean up
+            navigateWithScrollPreservation(redirectUrl);
+          } else {
+            navigateWithScrollPreservation('/');
+          }
         }, 1500);
       }
     } catch (error) {

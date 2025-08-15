@@ -106,6 +106,7 @@ const ProductSlider360 = () => {
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const [cachedProducts, setCachedProducts] = useState<Set<string>>(new Set());
   const [preloadedFrames, setPreloadedFrames] = useState<Set<string>>(new Set());
+  const [showPlaceholder, setShowPlaceholder] = useState(false);
   
   const containerRef = useRef<HTMLDivElement | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -353,6 +354,7 @@ const ProductSlider360 = () => {
           setIsLoading(true);
           setLoadProgress(0);
           setImagesLoaded(0);
+          setShowPlaceholder(false);
         }}
         className="product-swiper"
       >
@@ -400,31 +402,59 @@ const ProductSlider360 = () => {
                     </div>
                   </div>
                 )}
-                <img
-                  src={currentImageSrc || product.images360[0]}
-                  alt={product.name}
-                  className={styles.productPreviewImage}
-                  style={{
-                    opacity: isLoading ? 0.3 : 1,
-                    transition: 'opacity 0.3s ease',
-                    maxWidth: '55%',
-                    height: 'auto',
-                    filter: isLoading ? 'blur(2px)' : 'none',
-                    // Android-specific optimizations
-                    ...(deviceType === 'android' && {
-                      imageRendering: 'optimizeSpeed' as any,
-                      backfaceVisibility: 'hidden' as any,
-                      transform: 'translateZ(0)' as any,
-                    })
-                  }}
-                  onLoad={() => {
-                    if (isLoading && imagesLoaded >= (deviceType === 'android' ? 12 : 5)) {
+                {showPlaceholder ? (
+                  <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: 2,
+                    textAlign: 'center',
+                    color: 'white'
+                  }}>
+                    <img
+                      src="/small-carousel-placeholder.png"
+                      alt="360° View Placeholder"
+                      style={{
+                        width: '100%',
+                        height: 'auto',
+                        maxWidth: '300px',
+                        borderRadius: '8px'
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <img
+                    src={currentImageSrc || product.images360[0]}
+                    alt={product.name}
+                    className={styles.productPreviewImage}
+                    style={{
+                      opacity: isLoading ? 0.3 : 1,
+                      transition: 'opacity 0.3s ease',
+                      maxWidth: '55%',
+                      height: 'auto',
+                      filter: isLoading ? 'blur(2px)' : 'none',
+                      // Android-specific optimizations
+                      ...(deviceType === 'android' && {
+                        imageRendering: 'optimizeSpeed' as any,
+                        backfaceVisibility: 'hidden' as any,
+                        transform: 'translateZ(0)' as any,
+                      })
+                    }}
+                    onLoad={() => {
+                      if (isLoading && imagesLoaded >= (deviceType === 'android' ? 12 : 5)) {
+                        setIsLoading(false);
+                      }
+                      setShowPlaceholder(false);
+                    }}
+                    onError={() => {
+                      setShowPlaceholder(true);
                       setIsLoading(false);
-                    }
-                  }}
-                  loading="eager"
-                  decoding="async"
-                />
+                    }}
+                    loading="eager"
+                    decoding="async"
+                  />
+                )}
               </div>
             </div>
           </SwiperSlide>
@@ -443,6 +473,7 @@ const ProductSlider360 = () => {
               setIsLoading(true);
               setLoadProgress(0);
               setImagesLoaded(0);
+              setShowPlaceholder(false);
             }}
           >
             <img 

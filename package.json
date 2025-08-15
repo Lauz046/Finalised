@@ -28,7 +28,8 @@
     "deploy:ready": "npm run optimize:production && npm run build:production",
     "test:graphql": "node scripts/test-graphql-connection.js",
     "generate-favicons": "node scripts/generate-favicons.js",
-    "create-placeholder": "node scripts/create-hero-placeholder.js"
+    "create-placeholder": "node scripts/create-hero-placeholder.js",
+    "create-small-carousel-placeholder": "node scripts/create-small-carousel-placeholder.js"
   },
   "dependencies": {
     "@apollo/client": "^3.8.0",

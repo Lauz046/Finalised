@@ -34,7 +34,16 @@ const AddToStashButton: React.FC<AddToStashButtonProps> = ({
     e.stopPropagation();
     
     if (!isAuthenticated) {
+      // Store current page URL for redirect after login
+      const currentUrl = window.location.pathname + window.location.search;
+      localStorage.setItem('redirectAfterLogin', currentUrl);
       navigateWithScrollPreservation('/auth/signin');
+      return;
+    }
+    
+    if (isStashed) {
+      // If already in stash, navigate to stash page
+      navigateWithScrollPreservation('/stash');
       return;
     }
     

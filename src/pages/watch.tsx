@@ -126,7 +126,7 @@ const WatchPage = () => {
   const watches = useMemo(() => {
     const list = (watchesData?.watches || categoryData.watches || []);
     if (sortBy === '') {
-      return [...list].sort((a: unknown, b: unknown) => {
+      return [...list].sort((a: any, b: any) => {
         const aId = parseInt(a.id, 10);
         const bId = parseInt(b.id, 10);
         // Fallback for non-numeric ids
@@ -147,7 +147,7 @@ const WatchPage = () => {
   // Derive unique colors and min/max prices from watches
   const allColors = useMemo(() => {
     const set = new Set<string>();
-    watches.forEach((w: unknown) => {
+    watches.forEach((w: any) => {
       if (w.color) set.add(w.color);
     });
     return Array.from(set).sort();
@@ -155,7 +155,7 @@ const WatchPage = () => {
   
   const [minPrice, maxPrice] = useMemo(() => {
     let _min = Infinity, max = -Infinity;
-    watches.forEach((w: unknown) => {
+    watches.forEach((w: any) => {
       if (w.salePrice < _min) _min = w.salePrice;
       if (w.salePrice > max) max = w.salePrice;
     });
@@ -173,7 +173,7 @@ const WatchPage = () => {
   // Filter for in-stock (frontend, as backend does not support it)
   const filteredWatches = useMemo(() => {
     let filtered = watches;
-    if (inStockOnly) filtered = filtered.filter((w: unknown) => w.inStock);
+    if (inStockOnly) filtered = filtered.filter((w: any) => w.inStock);
     return filtered;
   }, [watches, inStockOnly]);
 
@@ -184,7 +184,7 @@ const WatchPage = () => {
     currentPage * PRODUCTS_PER_PAGE
   );
 
-  // Brand ticker: show only brands that have ticker images, with "Other" fallback
+  // Brand ticker: show only brands that have both products and ticker images, max 5 cards
   const brandTickerData = useMemo(() => {
     const availableBrandImages: { [key: string]: string } = {
       'rolex': '/watchticker/Rolex.png',
@@ -198,35 +198,30 @@ const WatchPage = () => {
       'bell & ross': '/watchticker/BELL & ROSS.png',
     };
 
-    const brandsWithImages = brands.filter((brand: string) => {
+    // Get brands that have both products and ticker images
+    const brandsWithProductsAndImages = brands.filter((brand: string) => {
       const normalizedBrand = brand.toLowerCase();
-      return availableBrandImages[normalizedBrand];
+      const hasImage = availableBrandImages[normalizedBrand];
+      const hasProducts = watches.some((watch: any) => 
+        watch.brand.toLowerCase() === normalizedBrand
+      );
+      return hasImage && hasProducts;
     });
 
-    const data = brandsWithImages.map((brand: string) => {
+    // Limit to maximum 5 brands
+    const limitedBrands = brandsWithProductsAndImages.slice(0, 5);
+
+    const data = limitedBrands.map((brand: string) => {
       const normalizedBrand = brand.toLowerCase();
       return {
         name: brand,
-        image: availableBrandImages[normalizedBrand] || '/watchticker/Rolex.png',
+        image: availableBrandImages[normalizedBrand],
       };
     });
 
-    // Add "Other" category for brands without images
-    const brandsWithoutImages = brands.filter((brand: string) => {
-      const normalizedBrand = brand.toLowerCase();
-      return !availableBrandImages[normalizedBrand];
-    });
-
-    if (brandsWithoutImages.length > 0) {
-      data.push({
-        name: 'Other',
-        image: '/watchticker/Rolex.png',
-      });
-    }
-
-    console.log('Watch brand ticker data:', data);
+    console.log('Watch brand ticker data (limited to 5):', data);
     return data;
-  }, [brands]);
+  }, [brands, watches]);
 
   // Handlers
   const handleBrandClick = (brand: string) => {
@@ -278,7 +273,7 @@ const WatchPage = () => {
   };
 
   // Prepare watch products for grid
-  const watchProducts = paginatedWatches.map((w: unknown) => {
+  const watchProducts = paginatedWatches.map((w: any) => {
     return {
       id: w.id,
       brand: w.brand,
@@ -357,13 +352,12 @@ const WatchPage = () => {
                   alignItems: 'center',
                   cursor: 'pointer',
                   height: 40,
-                  marginRight: 2,
+                  marginRight: '10px',
                 }}
                 onClick={() => {
                   const el = document.getElementById('brand-scroll-row-mobile');
                   if (el) el.scrollBy({ left: -120, behavior: 'smooth' });
                 }}
-                style={{ marginRight: '10px' }}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 20, height: 20 }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
@@ -417,13 +411,12 @@ const WatchPage = () => {
                   alignItems: 'center',
                   cursor: 'pointer',
                   height: 40,
-                  marginLeft: 2,
+                  marginLeft: '10px',
                 }}
                 onClick={() => {
                   const el = document.getElementById('brand-scroll-row-mobile');
                   if (el) el.scrollBy({ left: 120, behavior: 'smooth' });
                 }}
-                style={{ marginLeft: '10px' }}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 20, height: 20 }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />

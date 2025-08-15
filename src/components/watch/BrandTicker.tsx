@@ -45,8 +45,14 @@ const BrandTicker: React.FC<BrandTickerProps> = ({ brands, onBrandClick }) => {
 
   // Create endless scrolling by duplicating brands
   const displayBrands = useMemo(() => {
-    // Duplicate the brands 6 times for seamless endless scrolling (same as sneaker)
-    return [...uniqueBrands, ...uniqueBrands, ...uniqueBrands, ...uniqueBrands, ...uniqueBrands, ...uniqueBrands];
+    // Only duplicate if we have brands, and limit to 5 brands maximum
+    if (uniqueBrands.length === 0) return [];
+    
+    // Limit to 5 brands maximum
+    const limitedBrands = uniqueBrands.slice(0, 5);
+    
+    // Duplicate the brands 6 times for seamless endless scrolling
+    return [...limitedBrands, ...limitedBrands, ...limitedBrands, ...limitedBrands, ...limitedBrands, ...limitedBrands];
   }, [uniqueBrands]);
 
   // Transform-based animation for smooth endless movement

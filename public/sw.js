@@ -74,8 +74,14 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Handle different types of requests
-  if (url.pathname.startsWith('/_next/') || url.pathname.startsWith('/api/')) {
+  if (url.pathname.startsWith('/_next/')) {
     // Next.js internal requests - network first
+    event.respondWith(networkFirst(request));
+  } else if (url.pathname.startsWith('/api/auth/')) {
+    // OAuth and auth requests - bypass cache completely
+    return;
+  } else if (url.pathname.startsWith('/api/')) {
+    // Other API requests - network first
     event.respondWith(networkFirst(request));
   } else if (isImageRequest(request)) {
     // Images - cache first

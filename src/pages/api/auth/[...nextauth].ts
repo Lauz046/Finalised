@@ -3,6 +3,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
 export default NextAuth({
+  debug: true, // Enable debugging
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,

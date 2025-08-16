@@ -18,17 +18,23 @@ const SigninPage = () => {
   const { navigateWithScrollPreservation, router } = useEnhancedNavigation();
   const { data: session, status } = useSession();
 
-  // Handle successful OAuth login - only redirect if coming from OAuth flow
+  // Handle successful OAuth login
   useEffect(() => {
     if (session && status === 'authenticated') {
       console.log('Session detected:', session);
-      // Only redirect if there's a redirect URL (meaning user came from OAuth flow)
+      console.log('Session user:', session.user);
+      
+      // Check if there's a redirect URL stored
       const redirectUrl = localStorage.getItem('redirectAfterLogin');
       if (redirectUrl) {
+        console.log('Redirecting to:', redirectUrl);
         localStorage.removeItem('redirectAfterLogin');
         navigateWithScrollPreservation(redirectUrl);
+      } else {
+        // For OAuth login without stored redirect, go to home
+        console.log('OAuth login successful, redirecting to home');
+        navigateWithScrollPreservation('/');
       }
-      // Don't auto-redirect if user manually navigated to auth page
     }
   }, [session, status, navigateWithScrollPreservation]);
 
@@ -223,12 +229,16 @@ const SigninPage = () => {
                 className={styles.socialButton}
                 onClick={() => {
                   console.log('Google button clicked');
-                  const redirectUrl = localStorage.getItem('redirectAfterLogin');
+                  
+                  // Store current URL for redirect after OAuth
+                  const currentUrl = window.location.href;
+                  const redirectUrl = localStorage.getItem('redirectAfterLogin') || '/';
+                  console.log('Current URL:', currentUrl);
                   console.log('Redirect URL:', redirectUrl);
                   
                   try {
                     signIn('google', {
-                      callbackUrl: redirectUrl || '/',
+                      callbackUrl: redirectUrl,
                     });
                   } catch (error) {
                     console.error('SignIn error:', error);

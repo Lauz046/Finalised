@@ -55,18 +55,10 @@ export const authOptions: NextAuthOptions = {
         // Handle OAuth login
         if (account.provider === 'google') {
           console.log('Google OAuth login detected');
+          console.log('Google user data:', user);
+          console.log('Google account data:', account);
           
-          // Create or update user in your database
-          const userData = {
-            email: user.email,
-            fullName: user.name,
-            profileImage: user.image,
-            provider: 'google',
-            providerId: account.providerAccountId,
-          };
-
-          // For now, create a simple user object
-          // You can implement your own user creation logic here
+          // Use the actual Google user data
           token.userId = user.email;
           token.user = {
             id: user.email,
@@ -78,6 +70,12 @@ export const authOptions: NextAuthOptions = {
           console.log('User token created:', token.user);
         }
       }
+      
+      // If we already have user data in token, return it
+      if (token.user) {
+        return token;
+      }
+      
       return token;
     },
     async session({ session, token }: any) {

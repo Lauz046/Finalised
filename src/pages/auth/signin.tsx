@@ -207,10 +207,17 @@ const SigninPage = () => {
                 type="button" 
                 className={styles.socialButton}
                 onClick={() => {
+                  console.log('Google button clicked');
                   const redirectUrl = localStorage.getItem('redirectAfterLogin');
-                  signIn('google', {
-                    callbackUrl: redirectUrl || '/',
-                  });
+                  console.log('Redirect URL:', redirectUrl);
+                  
+                  try {
+                    signIn('google', {
+                      callbackUrl: redirectUrl || '/',
+                    });
+                  } catch (error) {
+                    console.error('SignIn error:', error);
+                  }
                 }}
               >
                 <Image

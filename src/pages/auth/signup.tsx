@@ -244,34 +244,11 @@ const SignupPage = () => {
               <button 
                 type="button" 
                 className={styles.socialButton}
-                onClick={async () => {
-                  try {
-                    const result = await signIn('google', {
-                      callbackUrl: '/',
-                      redirect: false,
-                    });
-                    
-                    if (result?.error) {
-                      setMessageType('error');
-                      setMessage('Failed to sign up with Google');
-                    } else if (result?.ok) {
-                      setMessageType('success');
-                      setMessage('Successfully signed up with Google!');
-                      setTimeout(() => {
-                        const redirectUrl = localStorage.getItem('redirectAfterLogin');
-                        if (redirectUrl) {
-                          localStorage.removeItem('redirectAfterLogin');
-                          navigateWithScrollPreservation(redirectUrl);
-                        } else {
-                          navigateWithScrollPreservation('/');
-                        }
-                      }, 1500);
-                    }
-                  } catch (error) {
-                    console.error('Google sign-up error:', error);
-                    setMessageType('error');
-                    setMessage('Failed to sign up with Google');
-                  }
+                onClick={() => {
+                  const redirectUrl = localStorage.getItem('redirectAfterLogin');
+                  signIn('google', {
+                    callbackUrl: redirectUrl || '/',
+                  });
                 }}
               >
                 <Image

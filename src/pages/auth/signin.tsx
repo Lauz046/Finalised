@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Head from 'next/head';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { useAuth } from '../../context/AuthContext';
 import { useEnhancedNavigation } from '../../hooks/useEnhancedNavigation';
 import styles from './AuthPage.module.css';
@@ -16,6 +16,21 @@ const SigninPage = () => {
   
   const { login } = useAuth();
   const { navigateWithScrollPreservation, router } = useEnhancedNavigation();
+  const { data: session, status } = useSession();
+
+  // Handle successful OAuth login
+  useEffect(() => {
+    if (session && status === 'authenticated') {
+      console.log('Session detected:', session);
+      const redirectUrl = localStorage.getItem('redirectAfterLogin');
+      if (redirectUrl) {
+        localStorage.removeItem('redirectAfterLogin');
+        navigateWithScrollPreservation(redirectUrl);
+      } else {
+        navigateWithScrollPreservation('/');
+      }
+    }
+  }, [session, status, navigateWithScrollPreservation]);
 
   const handleClose = () => {
     navigateWithScrollPreservation('/');

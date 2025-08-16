@@ -38,9 +38,13 @@ const handler = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user, account }) {
+      console.log('JWT Callback:', { token: !!token, user: !!user, account: !!account });
+      
       if (account && user) {
         // Handle OAuth login
         if (account.provider === 'google') {
+          console.log('Google OAuth login detected');
+          
           // Create or update user in your database
           const userData = {
             email: user.email,
@@ -59,32 +63,51 @@ const handler = NextAuth({
             name: user.name,
             image: user.image,
           };
+          
+          console.log('User token created:', token.user);
         }
       }
       return token;
     },
     async session({ session, token }) {
+      console.log('Session Callback:', { session: !!session, token: !!token });
+      
       if (token.user) {
         session.user = token.user;
+        console.log('Session user set:', session.user);
       }
       return session;
     },
     async redirect({ url, baseUrl }) {
       // Handle redirect after successful authentication
-      console.log('Redirect callback:', { url, baseUrl });
+      console.log('Redirect Callback:', { url, baseUrl });
       
       // If the URL is relative, make it absolute
       if (url.startsWith('/')) {
-        return `${baseUrl}${url}`;
+        const finalUrl = `${baseUrl}${url}`;
+        console.log('Final redirect URL:', finalUrl);
+        return finalUrl;
       }
       
       // If the URL is on the same origin, allow it
       if (url.startsWith(baseUrl)) {
+        console.log('Same origin redirect:', url);
         return url;
       }
       
       // Default redirect to home page
+      console.log('Default redirect to:', baseUrl);
       return baseUrl;
+    },
+    async signIn({ user, account, profile, email, credentials }) {
+      console.log('SignIn Callback:', { 
+        user: !!user, 
+        account: !!account, 
+        profile: !!profile, 
+        email: !!email, 
+        credentials: !!credentials 
+      });
+      return true;
     },
   },
   pages: {

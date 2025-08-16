@@ -18,17 +18,17 @@ const SigninPage = () => {
   const { navigateWithScrollPreservation, router } = useEnhancedNavigation();
   const { data: session, status } = useSession();
 
-  // Handle successful OAuth login
+  // Handle successful OAuth login - only redirect if coming from OAuth flow
   useEffect(() => {
     if (session && status === 'authenticated') {
       console.log('Session detected:', session);
+      // Only redirect if there's a redirect URL (meaning user came from OAuth flow)
       const redirectUrl = localStorage.getItem('redirectAfterLogin');
       if (redirectUrl) {
         localStorage.removeItem('redirectAfterLogin');
         navigateWithScrollPreservation(redirectUrl);
-      } else {
-        navigateWithScrollPreservation('/');
       }
+      // Don't auto-redirect if user manually navigated to auth page
     }
   }, [session, status, navigateWithScrollPreservation]);
 

@@ -1,9 +1,9 @@
-import NextAuth from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-// Custom handler to support multiple domains
-const handler = NextAuth({
+// Export auth options for use in other API routes
+export const authOptions: NextAuthOptions = {
   debug: true, // Enable debugging
   providers: [
     GoogleProvider({
@@ -37,7 +37,7 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account }: any) {
       console.log('JWT Callback:', { token: !!token, user: !!user, account: !!account });
       
       if (account && user) {
@@ -69,7 +69,7 @@ const handler = NextAuth({
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: any) {
       console.log('Session Callback:', { session: !!session, token: !!token });
       
       if (token.user) {
@@ -78,7 +78,7 @@ const handler = NextAuth({
       }
       return session;
     },
-    async redirect({ url, baseUrl }) {
+    async redirect({ url, baseUrl }: any) {
       // Handle redirect after successful authentication
       console.log('Redirect Callback:', { url, baseUrl });
       
@@ -99,7 +99,7 @@ const handler = NextAuth({
       console.log('Default redirect to:', baseUrl);
       return baseUrl;
     },
-    async signIn({ user, account, profile, email, credentials }) {
+    async signIn({ user, account, profile, email, credentials }: any) {
       console.log('SignIn Callback:', { 
         user: !!user, 
         account: !!account, 
@@ -118,7 +118,10 @@ const handler = NextAuth({
     strategy: 'jwt',
   },
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+// Custom handler to support multiple domains
+const handler = NextAuth(authOptions);
 
 // Export the handler with proper error handling
 export { handler as GET, handler as POST }; 

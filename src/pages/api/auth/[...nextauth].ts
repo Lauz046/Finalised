@@ -120,4 +120,5 @@ const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
 });
 
+// Export the handler with proper error handling
 export { handler as GET, handler as POST }; 

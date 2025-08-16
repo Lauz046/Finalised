@@ -4,6 +4,7 @@ import type { AppProps } from 'next/app';
 import { ApolloProvider } from '@apollo/client';
 import { Montserrat } from 'next/font/google';
 import Head from 'next/head';
+import { SessionProvider } from 'next-auth/react';
 import SearchOverlay, { SearchOverlayRef } from '../components/SearchOverlay';
 import React, { useState, useEffect, useRef } from 'react';
 import { useApollo } from '../lib/apolloClient';
@@ -58,39 +59,41 @@ function MyApp({ Component, pageProps }: AppProps) {
   // No pre-fetching needed - pages are statically generated and will load instantly
 
   return (
-    <ApolloProvider client={apolloClient}>
-      <Head>
-        <title>House of Plutus | India's Trusted Luxury Platform</title>
-        <meta name="description" content="House of Plutus - India's premier luxury marketplace. Buy 100% authentic luxury sneakers, watches & designer apparel with expert verification. Shop with confidence." />
-      </Head>
-      <ProductProvider>
-        <StashProvider>
-          <AuthProvider>
-            <NavigationProvider>
-              <EnquiryPanelProvider>
-                <EnquiryPanel />
-                <StashPromptWrapper />
-                {isLoading ? (
-                  <HornLoader 
-                    onComplete={handleLoadingComplete} 
-                    duration={2000}
-                  />
-                ) : (
-                  <>
-                    <main className={montserrat.className}>
-                      {!isAuthPage && <Navbar onSearchClick={() => setIsSearchOpen(true)} onMenuOrAccountClick={() => searchOverlayRef.current?.close()} />}
-                      {!isAuthPage && <SearchOverlay ref={searchOverlayRef} isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />}
-                      <Component {...pageProps} />
-                      {!isStashPage && !isAuthPage && <Footer />}
-                    </main>
-                  </>
-                )}
-              </EnquiryPanelProvider>
-            </NavigationProvider>
-          </AuthProvider>
-        </StashProvider>
-      </ProductProvider>
-    </ApolloProvider>
+    <SessionProvider session={pageProps.session}>
+      <ApolloProvider client={apolloClient}>
+        <Head>
+          <title>House of Plutus | India's Trusted Luxury Platform</title>
+          <meta name="description" content="House of Plutus - India's premier luxury marketplace. Buy 100% authentic luxury sneakers, watches & designer apparel with expert verification. Shop with confidence." />
+        </Head>
+        <ProductProvider>
+          <StashProvider>
+            <AuthProvider>
+              <NavigationProvider>
+                <EnquiryPanelProvider>
+                  <EnquiryPanel />
+                  <StashPromptWrapper />
+                  {isLoading ? (
+                    <HornLoader 
+                      onComplete={handleLoadingComplete} 
+                      duration={2000}
+                    />
+                  ) : (
+                    <>
+                      <main className={montserrat.className}>
+                        {!isAuthPage && <Navbar onSearchClick={() => setIsSearchOpen(true)} onMenuOrAccountClick={() => searchOverlayRef.current?.close()} />}
+                        {!isAuthPage && <SearchOverlay ref={searchOverlayRef} isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />}
+                        <Component {...pageProps} />
+                        {!isStashPage && !isAuthPage && <Footer />}
+                      </main>
+                    </>
+                  )}
+                </EnquiryPanelProvider>
+              </NavigationProvider>
+            </AuthProvider>
+          </StashProvider>
+        </ProductProvider>
+      </ApolloProvider>
+    </SessionProvider>
   );
 }
 

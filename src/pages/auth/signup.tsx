@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Head from 'next/head';
+import { signIn } from 'next-auth/react';
 import { useAuth } from '../../context/AuthContext';
 import { useEnhancedNavigation } from '../../hooks/useEnhancedNavigation';
 import styles from './AuthPage.module.css';
@@ -240,7 +241,39 @@ const SignupPage = () => {
           <div className={styles.socialSection}>
             <p className={styles.socialTitle}>Sign up with</p>
             <div className={styles.socialButtons}>
-              <button type="button" className={styles.socialButton}>
+              <button 
+                type="button" 
+                className={styles.socialButton}
+                onClick={async () => {
+                  try {
+                    const result = await signIn('google', {
+                      callbackUrl: '/',
+                      redirect: false,
+                    });
+                    
+                    if (result?.error) {
+                      setMessageType('error');
+                      setMessage('Failed to sign up with Google');
+                    } else if (result?.ok) {
+                      setMessageType('success');
+                      setMessage('Successfully signed up with Google!');
+                      setTimeout(() => {
+                        const redirectUrl = localStorage.getItem('redirectAfterLogin');
+                        if (redirectUrl) {
+                          localStorage.removeItem('redirectAfterLogin');
+                          navigateWithScrollPreservation(redirectUrl);
+                        } else {
+                          navigateWithScrollPreservation('/');
+                        }
+                      }, 1500);
+                    }
+                  } catch (error) {
+                    console.error('Google sign-up error:', error);
+                    setMessageType('error');
+                    setMessage('Failed to sign up with Google');
+                  }
+                }}
+              >
                 <Image
                   src="/auth/google.svg"
                   alt="Google"
@@ -248,7 +281,14 @@ const SignupPage = () => {
                   height={40}
                 />
               </button>
-              <button type="button" className={styles.socialButton}>
+              <button 
+                type="button" 
+                className={styles.socialButton}
+                onClick={() => {
+                  setMessageType('error');
+                  setMessage('Apple Sign-In coming soon!');
+                }}
+              >
                 <Image
                   src="/auth/apple.svg"
                   alt="Apple"

@@ -2,10 +2,9 @@ import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-export default NextAuth({
+// Custom handler to support multiple domains
+const handler = NextAuth({
   debug: true, // Enable debugging
-  // Handle multiple domains
-  basePath: '/api/auth',
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -90,11 +89,12 @@ export default NextAuth({
   },
   pages: {
     signIn: '/auth/signin',
-    signUp: '/auth/signup',
     error: '/auth/signin', // Redirect errors back to signin
   },
   session: {
     strategy: 'jwt',
   },
   secret: process.env.NEXTAUTH_SECRET,
-}); 
+});
+
+export { handler as GET, handler as POST }; 

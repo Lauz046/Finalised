@@ -120,8 +120,5 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-// Custom handler to support multiple domains
-const handler = NextAuth(authOptions);
-
-// Export the handler with proper error handling
-export { handler as GET, handler as POST }; 
+// Export the handler directly
+export default NextAuth(authOptions); 

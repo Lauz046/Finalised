@@ -19,34 +19,18 @@ export default NextAuth({
           return null;
         }
 
-        try {
-          const response = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/login`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: credentials.email,
-              password: credentials.password,
-            }),
-          });
-
-          const data = await response.json();
-
-          if (data.success) {
-            return {
-              id: data.user.id,
-              email: data.user.email,
-              name: data.user.fullName,
-              image: data.user.profileImage,
-            };
-          }
-
-          return null;
-        } catch (error) {
-          console.error('Auth error:', error);
-          return null;
+        // For now, return a mock user for testing
+        // You can implement your own login logic here
+        if (credentials.email === 'test@example.com' && credentials.password === 'password') {
+          return {
+            id: '1',
+            email: credentials.email,
+            name: 'Test User',
+            image: null,
+          };
         }
+        
+        return null;
       }
     }),
   ],
@@ -64,24 +48,15 @@ export default NextAuth({
             providerId: account.providerAccountId,
           };
 
-          // Call your API to create/update user
-          try {
-            const response = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/oauth-user`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(userData),
-            });
-
-            const data = await response.json();
-            if (data.success) {
-              token.userId = data.user.id;
-              token.user = data.user;
-            }
-          } catch (error) {
-            console.error('OAuth user creation error:', error);
-          }
+          // For now, create a simple user object
+          // You can implement your own user creation logic here
+          token.userId = user.email;
+          token.user = {
+            id: user.email,
+            email: user.email,
+            name: user.name,
+            image: user.image,
+          };
         }
       }
       return token;

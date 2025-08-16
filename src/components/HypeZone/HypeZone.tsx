@@ -287,7 +287,7 @@ const HypeZone: React.FC = () => {
         <p className={styles.subtitle}>
           A reel zone for fashion drops, sneak peeks, and styling stories.{' '}
           <a 
-            href="https://www.instagram.com/house_of_plutus?igsh=M2xzd2x0OXFzdWti" 
+            href="https://www.instagram.com/house_of_plutus/" 
             target="_blank" 
             rel="noopener noreferrer"
             className={styles.joinLink}

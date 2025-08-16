@@ -1,29 +1,32 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useEnhancedNavigation } from '../hooks/useEnhancedNavigation';
+import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { Breadcrumbs } from '../components/ProductPage/Breadcrumbs';
 import Navbar from '../components/nav/Navbar';
 import SearchOverlay from '../components/SearchOverlay';
 
 const AccountPage = () => {
-  const { user, isAuthenticated, logout } = useAuth();
-  const { navigateWithScrollPreservation, router } = useEnhancedNavigation();
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // Redirect to signin if not authenticated
   React.useEffect(() => {
-    if (!isAuthenticated) {
-      navigateWithScrollPreservation('/auth/signin');
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin');
     }
-  }, [isAuthenticated, navigateWithScrollPreservation]);
+  }, [status, router]);
 
-  if (!isAuthenticated || !user) {
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  if (status === 'unauthenticated' || !session?.user) {
     return null; // Will redirect to signin
   }
 
   const handleLogout = () => {
-    logout();
-    navigateWithScrollPreservation('/');
+    signOut({ callbackUrl: '/' });
   };
 
   const breadcrumbItems = [
@@ -90,7 +93,7 @@ const AccountPage = () => {
                 fontWeight: 600,
                 fontFamily: 'Montserrat, sans-serif'
               }}>
-                {user.fullName.charAt(0).toUpperCase()}
+                {session.user.name?.charAt(0).toUpperCase() || session.user.email?.charAt(0).toUpperCase() || 'U'}
               </div>
               
               <div>
@@ -101,24 +104,16 @@ const AccountPage = () => {
                   marginBottom: '4px',
                   fontFamily: 'Montserrat, sans-serif'
                 }}>
-                  {user.fullName}
+                  {session.user.name || 'User'}
                 </div>
                 <div style={{
                   fontSize: '1rem',
                   color: '#7a8ca3',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  {user.email}
+                  {session.user.email}
                 </div>
-                {user.phone && (
-                  <div style={{
-                    fontSize: '1rem',
-                    color: '#7a8ca3',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    {user.phone}
-                  </div>
-                )}
+                {/* Phone number not available in NextAuth session by default */}
               </div>
             </div>
             
@@ -127,7 +122,7 @@ const AccountPage = () => {
               color: '#7a8ca3',
               fontFamily: 'Inter, sans-serif'
             }}>
-              Member since {new Date(user.createdAt).toLocaleDateString()}
+              Member since {new Date().toLocaleDateString()}
             </div>
           </div>
           

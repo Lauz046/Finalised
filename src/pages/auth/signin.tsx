@@ -228,6 +228,7 @@ const SigninPage = () => {
                 type="button" 
                 className={styles.socialButton}
                 onClick={() => {
+                  console.log('=== GOOGLE LOGIN DEBUG ===');
                   console.log('Google button clicked');
                   
                   // Store current URL for redirect after OAuth
@@ -235,11 +236,15 @@ const SigninPage = () => {
                   const redirectUrl = localStorage.getItem('redirectAfterLogin') || '/';
                   console.log('Current URL:', currentUrl);
                   console.log('Redirect URL:', redirectUrl);
+                  console.log('Session status:', status);
+                  console.log('Current session:', session);
                   
                   try {
+                    console.log('Calling signIn("google")...');
                     signIn('google', {
                       callbackUrl: redirectUrl,
                     });
+                    console.log('signIn called successfully');
                   } catch (error) {
                     console.error('SignIn error:', error);
                   }

@@ -4,6 +4,8 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 
 export default NextAuth({
   debug: true, // Enable debugging
+  // Handle multiple domains
+  basePath: '/api/auth',
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -68,10 +70,28 @@ export default NextAuth({
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      // Handle redirect after successful authentication
+      console.log('Redirect callback:', { url, baseUrl });
+      
+      // If the URL is relative, make it absolute
+      if (url.startsWith('/')) {
+        return `${baseUrl}${url}`;
+      }
+      
+      // If the URL is on the same origin, allow it
+      if (url.startsWith(baseUrl)) {
+        return url;
+      }
+      
+      // Default redirect to home page
+      return baseUrl;
+    },
   },
   pages: {
     signIn: '/auth/signin',
     signUp: '/auth/signup',
+    error: '/auth/signin', // Redirect errors back to signin
   },
   session: {
     strategy: 'jwt',

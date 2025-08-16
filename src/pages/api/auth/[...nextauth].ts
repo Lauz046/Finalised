@@ -5,6 +5,17 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 // Export auth options for use in other API routes
 export const authOptions: NextAuthOptions = {
   debug: true, // Enable debugging
+  logger: {
+    error(code, ...message) {
+      console.error('NextAuth Error:', code, ...message);
+    },
+    warn(code, ...message) {
+      console.warn('NextAuth Warning:', code, ...message);
+    },
+    debug(code, ...message) {
+      console.log('NextAuth Debug:', code, ...message);
+    },
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -93,6 +104,12 @@ export const authOptions: NextAuthOptions = {
       if (url.startsWith(baseUrl)) {
         console.log('Same origin redirect:', url);
         return url;
+      }
+      
+      // For OAuth callbacks, always redirect to home page
+      if (url.includes('/api/auth/callback/')) {
+        console.log('OAuth callback detected, redirecting to home');
+        return baseUrl;
       }
       
       // Default redirect to home page

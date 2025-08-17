@@ -10,19 +10,56 @@ const AccountPage = () => {
   const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  // Redirect to signin if not authenticated
-  React.useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin');
-    }
-  }, [status, router]);
+  // Don't redirect automatically - let the component handle the display
 
   if (status === 'loading') {
-    return <div>Loading...</div>;
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontSize: '1.2rem',
+        color: '#22304a'
+      }}>
+        Loading...
+      </div>
+    );
   }
 
   if (status === 'unauthenticated' || !session?.user) {
-    return null; // Will redirect to signin
+    return (
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column',
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        gap: '20px'
+      }}>
+        <div style={{ fontSize: '1.5rem', color: '#22304a', fontWeight: 600 }}>
+          Please sign in to view your account
+        </div>
+        <button 
+          onClick={() => router.push('/auth/signin')}
+          style={{
+            background: '#22304a',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '8px',
+            padding: '12px 24px',
+            fontSize: '1rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+            transition: 'background-color 0.2s ease'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.background = '#1a2538'}
+          onMouseLeave={(e) => e.currentTarget.style.background = '#22304a'}
+        >
+          Sign In
+        </button>
+      </div>
+    );
   }
 
   const handleLogout = () => {

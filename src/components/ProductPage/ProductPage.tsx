@@ -38,6 +38,7 @@ interface ProductData {
   sizePrices?: SizePrice[];
   price?: number;
   salePrice?: number;
+  marketPrice?: number | string | null;
   variants?: Array<{ price: number }>;
   sellerName?: string;
   sellerUrl?: string;
@@ -156,6 +157,7 @@ const ALL_WATCHES_QUERY = gql`
       brand
       name
       salePrice
+      marketPrice
       images
     }
   }
@@ -435,7 +437,16 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
     .map((p: unknown) => {
       const pAny = p as ProductData;
       const name = pAny.productName || pAny.name || pAny.title || 'Unknown Product';
-      const price = pAny.price || pAny.salePrice || (pAny.sizePrices && pAny.sizePrices[0]?.price) || (pAny.variants && pAny.variants[0]?.price) || 0;
+      
+      // For watches, use the same price calculation as the listing page
+      let price: number;
+      if (productType === 'watch' && (pAny.salePrice || pAny.marketPrice)) {
+        const priceToUse = pAny.salePrice || pAny.marketPrice;
+        price = calculateWatchPrice(priceToUse);
+      } else {
+        price = pAny.price || pAny.salePrice || (pAny.sizePrices && pAny.sizePrices[0]?.price) || (pAny.variants && pAny.variants[0]?.price) || 0;
+      }
+      
       return {
         id: pAny.id,
         image: pAny.images[0] || '',
@@ -582,8 +593,44 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId, productType
   );
 };
 
+// Calculate price from AED to INR with 10% markup (for watches)
+const calculateWatchPrice = (aedPrice: number | null | undefined | string) => {
+  let numericPrice: number;
+  
+  if (typeof aedPrice === 'string') {
+    // Handle string format like "AED5,800.00"
+    const match = aedPrice.match(/AED([\d,]+\.?\d*)/);
+    if (match) {
+      // Remove commas and convert to number
+      numericPrice = parseFloat(match[1].replace(/,/g, ''));
+    } else {
+      // Try direct parsing if no AED prefix
+      numericPrice = parseFloat(aedPrice.replace(/,/g, ''));
+    }
+  } else {
+    numericPrice = aedPrice as number;
+  }
+  
+  if (!numericPrice || numericPrice <= 0 || isNaN(numericPrice)) return 0;
+  
+  // Convert AED to INR and add 10% markup
+  const aedToInrRate = 24; // Current approximate rate
+  const basePrice = numericPrice * aedToInrRate;
+  const markup = basePrice * 0.1; // 10% markup
+  return basePrice + markup;
+};
+
 function getDisplayFields(product: ProductData) {
   const name = product.productName || product.name || product.title || 'Unknown Product';
+  
+  // For watches, use the same price calculation as the listing page
+  if (product.salePrice || product.marketPrice) {
+    const priceToUse = product.salePrice || product.marketPrice;
+    const calculatedPrice = calculateWatchPrice(priceToUse);
+    return { name, price: calculatedPrice };
+  }
+  
+  // For other products, use existing logic
   const price = product.price || product.salePrice || (product.sizePrices && product.sizePrices[0]?.price) || (product.variants && product.variants[0]?.price) || 0;
   return { name, price };
 } 

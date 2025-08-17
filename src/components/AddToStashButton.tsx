@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
 import { useStash } from './StashContext';
-import { useAuth } from '../context/AuthContext';
 import { useEnhancedNavigation } from '../hooks/useEnhancedNavigation';
 import styles from './AddToStashButton.module.css';
 
@@ -25,9 +25,10 @@ const AddToStashButton: React.FC<AddToStashButtonProps> = ({
   className = ''
 }) => {
   const { addToStash, isInStash } = useStash();
-  const { isAuthenticated } = useAuth();
+  const { data: session, status } = useSession();
   const { navigateWithScrollPreservation } = useEnhancedNavigation();
   const isStashed = isInStash(product.id);
+  const isAuthenticated = status === 'authenticated' && !!session?.user;
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();

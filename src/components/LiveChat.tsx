@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { useEnquiryPanel } from './EnquiryPanelContext';
 import styles from './LiveChat.module.css';
 import { sendEnquiry } from '../utils/sendEnquiry';
@@ -13,6 +14,7 @@ const MESSAGE_DELAY = 900;
 
 const LiveChat: React.FC = () => {
   const { product, closePanel } = useEnquiryPanel();
+  const { data: session } = useSession();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [step, setStep] = useState(0);
   const [showOptions, setShowOptions] = useState(false);
@@ -28,12 +30,16 @@ const LiveChat: React.FC = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Focus input when step 2
+  // Focus input and auto-fill email when step 2
   useEffect(() => {
     if (step === 2) {
+      // Auto-fill email if user is logged in
+      if (session?.user?.email && !contact) {
+        setContact(session.user.email);
+      }
       setTimeout(() => contactInputRef.current?.focus(), 200);
     }
-  }, [step]);
+  }, [step, session?.user?.email, contact]);
 
   // Chat flow
   useEffect(() => {

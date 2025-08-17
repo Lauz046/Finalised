@@ -189,6 +189,7 @@
   .chatArea {
     padding: 18px 0 0 0;
     max-height: none;
+    padding-bottom: 120px; /* Add bottom padding to prevent cut-off */
   }
   .toast {
     font-size: 0.98rem;
@@ -204,6 +205,18 @@
   }
   .inputError {
     margin-left: 16px;
+  }
+  .optionsRow {
+    margin: 15px 0 0 0;
+    gap: 12px;
+  }
+  .proceedBtn, .cancelBtn {
+    padding: 8px 16px;
+    font-size: 0.95rem;
+  }
+  .contactForm {
+    margin: 15px 0 0 0;
+    gap: 8px;
   }
 }
 
@@ -238,6 +251,7 @@
   .chatArea {
     padding: 15px 0 0 0;
     gap: 12px;
+    padding-bottom: 100px; /* Ensure form doesn't get cut off */
   }
   .botMsg, .userMsg {
     padding: 8px 12px;

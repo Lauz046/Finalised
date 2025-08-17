@@ -120,15 +120,29 @@ const SneakerPage = () => {
   // Get all available sizes for the selected brands
   const { data: allSizesData } = useQuery(ALL_SNEAKER_SIZES, {
     variables: { brand: selectedBrands.length === 1 ? selectedBrands[0] : undefined },
-    skip: selectedBrands.length !== 1
+    skip: selectedBrands.length > 1 // Only skip when multiple brands are selected
   });
 
   const allSizes = React.useMemo(() => {
     if (allSizesData?.allSneakerSizes) {
       return allSizesData.allSneakerSizes;
     }
+    // If no sizes data from API, extract sizes from current sneakers data
+    if (sneakers.length > 0) {
+      const sizesSet = new Set<string>();
+      sneakers.forEach((sneaker: any) => {
+        if (sneaker.sizePrices && Array.isArray(sneaker.sizePrices)) {
+          sneaker.sizePrices.forEach((sp: any) => {
+            if (sp && sp.size) {
+              sizesSet.add(sp.size);
+            }
+          });
+        }
+      });
+      return Array.from(sizesSet).sort();
+    }
     return [];
-  }, [allSizesData]);
+  }, [allSizesData, sneakers]);
 
   // Calculate price range from data
   const { minPrice, maxPrice } = React.useMemo(() => {

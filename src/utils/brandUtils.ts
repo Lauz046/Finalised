@@ -158,6 +158,7 @@ const BRAND_URL_MAPPINGS: Record<string, string> = {
   'levis': "Levi's",
   'cactus-jack-by-travis-scott': 'Cactus Jack by Travis Scott',
   'cactus-jack': 'Cactus Jack',
+  'cactus-jack-travis-scott': 'Cactus Jack by Travis Scott',
   'carhartt-wip': 'Carhartt WIP',
   'aime-leon-dore': 'Aimé Leon Dore',
   'all-saints': 'ALL SAINTS',

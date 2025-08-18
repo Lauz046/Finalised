@@ -515,7 +515,7 @@ export default function ApparelBrandProductPage({ brand, initialApparelData }: {
             onClose={() => setShowFilter(false)}
             sortBy={sortBy}
             onSortByChange={setSortBy}
-            brands={brands}
+            brands={[brand]} // Only show current brand on brand-wise pages
             selectedBrands={[brand]}
             onBrandChange={() => {}}
             sizes={allSizes}
@@ -749,7 +749,7 @@ export default function ApparelBrandProductPage({ brand, initialApparelData }: {
                 minPrice={minPrice}
                 maxPrice={maxPrice}
                 onPriceChange={setPriceRange}
-                brands={brands}
+                brands={[brand]} // Only show current brand on brand-wise pages
                 selectedBrands={[brand]}
                 onBrandChange={() => {}}
                 sizes={allSizes}

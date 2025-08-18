@@ -1,6 +1,5 @@
 import React from 'react';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
 import { useStash } from './StashContext';
 import { useEnhancedNavigation } from '../hooks/useEnhancedNavigation';
 import { useAuth } from '../context/AuthContext';
@@ -26,7 +25,6 @@ const AddToStashButton: React.FC<AddToStashButtonProps> = ({
   className = ''
 }) => {
   const { addToStash, isInStash } = useStash();
-  const { data: session, status } = useSession();
   const { navigateWithScrollPreservation } = useEnhancedNavigation();
   const { isAuthenticated, user, isLoading } = useAuth();
   const isStashed = isInStash(product.id);
@@ -73,6 +71,7 @@ const AddToStashButton: React.FC<AddToStashButtonProps> = ({
       className={`${styles.button} ${styles[variant]} ${className}`}
       onClick={handleClick}
       aria-label={isStashed ? 'Remove from stash' : 'Add to stash'}
+      disabled={isLoading}
     >
       <Image 
         src="/DON/Stash White icon.svg" 

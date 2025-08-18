@@ -15,12 +15,18 @@
   width: 100%;
 }
 
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .primary {
   background: #051F2D;
   color: #fff;
 }
 
-.primary:hover {
+.primary:hover:not(:disabled) {
   background: #0a2f3f;
   transform: translateY(-1px);
 }
@@ -31,7 +37,7 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.secondary:hover {
+.secondary:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.5);
   transform: translateY(-1px);

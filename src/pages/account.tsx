@@ -1,33 +1,16 @@
 import React, { useState } from 'react';
-import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { Breadcrumbs } from '../components/ProductPage/Breadcrumbs';
 import Navbar from '../components/nav/Navbar';
 import SearchOverlay from '../components/SearchOverlay';
+import { useAuth } from '../context/AuthContext';
 
 const AccountPage = () => {
-  const { data: session, status } = useSession();
+  const { isAuthenticated, user, logout } = useAuth();
   const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  // Don't redirect automatically - let the component handle the display
-
-  if (status === 'loading') {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        fontSize: '1.2rem',
-        color: '#22304a'
-      }}>
-        Loading...
-      </div>
-    );
-  }
-
-  if (status === 'unauthenticated' || !session?.user) {
+  if (!isAuthenticated || !user) {
     return (
       <div style={{ 
         display: 'flex', 
@@ -63,7 +46,8 @@ const AccountPage = () => {
   }
 
   const handleLogout = () => {
-    signOut({ callbackUrl: '/' });
+    logout();
+    router.push('/');
   };
 
   const breadcrumbItems = [
@@ -130,7 +114,7 @@ const AccountPage = () => {
                 fontWeight: 600,
                 fontFamily: 'Montserrat, sans-serif'
               }}>
-                {session.user.name?.charAt(0).toUpperCase() || session.user.email?.charAt(0).toUpperCase() || 'U'}
+                {user.fullName?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || 'U'}
               </div>
               
               <div>
@@ -141,16 +125,24 @@ const AccountPage = () => {
                   marginBottom: '4px',
                   fontFamily: 'Montserrat, sans-serif'
                 }}>
-                  {session.user.name || 'User'}
+                  {user.fullName || 'User'}
                 </div>
                 <div style={{
                   fontSize: '1rem',
                   color: '#7a8ca3',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  {session.user.email}
+                  {user.email}
                 </div>
-                {/* Phone number not available in NextAuth session by default */}
+                {user.phone && (
+                  <div style={{
+                    fontSize: '1rem',
+                    color: '#7a8ca3',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    {user.phone}
+                  </div>
+                )}
               </div>
             </div>
             
@@ -159,7 +151,7 @@ const AccountPage = () => {
               color: '#7a8ca3',
               fontFamily: 'Inter, sans-serif'
             }}>
-              Member since {new Date().toLocaleDateString()}
+              Member since {new Date(user.createdAt).toLocaleDateString()}
             </div>
           </div>
           

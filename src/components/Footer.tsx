@@ -101,13 +101,26 @@ const Footer = () => {
             </div>
             
             <div className={styles.socialMedia}>
-              <a href="#" className={styles.socialIcon}>
+              <a 
+                href="https://www.instagram.com/house_of_plutus?igsh=M2xzd2x0OXFzdWti" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className={styles.socialIcon}
+              >
                 <Image src="/restof/Instagram.svg" alt="Instagram" width={32} height={32} />
               </a>
-              <a href="#" className={styles.socialIcon}>
+              <a 
+                href="https://www.facebook.com/share/179REkX7F7/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className={styles.socialIcon}
+              >
                 <Image src="/restof/Facebook.svg" alt="Facebook" width={32} height={32} />
               </a>
-              <a href="#" className={styles.socialIcon}>
+              <a 
+                href="mailto:support@houseofplutus.com?subject=Support Request&body=Hello House of Plutus team,%0D%0A%0D%0AI would like to get in touch regarding..." 
+                className={styles.socialIcon}
+              >
                 <Image src="/restof/Mail.svg" alt="Email" width={32} height={32} />
               </a>
             </div>

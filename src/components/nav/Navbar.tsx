@@ -55,6 +55,7 @@ const Navbar: React.FC<NavbarProps> = ({ onSearchClick, onMenuOrAccountClick, bl
   useEffect(() => {
     const handleRouteChange = () => {
       setIsMenuOpen(false);
+      setIsUserMenuOpen(false);
     };
 
     router.events.on('routeChangeStart', handleRouteChange);
@@ -62,6 +63,15 @@ const Navbar: React.FC<NavbarProps> = ({ onSearchClick, onMenuOrAccountClick, bl
       router.events.off('routeChangeStart', handleRouteChange);
     };
   }, [router.events]);
+
+  const handleAccountClick = () => {
+    onMenuOrAccountClick?.();
+    if (isAuthenticated) {
+      setIsUserMenuOpen(!isUserMenuOpen);
+    } else {
+      router.push('/auth/signin');
+    }
+  };
 
   return (
     <>
@@ -110,14 +120,7 @@ const Navbar: React.FC<NavbarProps> = ({ onSearchClick, onMenuOrAccountClick, bl
             ref={accountButtonRef}
             className={styles.iconBtn} 
             aria-label="Account"
-            onClick={() => {
-              onMenuOrAccountClick?.();
-              if (isAuthenticated) {
-                setIsUserMenuOpen(!isUserMenuOpen);
-              } else {
-                router.push('/auth/signin');
-              }
-            }}
+            onClick={handleAccountClick}
           >
             {isAuthenticated && user ? (
               <div className={styles.userAvatar}>

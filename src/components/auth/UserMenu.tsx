@@ -6,7 +6,7 @@ import styles from './UserMenu.module.css';
 interface UserMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  anchorRef: React.RefObject<HTMLElement>;
+  anchorRef: React.RefObject<HTMLButtonElement | null>;
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, anchorRef }) => {

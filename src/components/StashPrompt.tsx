@@ -23,6 +23,11 @@ const StashPrompt: React.FC = () => {
     navigateWithScrollPreservation('/auth/signin');
   };
 
+  const handleViewStash = () => {
+    closePrompt();
+    navigateWithScrollPreservation('/stash');
+  };
+
   return (
     <div className={styles.stashPrompt}>
       <div className={styles.stashPromptContent}>
@@ -31,6 +36,9 @@ const StashPrompt: React.FC = () => {
             <div className={styles.welcomeMessage}>
               <div>Welcome back, {user?.fullName}!</div>
               <div>Your stash is waiting for you.</div>
+              <button onClick={handleViewStash} className={styles.stashLink}>
+                View My Stash
+              </button>
             </div>
           ) : (
             <div className={styles.authMessage}>

@@ -5,10 +5,12 @@ import { getBrandFromUrl, normalizeBrandForDatabase } from '../../../utils/brand
 import { ErrorBoundary } from '../../../components/ErrorBoundary';
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  // Pre-generate paths for popular brands
+  // Pre-generate paths for popular brands including the ones mentioned
   const popularBrands = [
     'gucci', 'prada', 'balenciaga', 'louis-vuitton', 'fendi', 'valentino',
-    'saint-laurent', 'bottega-veneta', 'stone-island', 'canada-goose'
+    'saint-laurent', 'bottega-veneta', 'stone-island', 'canada-goose',
+    'levis', 'cactus-jack-by-travis-scott', 'carhartt-wip', 'aime-leon-dore',
+    'all-saints', 'bape', 'burberry', 'lanvin-women', '3eleven'
   ];
 
   const paths = popularBrands.map((brand) => ({
@@ -62,19 +64,16 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export default function ApparelBrandPage({ 
   initialApparelData, 
-  brand, 
-  apolloState 
+  brand
 }: { 
   initialApparelData: unknown[]; 
   brand: string;
-  apolloState?: unknown;
 }) {
   return (
     <ErrorBoundary>
       <ApparelBrandProductPage 
         brand={brand} 
         initialApparelData={initialApparelData}
-        apolloState={apolloState}
       />
     </ErrorBoundary>
   );

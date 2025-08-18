@@ -154,8 +154,18 @@ const BRAND_URL_MAPPINGS: Record<string, string> = {
   'canada-goose': 'Canada Goose',
   'the-north-face': 'The North Face',
   
-  // Accessories brands
+  // Apparel brands
+  'levis': "Levi's",
+  'cactus-jack-by-travis-scott': 'Cactus Jack by Travis Scott',
+  'cactus-jack': 'Cactus Jack',
+  'carhartt-wip': 'Carhartt WIP',
   'aime-leon-dore': 'Aimé Leon Dore',
+  'all-saints': 'ALL SAINTS',
+  'bape': 'BAPE',
+  'lanvin-women': 'Lanvin Women',
+  '3eleven': '3eleven',
+  
+  // Accessories brands
   'aim-leon-dore': 'Aimé Leon Dore', // Handle missing 'e' case
   'paris-saint-germain': 'Paris Saint-Germain',
   'off-white': 'OFF-WHITE',

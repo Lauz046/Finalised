@@ -7,7 +7,6 @@ import { useProductContext } from '../../context/ProductContext';
 import { useRouter } from 'next/router';
 import { useStash } from '../StashContext';
 import { useAuth } from '../../context/AuthContext';
-import UserMenu from '../auth/UserMenu';
 
 interface NavbarProps {
   onSearchClick: () => void;
@@ -17,12 +16,10 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ onSearchClick, onMenuOrAccountClick, blueIcons }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [bg, setBg] = useState('#fff');
   const { isPreloaded, loading } = useProductContext();
   const router = useRouter();
   const { isAuthenticated, user } = useAuth();
-  const accountButtonRef = useRef<HTMLButtonElement>(null);
 
   // Use blueIcons prop if provided, otherwise fallback to route logic
   const isBlueIcons = typeof blueIcons === 'boolean' 
@@ -55,7 +52,6 @@ const Navbar: React.FC<NavbarProps> = ({ onSearchClick, onMenuOrAccountClick, bl
   useEffect(() => {
     const handleRouteChange = () => {
       setIsMenuOpen(false);
-      setIsUserMenuOpen(false);
     };
 
     router.events.on('routeChangeStart', handleRouteChange);
@@ -67,8 +63,10 @@ const Navbar: React.FC<NavbarProps> = ({ onSearchClick, onMenuOrAccountClick, bl
   const handleAccountClick = () => {
     onMenuOrAccountClick?.();
     if (isAuthenticated) {
-      setIsUserMenuOpen(!isUserMenuOpen);
+      // If authenticated, navigate directly to account page
+      router.push('/account');
     } else {
+      // If not authenticated, navigate to sign-in page
       router.push('/auth/signin');
     }
   };
@@ -117,7 +115,6 @@ const Navbar: React.FC<NavbarProps> = ({ onSearchClick, onMenuOrAccountClick, bl
           </button>
 
           <button 
-            ref={accountButtonRef}
             className={styles.iconBtn} 
             aria-label="Account"
             onClick={handleAccountClick}
@@ -159,11 +156,6 @@ const Navbar: React.FC<NavbarProps> = ({ onSearchClick, onMenuOrAccountClick, bl
       {isMenuOpen && (
         <Menu />
       )}
-      <UserMenu 
-        isOpen={isUserMenuOpen}
-        onClose={() => setIsUserMenuOpen(false)}
-        anchorRef={accountButtonRef}
-      />
       <style>{`
         @keyframes pulse {
           0% { opacity: 1; }

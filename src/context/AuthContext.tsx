@@ -12,8 +12,9 @@ interface User {
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
-  signup: (fullName: string, email: string, password: string, phone?: string) => Promise<{ success: boolean; message: string }>;
+  signup: (email: string, fullName: string, password: string, phone?: string) => Promise<{ success: boolean; message: string }>;
   logout: () => void;
 }
 
@@ -34,6 +35,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { syncStashWithUser } = useStash();
 
   // Load user data from localStorage on mount
@@ -50,6 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.removeItem('plutus_user');
       }
     }
+    setIsLoading(false);
   }, [syncStashWithUser]);
 
   const login = async (email: string, password: string): Promise<{ success: boolean; message: string }> => {
@@ -118,6 +121,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const value: AuthContextType = {
     isAuthenticated,
     user,
+    isLoading,
     login,
     signup,
     logout,

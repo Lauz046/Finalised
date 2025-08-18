@@ -28,12 +28,17 @@ const AddToStashButton: React.FC<AddToStashButtonProps> = ({
   const { addToStash, isInStash } = useStash();
   const { data: session, status } = useSession();
   const { navigateWithScrollPreservation } = useEnhancedNavigation();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isLoading } = useAuth();
   const isStashed = isInStash(product.id);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Don't proceed if still loading
+    if (isLoading) {
+      return;
+    }
     
     if (!isAuthenticated) {
       // Store current page URL for redirect after login

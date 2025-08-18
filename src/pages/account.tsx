@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Breadcrumbs } from '../components/ProductPage/Breadcrumbs';
 import Navbar from '../components/nav/Navbar';
@@ -6,9 +6,25 @@ import SearchOverlay from '../components/SearchOverlay';
 import { useAuth } from '../context/AuthContext';
 
 const AccountPage = () => {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, isLoading } = useAuth();
   const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  // Show loading state while AuthContext is initializing
+  if (isLoading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontSize: '1.2rem',
+        color: '#22304a'
+      }}>
+        Loading...
+      </div>
+    );
+  }
 
   if (!isAuthenticated || !user) {
     return (

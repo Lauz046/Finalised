@@ -19,7 +19,7 @@ const Navbar: React.FC<NavbarProps> = ({ onSearchClick, onMenuOrAccountClick, bl
   const [bg, setBg] = useState('#fff');
   const { isPreloaded, loading } = useProductContext();
   const router = useRouter();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isLoading } = useAuth();
 
   // Use blueIcons prop if provided, otherwise fallback to route logic
   const isBlueIcons = typeof blueIcons === 'boolean' 
@@ -119,7 +119,7 @@ const Navbar: React.FC<NavbarProps> = ({ onSearchClick, onMenuOrAccountClick, bl
             aria-label="Account"
             onClick={handleAccountClick}
           >
-            {isAuthenticated && user ? (
+            {!isLoading && isAuthenticated && user ? (
               <div className={styles.userAvatar}>
                 {user.fullName.charAt(0).toUpperCase()}
               </div>

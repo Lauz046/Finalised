@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useSession, signOut } from 'next-auth/react';
 import { useStash } from '../components/StashContext';
 
 interface User {
@@ -36,24 +37,51 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { data: session, status } = useSession();
   const { syncStashWithUser } = useStash();
 
-  // Load user data from localStorage on mount
+  // Handle NextAuth session changes
   useEffect(() => {
-    const savedUser = localStorage.getItem('plutus_user');
-    if (savedUser) {
-      try {
-        const userData = JSON.parse(savedUser);
-        setUser(userData);
-        setIsAuthenticated(true);
-        syncStashWithUser(userData.id);
-      } catch (error) {
-        console.error('Error loading user data:', error);
-        localStorage.removeItem('plutus_user');
-      }
+    if (status === 'loading') {
+      setIsLoading(true);
+      return;
     }
-    setIsLoading(false);
-  }, [syncStashWithUser]);
+
+    if (status === 'authenticated' && session?.user) {
+      // User is authenticated via NextAuth (Google OAuth)
+      const nextAuthUser: User = {
+        id: session.user.email || 'nextauth-user',
+        fullName: session.user.name || session.user.email?.split('@')[0] || 'User',
+        email: session.user.email || '',
+        createdAt: new Date().toISOString()
+      };
+      
+      setUser(nextAuthUser);
+      setIsAuthenticated(true);
+      syncStashWithUser(nextAuthUser.id);
+      setIsLoading(false);
+    } else if (status === 'unauthenticated') {
+      // Check for custom authentication
+      const savedUser = localStorage.getItem('plutus_user');
+      if (savedUser) {
+        try {
+          const userData = JSON.parse(savedUser);
+          setUser(userData);
+          setIsAuthenticated(true);
+          syncStashWithUser(userData.id);
+        } catch (error) {
+          console.error('Error loading user data:', error);
+          localStorage.removeItem('plutus_user');
+          setUser(null);
+          setIsAuthenticated(false);
+        }
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+      setIsLoading(false);
+    }
+  }, [session, status, syncStashWithUser]);
 
   const login = async (email: string, password: string): Promise<{ success: boolean; message: string }> => {
     try {
@@ -115,6 +143,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Clear user-specific stash and revert to anonymous stash
     if (user) {
       localStorage.removeItem(`plutus_user_stash_${user.id}`);
+    }
+
+    // If user was authenticated via NextAuth, sign out from NextAuth as well
+    if (status === 'authenticated') {
+      signOut({ callbackUrl: '/' });
     }
   };
 
